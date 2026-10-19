@@ -23,7 +23,7 @@
 
 ## 4. Modification: logic (verified on print 1019: identical to original except intended changes)
 - **Rewinder diameter (DT35):** 0 V = near (fail-safe). Calibration: `RwDist0V` 0, `RwDist10V` 750, `RwAxisDist` 675.3 (100 mm core), `RwRawMin` 10, `RwRawMax` 3900. Plausibility check `RwDist > RwAxisDist`, diameter clamped ≥ 0.
-- **Section `AutoStop_Control`** (ST, latest **v6c**):
+- **Section `AutoStop_Control`** (ST, latest **v6d**, see `v6d/v6d_Changes.md`):
   1. tick / `MmPerPulse`
   2. DT35 → filtered distance → `RwDiam` (fault detection)
   3. speed from encoder
@@ -40,11 +40,12 @@
 - **Motor_Manager rung 3:** `SlowDown` = end-of-roll photocell OR `AutoSlowCmd` OR (`Measure_ON` · `SlowByDiam`).
   **Rung 4:** `Stop` = paper break OR `AutoStopCmd` OR (`Measure_ON` · `UwStopByDiam`).
 - **Console rung 3:** `CountReset_Req` = `I_AutoStop_OS` · `UwStopEnable` · meters ≥ stop length.
-- **Alarms (ladder, set/reset latched):** [10] DT35 fault (only in Rewinder AUTO), [11] rewinder max diameter, [15] unwinder empty, [16] learning fault (rungs to add for v6c). The tub-off alarm was removed (no physical input).
+- **Alarms (ladder, set/reset latched):** [10] DT35 fault (Rewinder AUTO **or motor running**, v6d), [11] rewinder max diameter, [15] unwinder empty, [16] learning fault (rungs to add, see v6d C2). All four drive the lamp and the buzzer (v6d C4). Encoder-stopped alarm [8] re-enabled (v6d C5). The tub-off alarm was removed (no physical input).
 - **Naming convention:** Uw = unwinder, Rw = rewinder; `_mm`, `_m`, `_Pls` (pulses), `_Pps`, `_Pps2`. The v6 rename list is in `AutoStop_v6_Renames.txt`.
 
 ## 5. Files delivered (latest versions)
-- `AutoStop_Control_v6c.st`: code to paste into the ST box.
+- `v6d/AutoStop_Control_v6d.st`: code to paste into the ST box (replaces v6c).
+- `v6d/v6d_Locals_paste.txt` (6 new Internals), `v6d/v6d_Changes.md` (initial values, ladder edits, commissioning checks).
 - `AutoStop_v6_Renames.txt`: Internals + 5 globals to rename.
 - `v6b_Globals_paste.txt` / `v6b_Externals_paste.txt` (`RwMaxSlowFallback`, `RwMaxSlowAtDiam`).
 - `v6c_Globals_paste.txt` (8), `v6c_Externals_paste.txt` (8), `v6c_Locals_paste.txt` (6).
@@ -53,31 +54,34 @@
 ## 6. Retain values to restore (renamed variables lose their value)
 Values read from the PLC on 10/19. Enter them as **Initial Values** before the transfer, or set them online right after.
 
-| New name | Value |
-|---|---|
-| Encoder_Pulse | **1000** |
-| EncoderWheel_Diam | 400 |
-| UwCoreDist (was UwCoreDiam, MisuraNocciolo) | **785.56** (sonar distance to empty core) |
-| UwCoreOD (was Shaft_Diam, DiamAlbero) | **101** (core OD) |
-| UwSlowDown_Diam | 200 |
-| DiamStop (name unchanged) | 110 |
-| DeadZone / Reading_Max | 60 / 2000 |
-| Stop_At_Meter | 5020 |
-| UwSlowMargin_m (was SlowDown_Metre) | 2 → suggest 10 |
-| Fan_Timeout | **0.5** (minutes) |
-| OverRider_TimeON / OFF | 0.05 / 0 |
-| ManSpd_SP (jog = HMI "SAFETY SPEED", clamped 10–70) | 10 |
-| Measure_ON | True |
-| VelMax (name unchanged) | 800 |
+Names below are the names **in the program (print 1019_1)**. An earlier version of this table used names that do not exist in the program (UwCoreDist, UwCoreOD, DiamStop, Stop_At_Meter, ManSpd_SP). Do not use those for the HMI Find/Replace.
+
+| Name in program | Value | Initial in print 1019_1 |
+|---|---|---|
+| Encoder_Pulse | **1000** | blank → **set** |
+| EncoderWheel_Diam | 400 | 400 ✓ |
+| UwCoreDistance (sonar distance to empty core) | **785.56** | 785.56 ✓ |
+| UwCoreDiameter (core OD) | **101** | 100 → **set** |
+| UwSlowDown_Diam | 200 | 200 ✓ |
+| UwDiamStop | 110 | blank → **set** |
+| DeadZone / Reading_Max | 60 / 2000 | ✓ |
+| UwStop_At_Meter | 5020 | blank → **set** |
+| UwSlowMargin_m | 2 → 10 | blank → **set 10** |
+| Fan_Timeout | **0.5** (minutes) | ✓ |
+| OverRider_TimeON / OFF | 0.05 / 0 | blank → **set** |
+| JogSpd_SP (jog = HMI "SAFETY SPEED", clamped 10–70) | 10 | 10 ✓ |
+| Measure_ON | True | ✓ |
+| VelMax | 800 | blank → **set** |
 
 - `Core_Measure` initial must be **False** (otherwise it re-teaches the core at the first scan).
 - The ramps re-initialise themselves through `Init_Ramp`.
 
 ## 7. Open items before or at the transfer
-1. Apply the v6 renames, then v6b + v6c pastes, the ST code, and the alarm-16 rungs. **F7** = 0 errors. Offline Comparison against "from PLC": only the intended differences.
-2. Alarms rung 20 (unwinder empty): replace `StartMotor_Cmd` with `Measure_ON`, so a blocked start is explained.
+1. Apply the v6 renames, then v6b + v6c + v6d pastes, the v6d ST code, and the ladder edits in `v6d/v6d_Changes.md` (alarm-16 rungs, alarm 10/15 rungs, lamp/buzzer, encoder alarm), and set the initial values in §6. **F7** = 0 errors. Offline Comparison against "from PLC": only the intended differences.
+2. ~~Alarms rung 20: `StartMotor_Cmd` → `Measure_ON`~~ now part of v6d (C3).
 3. Decide: `UwStopEnable` initial (False = meter stop off after transfer), `RwMaxDiam` (1330; 1300 is safer), `UwEmptyHyst` (5 mm is small; 50–100 suggested), `RwMaxSlowFallback` (1250).
-4. Transfer order: record values (old project online) → full transfer (machine stopped) → check values in Watch → HMI.
+4. After the transfer, do the commissioning checks in `v6d/v6d_Changes.md` §E (AI Ch2 = 4000 counts at 10 V, slow-down length, stop learning, encoder alarm).
+5. Transfer order: record values (old project online) → full transfer (machine stopped) → check values in Watch → HMI.
 
 ## 8. HMI status and to-do
 - Language EN/FR working: flags on window 200 (Combo Buttons). Group 1 = Set Word LW-9134 (1 EN, 2 FR); Group 2 = macro **Save_Language** (ID 3). **Restore_Language** (ID 2) runs at start-up from RW-0. In the Compile dialog, tick Language 3 and set start-up language ENGLISH.

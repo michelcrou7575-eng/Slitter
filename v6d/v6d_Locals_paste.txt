@@ -1,0 +1,6 @@
+TickCnt	INT			False	False	100 ms tick scan counter (25 x 4 ms)
+RunWasJog	BOOL			False	False	Run used jog / manual / slow button (2nd ramp)
+StopLearnValid	BOOL			False	False	This stop may be learned
+SpdBand_Pps	REAL			False	False	Speed band of the trim ramp (pulses/s)
+TrimDecel_Pps2	REAL			False	False	Trim ramp decel (pulses/s2)
+SpdKnee_Pps	REAL			False	False	Speed where coarse ramp hands over to trim ramp (pulses/s)
