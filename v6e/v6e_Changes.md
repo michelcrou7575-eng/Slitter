@@ -26,3 +26,9 @@ Alarm 16 behaves exactly as in v6d. "Not learned yet" (new material, `RwMat_K` r
    ```
 6. **F7** = 0 errors. The rename in step 1 updates any other reference automatically. Check that no `RwLearnFault` is left (Ctrl+F).
 7. **HMI:** if any object uses `RwLearnFault`, re-point it to `RwLearned_OK` and **invert the logic** (green = learned OK). Suggested: a lamp "REWINDER LEARNED" on the DT35 / LEARNING page and/or the main page.
+
+---
+## As applied in the PLC (10/20/2026)
+The names in the PLC are **`GSM_LearnFault`** (alarm 16) and **`GSM_Learned_OK`** (HMI status), instead of `LearnFault` / `RwLearned_OK`.
+The code in the PLC is saved as `AutoStop_Control_v6e_PLC.st`. It is identical to `AutoStop_Control_v6e.st` apart from these two names.
+v6f (`v6f/AutoStop_Control_v6f.st`) is built on the PLC version and keeps the GSM_ names.

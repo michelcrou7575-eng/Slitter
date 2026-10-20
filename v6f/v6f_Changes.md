@@ -14,7 +14,7 @@ New section **5b** in AutoStop_Control:
 Section 6 now takes the deceleration in this order:
 **`RwSlowDecel` (manual) > `RwSlowDecelLrn` (learned) > DecelCoarse/DecelTrim model.**
 
-## Steps (on top of 1019_10 + v6e)
+## Steps (on top of the PLC version v6e_PLC: GSM_LearnFault / GSM_Learned_OK)
 1. Global Variables: paste `v6f_Globals_paste.txt` (`RwSlowDecelLrn`).
 2. Program Externals: paste `v6f_Externals_paste.txt`.
 3. Internals: paste `v6f_Locals_paste.txt` (7 rows).

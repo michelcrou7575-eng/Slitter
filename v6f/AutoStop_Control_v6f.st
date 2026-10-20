@@ -15,9 +15,9 @@
           optimistic: the stop came before final speed was reached.
           Priority in section 6: RwSlowDecel (manual) > RwSlowDecelLrn
           (learned) > DecelCoarse/DecelTrim model.
-   v6e: RwLearned_OK (replaces global RwLearnFault): TRUE only when
+   v6e: GSM_Learned_OK (replaces global RwLearnFault): TRUE only when
           RwMat_K is learned, RwStopDecel is learned (if RwLearnStop) and
-          there is no learning fault. Alarm 16 now uses internal LearnFault.
+          there is no learning fault. Alarm 16 uses GSM_LearnFault.
    v6d: exact 100 ms tick (25 x 4 ms scan counter, the self-resetting
           TON ran ~104-108 ms -> speed ~4-8 % too high)
         standstill = <= 2 counts / 100 ms (encoder jitter)
@@ -489,10 +489,10 @@ END_IF;
 
 (* Fault: too many consecutive windows / stops that should have            *)
 (* learned but did not. Clears by itself on the next good result.          *)
-LearnFault := (LearnFailCnt >= RwLearnFailMax)
+GSM_LearnFault := (LearnFailCnt >= RwLearnFailMax)
               OR (StopFailCnt >= RwStopFailMax);       (* -> alarm 16 *)
 
 (* v6e: learning status for the HMI. FALSE until learned.                   *)
-RwLearned_OK := (RwMat_K > 0.0)
+GSM_Learned_OK := (RwMat_K > 0.0)
                 AND ((RwStopDecel > 0.0) OR NOT RwLearnStop)
-                AND NOT LearnFault;
+                AND NOT GSM_LearnFault;
