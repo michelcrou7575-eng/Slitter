@@ -1,0 +1,4 @@
+DecelDiam	REAL			False	False	Rewinder diameter used by the decel model (mm, min 100)
+SlowStartDiam	REAL			False	False	Diameter at slow-down start (mm)
+StopStartDiam	REAL			False	False	Diameter at stop command (mm)
+DecelK_Meas	REAL			False	False	Measured decel per mm of diameter

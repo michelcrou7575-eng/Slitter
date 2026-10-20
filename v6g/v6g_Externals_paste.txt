@@ -1,0 +1,2 @@
+RwSlowDecelK	False	Learned slow-down decel per mm of rewinder diameter (mm/s2 per mm)
+RwStopDecelK	False	Learned stop decel per mm of rewinder diameter (mm/s2 per mm)
