@@ -1,0 +1,1 @@
+LearnFault	BOOL			False	False	Learning fault: too many failed windows / stops (alarm 16)

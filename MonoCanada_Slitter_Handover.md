@@ -36,7 +36,7 @@
   9. **12SA5 selector (`I_AutoStop_OS`) = master** → `AutoSlowCmd` / `AutoStopCmd`
   10. `UnWinder_Empty`
   11. **max diameter protection, always active** (`RwMaxDiam`, fallback `RwMaxSlowFallback`, display `RwMaxSlowAtDiam`), OR-ed after the master
-  12. learning supervision → `RwLearnFault`, `RwThick_mm`
+  12. learning supervision → `LearnFault` (alarm 16), `RwLearned_OK` (FALSE until learned, v6e), `RwThick_mm`
 - **Motor_Manager rung 3:** `SlowDown` = end-of-roll photocell OR `AutoSlowCmd` OR (`Measure_ON` · `SlowByDiam`).
   **Rung 4:** `Stop` = paper break OR `AutoStopCmd` OR (`Measure_ON` · `UwStopByDiam`).
 - **Console rung 3:** `CountReset_Req` = `I_AutoStop_OS` · `UwStopEnable` · meters ≥ stop length.
@@ -44,7 +44,8 @@
 - **Naming convention:** Uw = unwinder, Rw = rewinder; `_mm`, `_m`, `_Pls` (pulses), `_Pps`, `_Pps2`. The v6 rename list is in `AutoStop_v6_Renames.txt`.
 
 ## 5. Files delivered (latest versions)
-- `v6d/AutoStop_Control_v6d.st`: code to paste into the ST box (replaces v6c).
+- `v6e/AutoStop_Control_v6e.st`: code to paste into the ST box (latest; see `v6e/v6e_Changes.md`).
+- `v6d/AutoStop_Control_v6d.st`: previous version (applied in 1019_10).
 - `v6d/v6d_Locals_paste.txt` (6 new Internals), `v6d/v6d_Changes.md` (initial values, ladder edits, commissioning checks).
 - `AutoStop_v6_Renames.txt`: Internals + 5 globals to rename.
 - `v6b_Globals_paste.txt` / `v6b_Externals_paste.txt` (`RwMaxSlowFallback`, `RwMaxSlowAtDiam`).
