@@ -1,0 +1,1 @@
+RwSlowDecelLrn	False	Learned real slow-down decel (mm/s2) - 0 = not learned

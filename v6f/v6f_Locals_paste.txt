@@ -1,0 +1,7 @@
+SlowMem	BOOL			False	False	SlowDown edge memory
+SlowMeasActive	BOOL			False	False	Slow-down measurement running
+SlowStartPos	DINT			False	False	Encoder at slow-down start
+SlowStartSpd_Pps	REAL			False	False	Speed at slow-down start (pulses/s)
+SlowMeas_Pls	REAL			False	False	Measured slow-down length (pulses)
+SlowDecelMeas_mm	REAL			False	False	Measured slow-down decel (mm/s2)
+SlowOneRamp	BOOL			False	False	Slow-down uses one ramp (manual or learned)
