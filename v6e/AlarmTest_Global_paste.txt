@@ -1,0 +1,1 @@
+AlarmTest_No	INT	0		False	False	Publish Only	HMI alarm test: 1..32 = force this alarm (motor stopped only), 0 = off
