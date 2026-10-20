@@ -9,8 +9,6 @@
            _Pls = encoder pulses (counts)   _Pps = pulses per second
            _Pps2 = pulses per second squared
 
-   v6g: stop decel learned from AUTOMATIC stops only (AutoStopCmd),
-          a STOP-button stop is abrupt (field 10/20/2026).
    v6g: slow-down AND stop decel proportional to the rewinder diameter.
           The ATV930 ramp is in Hz/s (motor = rewind shaft), so the web
           decel [mm/s2] = shaft decel x radius. Field data 10/20/2026:
@@ -170,12 +168,10 @@ IF MotorRunMem AND NOT O_MotorStart THEN            (* stop command edge *)
     StopStartSpd_Pps := SpdAct_Pps;
     StopStartDiam := DecelDiam;
     StandstillTicks := 0;
-    (* v6g: learn ONLY automatic stops (the ones that must be predicted).   *)
-    (* A STOP-button stop can be abrupt (T-one stop torque, drive Stt) and  *)
-    (* would teach a decel far too high. AutoStopCmd = value of last scan,  *)
-    (* the one that dropped the motor.                                     *)
-    StopLearnValid := ControlVoltage AND NOT RunWasJog AND NOT ManMode
-                      AND AutoStopCmd;
+    (* STOP button and automatic stop take the same path (drive DI1 and    *)
+    (* O_Brake -> T-one drop together, electrical plan sheets 1/9/15),     *)
+    (* so both are learned.                                                *)
+    StopLearnValid := ControlVoltage AND NOT RunWasJog AND NOT ManMode;
 END_IF;
 MotorRunMem := O_MotorStart;
 

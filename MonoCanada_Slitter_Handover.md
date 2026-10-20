@@ -7,6 +7,13 @@
   - NX-PF0730 power feed; **NX-AD2603** (AI Ch1 = unwinder sonar, P+F UC2000; **AI Ch2 = SICK DT35 rewinder**); NX-EC0122 encoder.
   - EtherCAT: Phoenix IL EC BK + DI8 + DO8.
 - **Inverter:** ATV930D30N4 (30 kW, firmware V3.4). **The main motor drives the rewind shaft** (confirmed 10/20/2026), so web deceleration = shaft deceleration × radius and it grows with the rewinder diameter (v6g). The unwinder is braked (RE T-one tension controller). Stop = run command (DI1) drops and the ATV930 stops with its own ramp. There is **no motor brake**: `O_Brake` is the unwinder reel-brake enable. STO via safety relay 4KA2.
+- **Electrical plan** (`Plan électrique Slitter LaMeccanica.pdf`, 04820SE001, 20/09/2024), key facts:
+  - ATV930 1AZ1: DI1 = run (PLC out 00 `O_MotorStart`), DI5 = 2nd ramp (out 05 `O_AccDec2`), AI2 = speed reference (MAB221 VO2), R1C/R1B = fault → PLC in 08. STO A/B via 4KA2 (emergency). **No braking resistor** (PA/PB not connected).
+  - STOP button 11SB5 → **PLC input 02 only**. The STOP button and an automatic stop take the same path.
+  - PLC out 02 `O_Brake` = "REEL BRAKE AUTOMATIC CONTROL" → **RE T-one brake controller** terminal 4 (auto/stop). Terminal 5 via 4KA2. Load cells 1/2 + taper potentiometer 9RP2.
+  - Blower = separate ATV320U75N4B (1AAZ1), alarm → NX-EC0122 I0 (`I_Vacuum_OK`).
+  - DO OUT4 = 23KA4 safety bypass (`O_FrontGuard_ByPass`). Lamp 4HL4 "safety device bypassed" is **hardwired** from 5SA1, so `O_Prot_ByPass_Lamp` (no AT) is not needed.
+  - NX-AD2603: only Ch1 (sonar 18AN1, "mother roll diameter") is drawn. The DT35 on Ch2 is our modification (not in the plan).
 - **HMI:** Weintek cMT2108X2, EasyBuilder Pro 6.10.02, project `.cmtp`.
 - **Network:** PLC **192.168.250.10**, HMI 192.168.250.11, laptop 192.168.250.200. Switch 24SW1 is also linked to the factory network. A SEVIO remote-access router (24SW2) gives the machine builder remote access.
 

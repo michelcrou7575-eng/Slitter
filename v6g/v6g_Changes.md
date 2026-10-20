@@ -22,10 +22,8 @@ Learn **K = deceleration / diameter** (mm/s² per mm), then use **K × current d
 - Filters: slow 0.5, stop 0.3 (unchanged).
 - The order in section 6 is unchanged: `RwSlowDecel` (manual) > learned > DecelCoarse model.
 
-## Stop learning: automatic stops only
-A STOP-button stop at 120 m/min was **abrupt** (field 10/20/2026). That kind of stop must not be learned: it would teach a deceleration far too high, and the automatic stops would then overshoot.
-→ `StopLearnValid` now also requires **`AutoStopCmd`** at the stop edge. Only stops by meters, diameter or max diameter are learned.
-**Before the transfer:** if `RwStopDecel` was learned from manual stops, write **0** to `RwStopDecel` (and `RwStopDecelK`) so it re-learns from automatic stops.
+## Stop learning: all normal stops (unchanged from v6f)
+According to the electrical plan (sheets 1, 9, 15), the STOP button and an automatic stop take **the same path**: `StartMotor_Cmd` drops → drive DI1 (run) **and** `O_Brake` → T-one (reel brake auto) drop at the same moment. A STOP-button stop is therefore representative and is learned too. (An intermediate v6g that learned automatic stops only was withdrawn.)
 
 ## Steps (on top of the v6f in the PLC)
 1. Global Variables: paste `v6g_Globals_paste.txt` (`RwSlowDecelK` 0.15, `RwStopDecelK` 0).

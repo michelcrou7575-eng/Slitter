@@ -28,7 +28,7 @@ Risk: today, typing the core OD (about 101) into "CORE OUTSIDE DIAMETER" overwri
 |---|---|---|
 | **AUTO SLOW DOWN AT ROLL END** | **I_LowSpd_OS** (same as "MOTOR START SLOW") | **I_RollEnd_SlowDown** |
 | **OVER RIDER PHOTOCELL ON** (outputs column) | **I_OR_Auto_OS** (an input) | **O_OR_Auto_Lamp** |
-| **SAFETY BYPASS** (outputs column) | **O_Prot_ByPass_Lamp** (has no I/O address, so it is never ON) | **O_FrontGuard_ByPass** (relay 23KA4) |
+| **SAFETY BYPASS** (outputs column) | **O_Prot_ByPass_Lamp** (has no I/O address, so it is never ON; the real lamp 4HL4 is hardwired from 5SA1) | **O_FrontGuard_ByPass** (relay 23KA4, DO OUT4, plan sheet 23) |
 | EMERGENCY ALARM (outputs column) | AlarmOn (internal flag) | Better: **O_Alarm_Array** (the real lamp output) |
 | 4th column, rows 3–13 | Lamps with no label that repeat the 3rd column's tags (O_Brake … O_Prot_ByPass_Lamp) | Delete them (leftover copies) |
 
