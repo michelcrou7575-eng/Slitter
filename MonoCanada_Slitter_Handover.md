@@ -6,7 +6,7 @@
   - Option board NX1W-MAB221: Ch1 = Pot1 work speed, Ch2 = Pot2 final speed, AO1 = fixed 10 V for the pots, AO2 = inverter reference.
   - NX-PF0730 power feed; **NX-AD2603** (AI Ch1 = unwinder sonar, P+F UC2000; **AI Ch2 = SICK DT35 rewinder**); NX-EC0122 encoder.
   - EtherCAT: Phoenix IL EC BK + DI8 + DO8.
-- **Inverter:** ATV930D30N4 (30 kW). Stop = run command (DI1) drops and the ATV930 stops with its own ramp. There is **no motor brake**: `O_Brake` is the unwinder reel-brake enable. STO via safety relay 4KA2.
+- **Inverter:** ATV930D30N4 (30 kW, firmware V3.4). **The main motor drives the rewind shaft** (confirmed 10/20/2026), so web deceleration = shaft deceleration × radius and it grows with the rewinder diameter (v6g). The unwinder is braked (RE T-one tension controller). Stop = run command (DI1) drops and the ATV930 stops with its own ramp. There is **no motor brake**: `O_Brake` is the unwinder reel-brake enable. STO via safety relay 4KA2.
 - **HMI:** Weintek cMT2108X2, EasyBuilder Pro 6.10.02, project `.cmtp`.
 - **Network:** PLC **192.168.250.10**, HMI 192.168.250.11, laptop 192.168.250.200. Switch 24SW1 is also linked to the factory network. A SEVIO remote-access router (24SW2) gives the machine builder remote access.
 
