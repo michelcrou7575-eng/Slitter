@@ -1,0 +1,2 @@
+UwTeachTicks	INT			False	False	Unwinder TEACH CORE samples (100 ms)
+UwTeachSum	REAL			False	False	Unwinder TEACH CORE sonar sum (mm)
