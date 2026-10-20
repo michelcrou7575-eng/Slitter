@@ -60,6 +60,10 @@ Manual mode keeps the **raw** pots (full turn = full drive range):
   ```
   (The auto branch, `ManMode = FALSE`, is unchanged: it already uses Pot_Mem, so it gets the new m/min scaling.)
 
+### 3b. AutoStop_Control
+Replace the ST with `AutoStop_Control_v6i.st` (= v6h + section 6 uses the raw pots in ManMode, the scaled Pot_Mem in auto).
+`Pot1_Work_Velocity` / `Pot2_Slow_Velocity` must be in the program **Externals** (they already are, see print 1019_10 p. 6).
+
 ### 4. HMI (ramp page, behind the password)
 Two numeric inputs: **WORK SPEED POT MAX** → `WorkSpd_Max` (#### m/min, limits 50–1000) and **FINAL SPEED POT MAX** → `FinalSpd_Max` (### m/min, limits 5–400).
 
