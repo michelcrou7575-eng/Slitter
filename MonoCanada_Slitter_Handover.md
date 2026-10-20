@@ -65,10 +65,10 @@ Names below are the names **in the program (print 1019_1)**. An earlier version 
 | UwSlowDown_Diam | 200 | 200 ✓ |
 | UwDiamStop | 110 | blank → **set** |
 | DeadZone / Reading_Max | 60 / 2000 | ✓ |
-| UwStop_At_Meter | 5020 | blank → **set** |
+| UwStop_At_Meter | 5020 (1019_10 uses 5100) | 5100 in 1019_10 |
 | UwSlowMargin_m | 2 → 10 | blank → **set 10** |
 | Fan_Timeout | **0.5** (minutes) | ✓ |
-| OverRider_TimeON / OFF | 0.05 / 0 | blank → **set** |
+| OverRider_TimeON / OFF | 0.05 / 0 (1019_10 uses 0.01 for OFF) | 0.05 / 0.01 in 1019_10 |
 | JogSpd_SP (jog = HMI "SAFETY SPEED", clamped 10–70) | 10 | 10 ✓ |
 | Measure_ON | True | ✓ |
 | VelMax | 800 | blank → **set** |
@@ -77,6 +77,7 @@ Names below are the names **in the program (print 1019_1)**. An earlier version 
 - The ramps re-initialise themselves through `Init_Ramp`.
 
 ## 7. Open items before or at the transfer
+0. **Latest project: print 1019_10.** v6d is applied except the alarm lamp (Output_Manager rung 7) and `UwCoreDiameter` = 101; see the status table at the end of `v6d/v6d_Changes.md`.
 1. Apply the v6 renames, then v6b + v6c + v6d pastes, the v6d ST code, and the ladder edits in `v6d/v6d_Changes.md` (alarm-16 rungs, alarm 10/15 rungs, lamp/buzzer, encoder alarm), and set the initial values in §6. **F7** = 0 errors. Offline Comparison against "from PLC": only the intended differences.
 2. ~~Alarms rung 20: `StartMotor_Cmd` → `Measure_ON`~~ now part of v6d (C3).
 3. Decide: `UwStopEnable` initial (False = meter stop off after transfer), `RwMaxDiam` (1330; 1300 is safer), `UwEmptyHyst` (5 mm is small; 50–100 suggested), `RwMaxSlowFallback` (1250).

@@ -106,3 +106,22 @@ Result: the alarm comes on when the motor is commanded in auto, the reference is
 ## Not changed (needs site information)
 - `O_Prot_ByPass_Lamp` and `I_SafeGuard_Closed` have **no AT address**. The guards-bypassed lamp never lights. Check the electrical drawings for a free output.
 - `EncoderWheel_Diam` (400) behaves as the wheel **circumference** (`400 / (1000 × 4)` = 0.1 mm/count). The metre counter is correct; only the name is misleading.
+
+---
+
+## Status in `Slitter_Program_1019_10.pdf` (10/19/2026 8:47 PM)
+| Item | Status |
+|---|---|
+| A1 new Internals (6) | ✓ |
+| A2 `Encoder_Pulse` 1000, `VelMax` 800, `UwDiamStop` 110, `UwSlowMargin_m` 10, `OverRider_TimeON` 0.05 | ✓ |
+| A2 `UwStop_At_Meter` | 5100 (not 5020). OK if intended |
+| A2 `OverRider_TimeOFF` | 0.01 (not 0). OK if intended |
+| A2 `UwCoreDiameter` | ✗ **still 100. Enter 101** |
+| A3 `UwEmptyHyst` Publish Only | ✓ (value still 5, open decision) |
+| B AutoStop_Control v6d | ✓ identical. Cosmetic: header lines 1 and 2 both open a comment with `(*`. Delete line 2 |
+| C1 alarm 10 while running | ✓ Alarms rung 12 |
+| C2 alarm 16 rungs | ✓ Alarms rungs 16/17 |
+| C3 alarm 15 on `Measure_ON` | ✓ Alarms rung 22 |
+| C4 buzzer (Alarms rung 0) | ✓ 10, 11, 15, 16 added |
+| C4 **alarm lamp (Output_Manager rung 7)** | ✗ **still alarms 1–8 only. Add `Alarm_Array[10]`, `[11]`, `[15]`, `[16]` in parallel** |
+| C5 encoder alarm | ✓ ManMode NC, InvRef > 200, 3 s |
