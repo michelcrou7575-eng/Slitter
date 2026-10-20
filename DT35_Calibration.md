@@ -12,7 +12,12 @@ RwDiam = 2 × (RwAxisDist − RwDist)
 
 Read the values in the Sysmac Watch tab (or on the HMI DT35 page when it exists), **machine stopped**, and wait 2–3 s for the filter (`RwFilter_K` 0.2 per 100 ms).
 
+## DT35 analog range as set on this machine
+0 V = nearest point before the reading stalls + 30 mm (≈ 14 counts); 10 V = a little beyond the shaft centre + 30 mm (≈ 3,900 counts). Linear zone only.
+→ `RwDist10V − RwDist0V` = real distance between these two points. The offset is done by **TEACH CORE** (v6j).
+
 ## Step 1: offset, with the empty core (always do this first)
+**With v6j: just press TEACH CORE on the HMI** (empty core, machine stopped). The manual method:
 1. Load an empty core of known outside diameter **D_core** (100 mm; measure it with a caliper).
 2. Read **`RwDist`**.
 3. Set **`RwAxisDist` = `RwDist` + D_core / 2**.

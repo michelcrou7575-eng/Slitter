@@ -1,0 +1,1 @@
+TeachTicks	INT			False	False	TEACH CORE stable time (100 ms ticks)
