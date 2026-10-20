@@ -1,0 +1,2 @@
+BrakeHold	BOOL			False	False	Keep T-one in auto during a normal stop (O_Brake)
+BrakeHoldTicks	INT			False	False	BrakeHold duration after stop (100 ms ticks, max 150)

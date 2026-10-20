@@ -51,7 +51,8 @@
 - **Naming convention:** Uw = unwinder, Rw = rewinder; `_mm`, `_m`, `_Pls` (pulses), `_Pps`, `_Pps2`. The v6 rename list is in `AutoStop_v6_Renames.txt`.
 
 ## 5. Files delivered (latest versions)
-- `v6g/AutoStop_Control_v6g.st`: code to paste into the ST box (latest; see `v6g/v6g_Changes.md`, decel proportional to rewinder diameter).
+- `v6h/AutoStop_Control_v6h.st`: code to paste into the ST box (latest; see `v6h/v6h_Changes.md`, T-one kept in auto during the stop).
+- `v6g/AutoStop_Control_v6g.st`: decel proportional to rewinder diameter (see `v6g/v6g_Changes.md`).
 - `v6f/AutoStop_Control_v6f.st`: learned slow-down decel (see `v6f/v6f_Changes.md`).
 - `v6e/AutoStop_Control_v6e.st`: RwLearned_OK (see `v6e/v6e_Changes.md`).
 - `v6d/AutoStop_Control_v6d.st`: previous version (applied in 1019_10).
