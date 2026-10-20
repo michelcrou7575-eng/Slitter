@@ -49,14 +49,16 @@ END_IF;
 ```
 (Rung 5 runs before it, so `VelMax` is already clamped to 600–1000 and never 0.)
 
-### 3. Motor_Manager rung 17 (ManMode): use the scaled values
-```
-IF SlowDown = FALSE THEN
-    InvRef := Pot1_Mem;            // was Pot1_Work_Velocity
-ELSE
-    InvRef := Pot2_Mem;            // was Pot2_Slow_Velocity
-END_IF;
-```
+### 3. Manual mode (ManMode): unchanged, stays in percent
+Manual mode keeps the **raw** pots (full turn = full drive range):
+- **Rung 17: no change** (`InvRef := Pot1_Work_Velocity` / `Pot2_Slow_Velocity`).
+- **Rung 7, ELSE branch (ManMode):** use the raw pots so the percent display stays as before:
+  ```
+  ELSE;
+      Speed_Display := Pot1_Work_Velocity / (Analog_Res / UINT#40); // v6i: raw pot, % as before
+      LowSpd_Display := Pot2_Slow_Velocity / (Analog_Res / UINT#40);
+  ```
+  (The auto branch, `ManMode = FALSE`, is unchanged: it already uses Pot_Mem, so it gets the new m/min scaling.)
 
 ### 4. HMI (ramp page, behind the password)
 Two numeric inputs: **WORK SPEED POT MAX** → `WorkSpd_Max` (#### m/min, limits 50–1000) and **FINAL SPEED POT MAX** → `FinalSpd_Max` (### m/min, limits 5–400).
@@ -69,7 +71,7 @@ Two numeric inputs: **WORK SPEED POT MAX** → `WorkSpd_Max` (#### m/min, limits
 
 - `VelMax` (800) stays the analog scale of the drive reference (10 V = 800 m/min), and is unchanged.
 - AutoStop (slow-down / stop lengths) uses the new speeds automatically.
-- In **ManMode**, the HMI display (rung 7, the "÷ Analog_Res/40" formula) now also reads half / one twentieth. It was already not in m/min. Optional: let me know if you want ManMode to show m/min too.
+- **ManMode is unchanged:** percent display and full pot range, as before.
 
 ## Test
 1. Pot at maximum → `Speed_Display` = 400, `LowSpd_Display` = 40.
