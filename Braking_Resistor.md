@@ -17,16 +17,34 @@ Peak braking power ≈ U_DC² / R, with U_DC ≈ 780 V (braking threshold of a 4
 | **15 Ω** | **≈ 41 kW** | ≈ 1.4 × the motor power, enough here |
 | 20 Ω | ≈ 30 kW | ≈ motor power, can be just enough |
 
-## 2. Power rating (continuous)
-The resistor only works during stops and slow-downs, so its average power is small. It depends on the energy of each stop:
+## 2. Energy and power: sized for this machine
+Data (10/20/2026): roll **1,500 mm wide, max 1,200 kg**, full diameter 1,330 mm, core about 100 mm, max speed 800 m/min.
 
-E ≈ ¼ · m · v² (full rewinder roll, solid cylinder) + motor/gearbox inertia
+| | Value |
+|---|---|
+| Inertia of the full roll J = m·(R²+r²)/2 | ≈ 267 kg·m² |
+| Roll speed at 800 m/min | 20 rad/s |
+| **Energy of the full roll** ½·J·ω² | **≈ 54 kJ** |
+| + motor / gearbox (estimate) | ≈ 12 kJ |
+| **Energy per stop, worst case** | **≈ 66 kJ** |
 
-Example: full roll 1,000 kg at 800 m/min (13.3 m/s) → E ≈ 45 kJ. With 1 stop + 1 slow-down per roll and a few rolls per hour, the average power is **< 0.5 kW**.
-→ **1.5–3 kW continuous, IP23 or better, with a built-in thermal switch** is ample. A heavier roll or frequent jogging means choosing the top of the range.
-To size it exactly: the **roll width and maximum weight**, and the **number of stops per hour**.
+The unwinder brake (T-one) pulls on the web during the stop and takes part of this energy, so the real figure is lower. The values are on the safe side.
 
-Use a Schneider **VW3A77xx** resistor (catalog, instruction sheet NHA87388) or an equivalent third-party resistor with a thermal switch. Check the choice against the Schneider catalog table for the ATV930D30N4.
+| Stop duration (from 800 m/min) | Peak braking power | Needed R (≤ 780²/P) |
+|---|---|---|
+| 3 s | ≈ 44 kW | ≤ 13.8 Ω → **12 Ω** |
+| 5 s | ≈ 26 kW | ≤ 23 Ω → **15 Ω** OK |
+| 10 s | ≈ 13 kW | 15 Ω OK |
+
+Average power: 10 to 30 stops or slow-downs per hour → **0.2–0.6 kW**.
+
+### Choice
+- **R = 15 Ω** (12 Ω if stops shorter than 4 s from full speed are wanted). Never below 10 Ω.
+- **Continuous power ≥ 1.5 kW** (2 kW gives margin for jogging and frequent stops).
+- **Pulse energy ≥ 100 kJ** in about 10 s (the full-roll stop, about 66 kJ, must fit with margin). Check this value in the resistor datasheet.
+- **Built-in thermal switch** (mandatory, see §3).
+
+Use a Schneider **VW3A77xx** resistor (catalog, instruction sheet NHA87388) or an equivalent third-party resistor. Check the choice against the Schneider catalog table for the ATV930D30N4.
 
 ## 3. Wiring and safety (manual, DANGER, hazard of fire)
 - Connect it to **PA/+ and PB** of the drive, with a shielded cable rated for the DC bus voltage (> 800 V DC), as short as possible.
