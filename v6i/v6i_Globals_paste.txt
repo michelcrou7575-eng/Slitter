@@ -1,0 +1,2 @@
+WorkSpd_Max	REAL	400.0		True	False	Publish Only	Work speed pot full scale (m/min), 50..VelMax
+FinalSpd_Max	REAL	40.0		True	False	Publish Only	Final speed pot full scale (m/min), 5..WorkSpd_Max

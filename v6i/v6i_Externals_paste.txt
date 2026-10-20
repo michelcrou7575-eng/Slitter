@@ -1,0 +1,2 @@
+WorkSpd_Max	False	Work speed pot full scale (m/min), 50..VelMax
+FinalSpd_Max	False	Final speed pot full scale (m/min), 5..WorkSpd_Max
