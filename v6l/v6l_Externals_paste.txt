@@ -1,0 +1,4 @@
+RwAxisDist_Prev	False	Rewinder: RwAxisDist before the last TEACH (for UNDO)
+UwCoreDist_Prev	False	Unwinder: UwCoreDistance before the last TEACH (for UNDO)
+RwTeachUndo	False	HMI: UNDO rewinder TEACH (PLC resets it)
+UwTeachUndo	False	HMI: UNDO unwinder TEACH (PLC resets it)

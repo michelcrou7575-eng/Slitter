@@ -1,0 +1,4 @@
+RwAxisDist_Prev	REAL	675.3		True	False	Publish Only	Rewinder: RwAxisDist before the last TEACH (for UNDO)
+UwCoreDist_Prev	REAL	785.56		True	False	Publish Only	Unwinder: UwCoreDistance before the last TEACH (for UNDO)
+RwTeachUndo	BOOL	False		False	False	Publish Only	HMI: UNDO rewinder TEACH (PLC resets it)
+UwTeachUndo	BOOL	False		False	False	Publish Only	HMI: UNDO unwinder TEACH (PLC resets it)
