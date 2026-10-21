@@ -43,3 +43,23 @@ Optional, for the technician: `UwCoreDistance` and `RwAxisDist` (read only).
 - "UNWINDER / REWINDER **MIN DIAMETER**" → better **CORE DIAMETER**, and put the input and the TEACH button on the same row (table above). The value next to TEACH is then the **actual diameter**, so the operator sees the core diameter right after the teach.
 - "REWINDER LEARNED MATERIAL [K]" with ####.# would show **0.0**: `RwMat_K` is very small (about 0.006). Show **`RwThick_mm`** (learned paper thickness, #.### mm) instead, which is easy to check. Or show `RwMat_K` with #.###### if you prefer.
 - The TEACH buttons: **visible only when `MotStop` = TRUE**.
+
+## HMI: status display for UwTeachState / RwTeachState (EasyBuilder Pro)
+1. **PLC:** `UwTeachState` / `RwTeachState` in Global Variables with **Network Publish = Publish Only**, then transfer to the PLC.
+2. **EasyBuilder: update the tags** (System Parameters → Device → the Omron NX device → Tag → re-import from Sysmac Studio). A tag missing in the HMI or not published = "Device No Response". Restart the simulator after the import.
+3. **Objects → Lamp → Word Lamp**
+   - General: Read address = PLC device, tag **`UwTeachState`**, mode **Value**, number of states **4**, offset 0.
+   - Shape: no shape, or a frame. Optional per state: colour, and **Blink** on state 1.
+   - Label: **Use label library**, one label per state:
+
+| State | EN | FR | Colour |
+|---|---|---|---|
+| 0 | (empty) | (empty) | — |
+| 1 | TEACHING... | APPRENTISSAGE... | yellow, blink |
+| 2 | DONE | TERMINÉ | green |
+| 3 | REFUSED: STOP MACHINE | REFUSÉ : ARRÊTER LA MACHINE | red |
+
+4. Copy the Word Lamp next to the rewinder TEACH button and change the tag to **`RwTeachState`**. Same labels.
+5. Test: simulator online → press TEACH with the machine stopped → TEACHING (2 s) → DONE. Press it while running → REFUSED.
+
+The status goes back to 0 (empty) automatically at the next motor start.
