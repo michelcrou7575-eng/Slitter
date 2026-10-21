@@ -1,0 +1,4 @@
+SoftStop	BOOL	False		False	False	Publish Only	Soft stop in progress (HMI)
+SoftStopEnable	BOOL	True		True	False	Publish Only	STOP button = soft stop (False = immediate as before)
+SoftStopEndSpd	REAL	5.0		True	False	Publish Only	Soft stop: run command drops below this speed (m/min)
+SoftStopDecel	REAL	0.0		True	False	Publish Only	Soft stop decel (mm/s2), 0 = DecelCoarse

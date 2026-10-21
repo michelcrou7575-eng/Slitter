@@ -1,0 +1,4 @@
+StopNow	BOOL			False	False	Immediate stop request (replaces I_Stop_PB in General rung 9)
+StopPB_Mem	BOOL			False	False	STOP button edge memory
+T_StopLong	TON			False	False	STOP held 1 s = immediate stop
+T_SoftStop	TON			False	False	Soft stop timeout (120 s)

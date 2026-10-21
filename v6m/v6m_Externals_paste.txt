@@ -1,0 +1,4 @@
+SoftStop	False	Soft stop in progress (HMI)
+SoftStopEnable	False	STOP button = soft stop (False = immediate as before)
+SoftStopEndSpd	False	Soft stop: run command drops below this speed (m/min)
+SoftStopDecel	False	Soft stop decel (mm/s2), 0 = DecelCoarse
