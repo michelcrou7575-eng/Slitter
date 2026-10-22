@@ -53,6 +53,7 @@
 ## 5. Files delivered (latest versions)
 - `v6l/AutoStop_Control_v6l.st`: code to paste into the ST box (latest; see `v6l/v6l_Changes.md`, previous value + UNDO for TEACH CORE).
 - `v6m/v6m_Changes.md`: soft stop on the STOP button (General + Motor_Manager ladder/ST edits, no AutoStop change).
+- `v6n/v6n_Changes.md`: pot ranges (`WorkSpd_Max` / `FinalSpd_Max`) requested by the HMI via `_Set`, applied only with the motor stopped (Motor_Manager rung 6).
 - `v6k/AutoStop_Control_v6k.st`: unwinder + rewinder TEACH CORE normalised (see `v6k/v6k_Changes.md`).
 - `v6j/AutoStop_Control_v6j.st`: rewinder TEACH CORE (see `v6j/v6j_Changes.md`).
 - `v6i/AutoStop_Control_v6i.st`: pots 0-400 / 0-40 m/min in auto (see `v6i/v6i_Changes.md`).

@@ -1,0 +1,3 @@
+WorkSpd_Max_Set	False	HMI request: work pot full scale (m/min), applied only with motor stopped
+FinalSpd_Max_Set	False	HMI request: final pot full scale (m/min), applied only with motor stopped
+SpdMax_Pending	False	New pot range waiting for the motor to stop

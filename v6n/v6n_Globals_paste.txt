@@ -1,0 +1,3 @@
+WorkSpd_Max_Set	REAL	400.0		True	False	Publish Only	HMI request: work pot full scale (m/min), applied only with motor stopped
+FinalSpd_Max_Set	REAL	40.0		True	False	Publish Only	HMI request: final pot full scale (m/min), applied only with motor stopped
+SpdMax_Pending	BOOL	False		False	False	Publish Only	New pot range waiting for the motor to stop
