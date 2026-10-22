@@ -77,7 +77,7 @@ IF SoftStop AND (SoftStopDecel > 0.0) THEN
     Decel_Ramp := SoftStopDecel / 250.0;            // 1 = 250 mm/s2 (4 ms task)
 END_IF;
 ```
-**Rung 17** (ManMode, open loop), ST box:
+**Manual rung "Updating potentiometer value" with contact `ManMode` NO** (rung 17 in print 1019_10, **rung 18** once the rung above has been inserted; NOT the auto rung with `ManMode` NC). See v6o fix 1. ST box:
 ```
 IF SoftStop THEN
     InvRef := INT#0;                                // v6m: drive ramps down on its own
