@@ -122,3 +122,18 @@ END_IF;
 5. Immediate stop at speed (STOP held 1 s): `O_Brake` stays ON until < 5 m/min (or 15 s) → the web stays tight.
 6. Unwinder TEACH CORE (machine stopped): TEACHING about 2 s → DONE; `UwCoreDist_Prev` = old value; UNDO → RESTORED.
 7. **Fix 5:** auto slow-down on a small roll (< 400 mm), Watch `Velocity_M_min` and `Decel_Ramp`: `Decel_Ramp` ≈ `RwSlowDecelLrn` × 1.25 / 250 during the slow-down, and the speed settles at the final speed **without dipping below it**. After 2–3 slow-downs `RwSlowDecelK` stays stable (does not keep falling).
+
+---
+## Check of print 1026 (10/26/2026)
+| Fix | Status |
+|---|---|
+| 1. Motor_Manager rung 18 (auto) closed loop restored, rung 19 (ManMode) soft stop | ✅ |
+| 2. Output_Manager rung 2 `Brake_Cmd` OR `BrakeHold` | ✅ |
+| 3. General old core-teach rung deleted | ✅ |
+| 4. Motor_Manager rung 7 ManMode display on raw pots | ✅ |
+| 5. Motor_Manager rung 16 decel limited to `RwSlowDecelLrn` × 1.25 | ✅ |
+| Console rung 4: wrong code → `DINT#10` | ✅ |
+| `Psw` Retain = False | ✅ |
+| Console rung 5 `HMI_Screen[0] = 10` branch | still there, harmless (no Change window control on the HMI) |
+| `UwCoreDiameter` initial 100 | unchanged, check the real core OD |
+→ Program OK for the tests above (AUTO allowed again).
