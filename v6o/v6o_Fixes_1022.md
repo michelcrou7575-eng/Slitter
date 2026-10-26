@@ -14,6 +14,7 @@
 | **Output_Manager rung 2: `BrakeHold` missing** | ❌ fix 2 |
 | **General rung 16 (old single-reading core teach) still present** | ❌ fix 3 |
 | Motor_Manager rung 7 ELSE (ManMode % display) still on Pot_Mem | ⚠ fix 4 |
+| PLC decel ramp faster than the drive → reference wind-up / undershoot | ➕ fix 5 (new) |
 | `UwCoreDiameter` initial value 100 (field value 101?) | ⚠ check |
 | Local `TESTBOOL` (NC contact in Console rung 4) | ℹ harmless while FALSE, can be deleted |
 
@@ -79,13 +80,37 @@ ELSE;
     LowSpd_Display := Pot2_Slow_Velocity / (Analog_Res / UINT#40);
 ```
 
+## Fix 5 (new): PLC decel ramp limited to what the drive can really do (anti wind-up)
+**Why:** `DecelCoarse` 0.5 = 125 mm/s². With a small rewinder roll the drive (Hz/s ramp, no braking resistor) only gives about K × D (≈ 22 mm/s² at 150 mm, 90 at 600 mm). The PLC keeps lowering `Vfd_SP_Modif` every 4 ms, so the reference runs far below the real web speed, sometimes down to 0. When the speed reaches the ±8 m/min band, the web undershoots the final speed and the loop has to accelerate again. Stops can also come "too early".
+
+**Where:** new inline-ST rung **between "Optional faster decel" (v6m soft stop decel) and "Speed correction factor calculation"**. That is rung 15/16 in print 1022, so the new rung becomes 16 and "Speed correction…" becomes 17. Rungs are named here by their **comment**, because the numbers shift every time a rung is inserted.
+
+Comment: `v6o: decel ramp limited to the learned drive decel`
+```
+// v6o: never ask more decel than the drive can give (anti wind-up).
+// RwSlowDecelLrn = RwSlowDecelK x rewinder diameter (mm/s2), AutoStop section 5c.
+// 1.25 margin: the measured decel can still grow, so the learning never only ratchets down.
+IF RwSlowDecelLrn > 0.0 THEN
+    IF Decel_Ramp > RwSlowDecelLrn * 1.25 / 250.0 THEN
+        Decel_Ramp := RwSlowDecelLrn * 1.25 / 250.0;   // 1 = 250 mm/s2 (4 ms task)
+    END_IF;
+END_IF;
+```
+- Variables: none new (`RwSlowDecelLrn` is already in the Externals, `Decel_Ramp` is local).
+- `RwSlowDecelLrn` = 0 (not learned) → no limit, same as before.
+- It applies in AUTO only (the speed loop rungs). Manual mode drives the inverter directly.
+- It also limits `SoftStopDecel` and `DecelTrim`, which is correct: the drive can't do more anyway.
+- **Why × 1.25:** with an exact limit, a measured slow-down could never be faster than the learned value, so K could only go down. With 25 % headroom the learning can still climb to the real drive value.
+
+**Expected result:** smooth slow-down down to final speed with no dip below it, a slow-down length closer to the calculated one, and more stable learning of `RwSlowDecelK` / `RwStopDecelK`.
+
 ## Check
 `UwCoreDiameter` initial value = **100** in Globals. If the real unwinder core OD is 101 mm, enter it (Retain, Watch tab or HMI page 44).
 
 ---
 
 ## Order
-1. Fix 1 + 2 + 3 (+ 4) → F7 = 0 errors.
+1. Fix 1 + 2 + 3 + 5 (+ 4) → F7 = 0 errors.
 2. Before the transfer: record the Retain values (`Pre_Transfer_Values.md`). No variable is new or renamed, so a normal transfer keeps them.
 3. Transfer → tests.
 
@@ -96,3 +121,4 @@ ELSE;
 4. **MANUAL**: STOP once → `InvRef` = 0, the drive decelerates on its ramp; the % display = 100 % at full pot.
 5. Immediate stop at speed (STOP held 1 s): `O_Brake` stays ON until < 5 m/min (or 15 s) → the web stays tight.
 6. Unwinder TEACH CORE (machine stopped): TEACHING about 2 s → DONE; `UwCoreDist_Prev` = old value; UNDO → RESTORED.
+7. **Fix 5:** auto slow-down on a small roll (< 400 mm), Watch `Velocity_M_min` and `Decel_Ramp`: `Decel_Ramp` ≈ `RwSlowDecelLrn` × 1.25 / 250 during the slow-down, and the speed settles at the final speed **without dipping below it**. After 2–3 slow-downs `RwSlowDecelK` stays stable (does not keep falling).
