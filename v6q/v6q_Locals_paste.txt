@@ -1,0 +1,2 @@
+SoftStartTicks	INT			False	False	S-curve start: 4 ms ticks since start
+SoftStartK	REAL			False	False	S-curve start: accel factor 0.05..1

@@ -1,0 +1,1 @@
+SoftStartTime	False	AUTO start S-curve: time for the accel ramp to rise from 5 % to 100 % (s), 0 = off
