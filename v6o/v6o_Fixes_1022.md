@@ -104,6 +104,22 @@ END_IF;
 
 **Expected result:** smooth slow-down down to final speed with no dip below it, a slow-down length closer to the calculated one, and more stable learning of `RwSlowDecelK` / `RwStopDecelK`.
 
+
+## Fix 5b (10/27/2026): soft stop not limited by fix 5
+**Field:** normal AUTO run at 50 m/min, STOP → `VelSet` = 0, but the decel takes very long.
+**Cause:** fix 5 limits **every** PLC decel in AUTO to `RwSlowDecelLrn` × 1.25 (K × diameter). On a small roll that is 20–30 mm/s² → 50 → 5 m/min takes 30–40 s.
+For a soft stop the target is **0**: there is no final speed to undershoot, so the wind-up protection is not needed.
+
+Motor_Manager, rung "v6o: Decel ramp limited to the learned drive decel": add `AND NOT SoftStop` to the first IF:
+```
+IF (RwSlowDecelLrn > 0.0) AND NOT SoftStop THEN
+    IF Decel_Ramp > RwSlowDecelLrn * 1.25 / 250.0 THEN
+        Decel_Ramp := RwSlowDecelLrn * 1.25 / 250.0;
+    END_IF;
+END_IF;
+```
+Soft stop then decelerates with `DecelCoarse` (125 mm/s² → 50 → 5 m/min in about 8 s), or `SoftStopDecel` if > 0, limited only by the drive. To make it gentler: `SoftStopDecel` = e.g. 60 mm/s².
+
 ## Check
 `UwCoreDiameter` initial value = **100** in Globals. If the real unwinder core OD is 101 mm, enter it (Retain, Watch tab or HMI page 44).
 
