@@ -1,0 +1,1 @@
+RwLearnReset	False	HMI / Watch: clear learned decels RwStopDecelK, RwStopDecel, RwSlowDecelK (PLC resets it)
