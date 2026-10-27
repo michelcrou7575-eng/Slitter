@@ -153,3 +153,20 @@ Soft stop then decelerates with `DecelCoarse` (125 mm/s² → 50 → 5 m/min in 
 | Console rung 5 `HMI_Screen[0] = 10` branch | still there, harmless (no Change window control on the HMI) |
 | `UwCoreDiameter` initial 100 | unchanged, check the real core OD |
 → Program OK for the tests above (AUTO allowed again).
+
+## Drive scope 10/27/2026 → fix 5 WITHDRAWN
+SoMove scope (FRH reference, RFR motor frequency, LCR current, VBUS):
+- Stop from 50 m/min (7.3 Hz), SoftStopDecel 0: FRH falls ≈ 0.45 Hz/s, **RFR follows FRH exactly** → 16 s.
+- Stop from ≈ 20 Hz, **SoftStopDecel 500**: FRH ≈ 2.3 Hz/s, RFR follows, current ≈ 10 A (motor 46 A), **VBUS 665–672 V, no rise** → ≈ 9 s.
+
+→ The drive is **not** the limit at these speeds: no DC bus rise, brA never acts. The slow decel was the **PLC ramp**: `DecelCoarse` 0.5 = 125 "mm/s²" on the reference scale (10 V = VelMax 800 m/min) ≈ 0.56 Hz/s. Because the motor drives the rewinder, a fixed Hz/s gives a web decel proportional to the diameter: the "K × D" measured since v6f is the PLC ramp itself.
+→ Fix 5's premise (drive slower than the PLC ramp) is wrong: the cap only limits the PLC to its own past value. **Delete the fix 5 rung** ("v6o: Decel ramp limited to the learned drive decel"); fix 5b goes with it.
+
+### Settings
+| Setting | Value | Note |
+|---|---|---|
+| `SoftStopDecel` | 500 (keep, adjust to taste) | soft stop ≈ 2.25 Hz/s |
+| `SoftStopEndSpd` | 8 | |
+| `DecelCoarse` | 0.5 → **1.0** (optional) | auto slow-downs / pot reductions twice as fast; test web tension |
+| `RwSlowDecelK`, `RwStopDecelK`, `RwStopDecel` | **0** after changing DecelCoarse | re-learned on the next auto slow-down / stop |
+Next: scope at 300–400 m/min on a large roll, watch VBUS (no braking resistor) before going higher than DecelCoarse 1.0.
