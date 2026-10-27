@@ -80,7 +80,7 @@ ELSE;
     LowSpd_Display := Pot2_Slow_Velocity / (Analog_Res / UINT#40);
 ```
 
-## Fix 5 (new): PLC decel ramp limited to what the drive can really do (anti wind-up)
+## ~~Fix 5~~ CANCELLED 10/27/2026 (see "Drive scope" below: delete the rung): PLC decel ramp limited to what the drive can really do (anti wind-up)
 **Why:** `DecelCoarse` 0.5 = 125 mm/s². With a small rewinder roll the drive (Hz/s ramp, no braking resistor) only gives about K × D (≈ 22 mm/s² at 150 mm, 90 at 600 mm). The PLC keeps lowering `Vfd_SP_Modif` every 4 ms, so the reference runs far below the real web speed, sometimes down to 0. When the speed reaches the ±8 m/min band, the web undershoots the final speed and the loop has to accelerate again. Stops can also come "too early".
 
 **Where:** new inline-ST rung **between "Optional faster decel" (v6m soft stop decel) and "Speed correction factor calculation"**. That is rung 15/16 in print 1022, so the new rung becomes 16 and "Speed correction…" becomes 17. Rungs are named here by their **comment**, because the numbers shift every time a rung is inserted.
@@ -105,7 +105,7 @@ END_IF;
 **Expected result:** smooth slow-down down to final speed with no dip below it, a slow-down length closer to the calculated one, and more stable learning of `RwSlowDecelK` / `RwStopDecelK`.
 
 
-## Fix 5b (10/27/2026): soft stop not limited by fix 5
+## ~~Fix 5b~~ CANCELLED 10/27/2026 (never applied; fix 5 is deleted instead): soft stop not limited by fix 5
 **Field:** normal AUTO run at 50 m/min, STOP → `VelSet` = 0, but the decel takes very long.
 **Cause:** fix 5 limits **every** PLC decel in AUTO to `RwSlowDecelLrn` × 1.25 (K × diameter). On a small roll that is 20–30 mm/s² → 50 → 5 m/min takes 30–40 s.
 For a soft stop the target is **0**: there is no final speed to undershoot, so the wind-up protection is not needed.
@@ -170,3 +170,7 @@ SoMove scope (FRH reference, RFR motor frequency, LCR current, VBUS):
 | `DecelCoarse` | 0.5 → **1.0** (optional) | auto slow-downs / pot reductions twice as fast; test web tension |
 | `RwSlowDecelK`, `RwStopDecelK`, `RwStopDecel` | **0** after changing DecelCoarse | re-learned on the next auto slow-down / stop |
 Next: scope at 300–400 m/min on a large roll, watch VBUS (no braking resistor) before going higher than DecelCoarse 1.0.
+
+## Status 10/27/2026 (summary)
+- **Fix 5 and 5b are cancelled.** Action: delete Motor_Manager rung "v6o: Decel ramp limited to the learned drive decel" (was rung 16), transfer. Nothing to add.
+- Deceleration is set only by: `SoftStopDecel` (soft stop, 500), `DecelCoarse` (speed reductions, 1.0), `DecelTrim` (inside ±8 m/min, 0.08).
