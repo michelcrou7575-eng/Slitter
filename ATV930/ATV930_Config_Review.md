@@ -45,3 +45,27 @@ dEC = 3 s from 60 Hz is already short. The real limit is **brA = Yes** + no brak
 ## After any drive change: let the PLC re-learn
 Watch tab: `RwStopDecelK` = 0, `RwStopDecel` = 0 (re-learned at the next stop ≥ 50 m/min). `RwSlowDecelK`: leave it, it climbs by itself (fix 5 margin 1.25) over 2–3 auto slow-downs.
 Before any change: **save the configuration** (SoMove "Save as" / keypad File management → copy to keypad).
+
+## Motor nameplate vs drive motor data (photo 10/27/2026)
+Siemens 1LE1523-2AB59-0JA4-Z, 200L, 240 kg, IE3, SF 1.15, Design A.
+
+| Drive | Code | In the drive now | Nameplate | Action |
+|---|---|---|---|---|
+| Nominal motor power | NPR | 40 HP | 40 HP / 30 kW | OK |
+| Nominal motor voltage | UNS | 460 V | **480 V Δ** | → 480 V |
+| Nominal motor current | NCR | 55 A | **46.0 A** | → 46.0 A |
+| Nominal motor frequency | FRS | 60 Hz | 60 Hz | OK |
+| Nominal motor speed | NSP | 1771 rpm | **1778 rpm** | → 1778 rpm |
+| Motor cos phi (if asked) | COS | — | 0.83 | → 0.83 |
+| Motor thermal current | ITH | **55 A** | 46.0 A | → **46.0 A** (55 A = motor overload protection 20 % too high) |
+
+The drive holds the **factory values** for a 40 HP motor, not the nameplate. The autotune (RSA, IDA…) was therefore done with wrong data (IDA 36.5 A magnetising current looks high: about 26 A expected for 46 A at cos phi 0.83).
+
+### Procedure (machine stopped, run command OFF, motor cold)
+1. Save the current configuration (SoMove "Save as" / keypad copy).
+2. Complete settings → Motor parameters → Motor data: UNS 480, NCR 46.0, NSP 1778 (FRS 60, NPR 40 HP unchanged).
+3. Motor parameters → Motor thermal monitoring: ITH = 46.0 A.
+4. **Autotune (TUN = Apply autotuning)**: standstill autotune, the motor is energised but does not turn. The STO must be released (4KA2 on), PLC run command (DI1) OFF. Takes a few seconds; check status = done.
+5. Save the new configuration again (new file name).
+6. Test run in manual, then auto: speed stability (the PLC loop compensates), no drive alarm.
+Do the motor data + autotune **before** testing brA = DYNA: the High Torque braking works with the motor flux model.
