@@ -32,11 +32,18 @@ This fixes the zero. Small errors in mounting distance or sensor tolerance are r
 3. Read `RwDiam` (= D_read).
 4. If D_read and D_real differ by more than about 3 mm, the scale is wrong. Correct the span:
    ```
-   k         = (D_real − D_core) / (D_read − D_core)
-   RwDist10V_new = RwDist0V + (RwDist10V − RwDist0V) / k     ... with RwDist0V = 0: RwDist10V / k
+   k             = (D_real − D_core) / (D_read − D_core)
+   RwDist10V_new = RwDist0V + (RwDist10V − RwDist0V) × k     ... with RwDist0V = 0: RwDist10V × k
    ```
-   Then **repeat Step 1** (the offset changes with the scale).
-   Example: D_core 100, D_real 1,000, D_read 985 → k = 900 / 885 = 1.017 → RwDist10V = 750 / 1.017 = **737.5**, then redo the core.
+   (reading too small → k > 1 → larger span). Then **repeat Step 1** (TEACH CORE), because the offset changes with the scale.
+   *(Correction 10/27/2026: an earlier version of this sheet divided by k, which is wrong.)*
+
+### Case 10/27/2026 (sensor relocated)
+TEACH with core 100 → `RwAxisDist` 697.82. Full roll radius 720 mm (D_real 1440) reads **1380**.
+k = (1440 − 100) / (1380 − 100) = 1340 / 1280 = **1.0469** → `RwDist10V` = 750 × 1.0469 = **785.2** (`RwDist0V` stays 0).
+Then TEACH CORE again: expected `RwAxisDist` ≈ 728.2, and the full roll then reads ≈ 1440.
+⚠ `RwMaxDiam` (1340) and `RwMaxSlowFallback` (1310) are below 1440: raise them to the new real maximum, otherwise the max-diameter protection stops the machine first.
+⚠ At 1440 the DT35 raw value is only ≈ 40 counts (`RwRawMin` = 10): about 12 mm of diameter margin before a sensor fault.
 
 ## Good practice
 - **Aiming:** the DT35 beam must point **at the shaft centre**, perpendicular to the roll surface. An off-centre beam gives an error that changes with the diameter. No setting can fix that, so correct the bracket first.
