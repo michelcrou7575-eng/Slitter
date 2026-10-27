@@ -28,6 +28,9 @@ Drive V3.4IE28, SoMove DTM 4.6.4. **Ethernet: fixed IP 192.168.137.15** (not 192
 | FLR catch on fly | not configured | | |
 
 ## Question 1: was this read BEFORE or AFTER the password reset?
+**Answered 10/27/2026:** the password was unlocked with **RESET!** (Schneider FAQ), which is NOT a factory reset. So this export is the **original configuration**: speed reference on **AI1**, 2nd ramp never active.
+RESET! only unlocks until the next power cycle: enter **000000** as the new password so the status becomes "no password defined". SoMove/Ethernet user: Communication → Comm parameters → Embd Eth Config → User Authentication.
+
 - **After**, and the reset was a factory reset: the original configuration is lost (FR1, RPS…). Check that the drive still follows the PLC reference before running.
 - **Before** (or the machine runs normally with it): this IS the original configuration. The speed wire is then on **AI1**, and the 2nd ramp was never active.
 
