@@ -107,3 +107,16 @@ FR1 = AI1 (nothing wired) → no speed reference. Restore (keypad or SoMove, mac
 Unknown original values (lost): HSP (factory 60 Hz), ACC/dEC (factory 3 s), AC2/dE2. In auto the PLC speed loop compensates the speed scale; in manual the full pot = HSP.
 Test: manual at low pot → motor turns, then auto at 100 m/min → `Velocity_M_min` follows the set point. If the work speed max (400 m/min) is not reached in auto with `InvRef` at 4000, raise HSP.
 After the restore, in the Watch tab: `RwStopDecelK` = 0, `RwStopDecel` = 0 (re-learn).
+
+## Config 1027 (after restore) — Slitter903_Config_1027.txt
+| | Org | 1027 | |
+|---|---|---|---|
+| FR1 / AI2A / AI2T | AI1 / – / bipolar | **AI2 / Ref 1 / Voltage** | ✅ |
+| RPS / L5H | – | **DI5 / Ramp switching** | ✅ |
+| UNS / NCR / NSP | 460 / 55 / 1771 | **480 V / 46 A / 1778 rpm** | ✅ |
+| ITH | 55 A | **46 A** | ✅ |
+| Autotune STUN | Default | **Measure** | ✅ IDA 36.5 → 25.7 A (expected ≈ 26 A), RSA 56 → 186 mΩ |
+| NSM motor starts | 10359 | 10371 | motor ran again |
+| ACC / dEC / AC2 / dE2 / HSP / brA | 3 / 3 / 5 / 5 s / 60 Hz / Yes | unchanged | factory |
+COS 0.85 (drive value; nameplate 0.83, minor, can be set to 0.83 then re-tune).
+Next: check top speed (HSP), PLC re-learn, then brA = DYNA comparative test.
