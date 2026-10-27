@@ -88,3 +88,22 @@ With FR1 = AI1 and nothing on AI1, the drive would get **no speed reference**: t
 Complete settings → Command and Reference → **Ref Freq 1 Config (FR1)**, and Generic functions → Ramp switching → **RPS**.
 - Keypad shows **AI2** / **DI5** → the export is wrong: redo SoMove **Load from device** (connected, "Device → Load from device"), check that "Modified parameters" now lists FR1, AI2… and save again.
 - Keypad shows **AI1** / not assigned → the drive was reset: **do not run**. Restore: FR1 = AI2, AI2T = voltage (0–10 V, UIL2 0 V / UIH2 10 V), RPS = DI5, then motor data + autotune.
+
+## 10/27/2026: the motor does not run any more → the drive is on factory settings
+FR1 = AI1 (nothing wired) → no speed reference. Restore (keypad or SoMove, machine stopped):
+
+| Step | Menu (Complete settings →) | Parameter | Set to |
+|---|---|---|---|
+| 1 | Command and Reference | **FR1** Ref Freq 1 Config | **AI2** |
+| 2 | Input/Output → AI/AQ → AI2 | **AI2T** | **Voltage** (0–10 V) |
+| 3 | same | UIL2 / UIH2 | 0 V / 10 V (factory) |
+| 4 | Motor parameters → Motor data | UNS / NCR / FRS / NSP / NPR | 480 V / 46.0 A / 60 Hz / 1778 rpm / 40 HP |
+| 5 | Motor parameters → Thermal monitoring | ITH | 46.0 A |
+| 6 | Motor parameters → Motor tune | TUN | Apply autotuning (STO released, no run command) |
+| 7 | Generic functions → Ramp switching | RPS | DI5 (AC2 / dE2 stay 5 s) |
+| 8 | My preferences → Password | | 000000 → "no password defined" |
+| 9 | SoMove / keypad | | **save the configuration** (new file) |
+
+Unknown original values (lost): HSP (factory 60 Hz), ACC/dEC (factory 3 s), AC2/dE2. In auto the PLC speed loop compensates the speed scale; in manual the full pot = HSP.
+Test: manual at low pot → motor turns, then auto at 100 m/min → `Velocity_M_min` follows the set point. If the work speed max (400 m/min) is not reached in auto with `InvRef` at 4000, raise HSP.
+After the restore, in the Watch tab: `RwStopDecelK` = 0, `RwStopDecel` = 0 (re-learn).
