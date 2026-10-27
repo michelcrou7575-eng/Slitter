@@ -72,3 +72,19 @@ The drive holds the **factory values** for a 40 HP motor, not the nameplate. The
 5. Save the new configuration again (new file name).
 6. Test run in manual, then auto: speed stability (the PLC loop compensates), no drive alarm.
 Do the motor data + autotune **before** testing brA = DYNA: the High Torque braking works with the motor flux model.
+
+## Wiring photo 10/27/2026 vs the export: they do NOT match
+| Terminal | Wire | Plan | Export says |
+|---|---|---|---|
+| AI2 / COM | 13.70 / 13.80 (shielded pair) | speed reference from PLC MAB221 VO2 | FR1 = **AI1**, AI2 not assigned |
+| AI1 | empty | | |
+| DI5 | 15.70 | 2nd ramp `O_AccDec2` | RPS **not assigned** |
+| R1A / R1C | 24PW / 12.30 | fault relay → PLC IN 08 | |
+| STOA / STOB | 1.10 / 1.20 | STO via 4KA2 | |
+
+With FR1 = AI1 and nothing on AI1, the drive would get **no speed reference**: the machine could not run in auto. Since it ran, the export is probably **not the drive's real configuration** (SoMove project defaults, a partial "Load from device", or a different configuration set), unless the drive was reset since.
+
+### Check on the keypad (nothing to change)
+Complete settings → Command and Reference → **Ref Freq 1 Config (FR1)**, and Generic functions → Ramp switching → **RPS**.
+- Keypad shows **AI2** / **DI5** → the export is wrong: redo SoMove **Load from device** (connected, "Device → Load from device"), check that "Modified parameters" now lists FR1, AI2… and save again.
+- Keypad shows **AI1** / not assigned → the drive was reset: **do not run**. Restore: FR1 = AI2, AI2T = voltage (0–10 V, UIL2 0 V / UIH2 10 V), RPS = DI5, then motor data + autotune.

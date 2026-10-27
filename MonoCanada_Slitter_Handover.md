@@ -8,7 +8,7 @@
   - EtherCAT: Phoenix IL EC BK + DI8 + DO8.
 - **Inverter:** ATV930D30N4 (30 kW, firmware V3.4). **The main motor drives the rewind shaft** (confirmed 10/20/2026), so web deceleration = shaft deceleration × radius and it grows with the rewinder diameter (v6g). The unwinder is braked (RE T-one tension controller). Stop = run command (DI1) drops and the ATV930 stops with its own ramp. There is **no motor brake**: `O_Brake` is the unwinder reel-brake enable. STO via safety relay 4KA2.
 - **Electrical plan** (`Plan électrique Slitter LaMeccanica.pdf`, 04820SE001, 20/09/2024), key facts:
-  - ATV930 1AZ1: DI1 = run (PLC out 00 `O_MotorStart`), DI5 = 2nd ramp (out 05 `O_AccDec2`, but RPS not assigned in the drive → no effect), speed reference MAB221 VO2 → drive **AI1** (drive config FR1 = AI1, SoMove export 10/27/2026; earlier note said AI2), R1C/R1B = fault → PLC in 08. STO A/B via 4KA2 (emergency). **No braking resistor** (PA/PB not connected).
+  - ATV930 1AZ1: DI1 = run (PLC out 00 `O_MotorStart`), DI5 = 2nd ramp (out 05 `O_AccDec2`, wire 15.70), speed reference MAB221 VO2 → drive **AI2** / COM (wires 13.70 / 13.80, photo 10/27/2026). ⚠ The SoMove export of 10/27 says FR1 = AI1 and RPS not assigned: does NOT match the wiring, see ATV930/ATV930_Config_Review.md, R1C/R1B = fault → PLC in 08. STO A/B via 4KA2 (emergency). **No braking resistor** (PA/PB not connected).
   - STOP button 11SB5 → **PLC input 02 only**. The STOP button and an automatic stop take the same path.
   - PLC out 02 `O_Brake` = "REEL BRAKE AUTOMATIC CONTROL" → **RE T-one brake controller** terminal 4 (auto/stop). Terminal 5 via 4KA2. Load cells 1/2 + taper potentiometer 9RP2.
   - Blower = separate ATV320U75N4B (1AAZ1), alarm → NX-EC0122 I0 (`I_Vacuum_OK`).
