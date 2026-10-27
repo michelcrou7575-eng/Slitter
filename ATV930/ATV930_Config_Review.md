@@ -120,3 +120,7 @@ After the restore, in the Watch tab: `RwStopDecelK` = 0, `RwStopDecel` = 0 (re-l
 | ACC / dEC / AC2 / dE2 / HSP / brA | 3 / 3 / 5 / 5 s / 60 Hz / Yes | unchanged | factory |
 COS 0.85 (drive value; nameplate 0.83, minor, can be set to 0.83 then re-tune).
 Next: check top speed (HSP), PLC re-learn, then brA = DYNA comparative test.
+
+## Config 1027_1 (manual ramp) — Slitter903_Config_1027_1.txt
+Only change vs 1027: **AC2 / dE2 5 s → 15 s** (manual mode + jog, via DI5). rPt still Linear (TA1–TA4 not active), IBR 55 A unused (no brake logic), brA Yes.
+This is the **current reference configuration** of the drive.
