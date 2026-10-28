@@ -13,10 +13,10 @@
 
 ## Steps
 1. Global Variables: paste `v6s_Globals_paste.txt` (`RwMatReset`, `RwMatChangePct` 25.0 Retain). Externals: type the two names (types come from the globals).
-2. Internals: paste `v6s_Locals_paste.txt` (`MatChangeCnt`).
+2. Internals: paste `v6s_Locals_paste.txt` (`MatChangeCnt`, `T_MatReset` TON).
 3. Replace the AutoStop_Control ST with `AutoStop_Control_v6s.st` (= v6p + section 4a + the change in section 4).
 4. F7 → transfer. No Retain variable renamed.
-5. HMI window 44: button **NEW PAPER** → `RwMatReset` (Set Bit, Set ON), visible when `MotStop`.
+5. HMI window 44: button **NEW PAPER** → `RwMatReset` (Set Bit, Set ON; stays ON 3 s, then the PLC resets it), visible when `MotStop`.
 
 ## Test
 - Same paper: `RwThick_mm` stable, `TaglMonoTRM.MatChangeCnt` mostly 0.
