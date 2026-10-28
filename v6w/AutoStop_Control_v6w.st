@@ -168,7 +168,7 @@ IF Tick THEN
         (* Motor stopped during the window -> window dropped (no fault).  *)
         IF MmPerPulse > 0.0 THEN
             IF (RwMat_K > 0.0) AND (RwWinGrow_mm > 0.0) THEN
-                LearnWinLen_Pls := RwWinGrow_mm * MAX(RwDiam, 100.0) / RwMat_K;
+                LearnWinLen_Pls := RwWinGrow_mm * MAX(RwDiam, REAL#100.0) / RwMat_K;
             ELSE
                 LearnWinLen_Pls := RwWinLen_m * 1000.0 / MmPerPulse;
             END_IF;
