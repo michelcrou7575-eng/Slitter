@@ -36,3 +36,6 @@ Same ≈ 2.5 mm of growth in every window → same accuracy (≈ ±12 % per wind
 ## Test (trace)
 `TaglMonoTRM.ThickWin_mm` at 24 m/min and at 400 m/min should both be ≈ 0.10–0.11 mm (80 g/m² kraft). Paper change 80 → 120 g/m²: detected after 2 windows.
 `RwWinGrow_mm` larger (3–4) = smoother but longer windows; smaller (2) = faster but noisier.
+
+## Also in v6w: ALARM RESET clears the learning fail counters (section 12)
+`I_RsetAlarm` (panel button) or `Alarm_Reset` (HMI) → `LearnFailCnt` := 0 and `StopFailCnt` := 0. Alarm 16 then resets with the same press (Alarms rung 17 sees `GSM_LearnFault` = FALSE on the next scan, the button is held longer than one scan). If the cause is still there, alarm 16 comes back after 12 failed windows / 3 failed stops. No need to write `StopFailCnt` = 0 in the Watch tab any more.

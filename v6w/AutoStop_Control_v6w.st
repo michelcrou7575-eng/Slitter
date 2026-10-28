@@ -12,6 +12,7 @@
    v6w: paper thickness window is LENGTH-based instead of 10 s, modulated by
         the diameter (RwWinGrow_mm 2.5 mm of growth, 4 m .. RwWinLen_m 30 m):
         same accuracy at every speed and roll size; stopped window = dropped.
+        ALARM RESET also clears LearnFailCnt / StopFailCnt (alarm 16).
    v6v: BrakeHold released on the SIGNED web speed (Velocity_M_min < 5),
         so a web pulled back after the stop releases the T-one at once.
    v6u: stop learning: a stop shorter than the reaction distance or faster
@@ -635,6 +636,13 @@ END_IF;
 
 (* Fault: too many consecutive windows / stops that should have            *)
 (* learned but did not. Clears by itself on the next good result.          *)
+(* v6w: ALARM RESET (panel button or HMI) also clears the fail counters, *)
+(* so alarm 16 resets in one press. It comes back only if the learning  *)
+(* fails again RwLearnFailMax / RwStopFailMax times in a row.           *)
+IF I_RsetAlarm OR Alarm_Reset THEN
+    LearnFailCnt := 0;
+    StopFailCnt := 0;
+END_IF;
 GSM_LearnFault := (LearnFailCnt >= RwLearnFailMax)
               OR (StopFailCnt >= RwStopFailMax);       (* -> alarm 16 *)
 
