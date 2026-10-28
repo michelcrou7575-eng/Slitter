@@ -1,0 +1,1 @@
+MatChangeCnt	INT			False	False	v6s: consecutive learning windows far from RwMat_K
