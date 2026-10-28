@@ -1,0 +1,2 @@
+SoftStopMem	BOOL			False	False	v6r: soft stop edge memory
+SoftStopRatio	REAL			False	False	v6r: InvRef counts per m/min, frozen at the soft stop start
