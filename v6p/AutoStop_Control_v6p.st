@@ -19,7 +19,7 @@
           Replaces General rung 15 (one immediate sonar reading).
    v6j: TEACH CORE (section 14): HMI button RwTeachCore, empty core on the
           rewinder, machine stopped -> after 2 s stable:
-          RwAxisDist := RwDist + RwCoreOD / 2. Status in RwTeachState.
+          RwAxisDist := RwDist + RwCoreDiameter / 2. Status in RwTeachState.
    v6i: auto: pots scaled to WorkSpd_Max / FinalSpd_Max (Motor_Manager rung 6,
           Pot1_Mem / Pot2_Mem). ManMode keeps the raw pots (percent),
           so section 6 uses the raw pots in ManMode.
@@ -587,14 +587,14 @@ END_IF;
 (* ---- 14. v6j: TEACH CORE - automatic offset with an empty core -------- *)
 (* HMI: set RwTeachCore (button, Set ON). Conditions: motor stopped, web  *)
 (* not moving, DT35 OK. After 2 s stable (filter settled):                 *)
-(*     RwAxisDist := RwDist + RwCoreOD / 2   -> RwDiam = RwCoreOD          *)
+(*     RwAxisDist := RwDist + RwCoreDiameter / 2   -> RwDiam = RwCoreDiameter          *)
 (* RwTeachState: 0 idle, 1 teaching (wait 2 s), 2 done OK,                *)
 (*               3 refused (motor running / web moving / DT35 fault).     *)
 (* Only the offset is taught: the scale is RwDist10V - RwDist0V           *)
 (* (= real distance between the two DT35 taught points).                  *)
 IF RwTeachCore THEN
     IF O_MotorStart OR (RwSpeed > 1.0) OR RwSensFault
-       OR NOT RwFiltInit OR (RwCoreOD <= 0.0) THEN
+       OR NOT RwFiltInit OR (RwCoreDiameter <= 0.0) THEN
         RwTeachState := 3;                          (* refused *)
         RwTeachCore := FALSE;
         TeachTicks := 0;
@@ -605,7 +605,7 @@ IF RwTeachCore THEN
         END_IF;
         IF TeachTicks >= 20 THEN                    (* 2 s stable *)
             RwAxisDist_Prev := RwAxisDist;          (* v6l: keep previous *)
-            RwAxisDist := RwDist + RwCoreOD / 2.0;
+            RwAxisDist := RwDist + RwCoreDiameter / 2.0;
             RwTeachState := 2;                      (* done *)
             RwTeachCore := FALSE;
             TeachTicks := 0;

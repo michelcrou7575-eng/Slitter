@@ -26,3 +26,7 @@ The slow-down at 200 m/min needs ≈ 60–70 m at 300 mm (DecelCoarse 1.0). Diam
 
 ## Test
 NEW PAPER (`RwMatReset`) → GSM OK off → AUTO run toward the target: "SLOW DOWN AT" = target − 30; the machine reaches the final speed before the target.
+
+## Baseline check (10/28/2026)
+v6s / v6t were checked line by line against the **1027 print** (AutoStop_Control = v6p, 680 lines).
+One field change found and adopted: global **`RwCoreOD` renamed to `RwCoreDiameter`** (section 14 + Global Variables). The v6p / v6s / v6t files now use `RwCoreDiameter`.
