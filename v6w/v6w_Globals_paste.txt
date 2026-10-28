@@ -1,1 +1,2 @@
-RwWinLen_m	REAL	30.0		True	False	Publish Only	Paper thickness learning: window length (m of paper), same accuracy at every speed
+RwWinLen_m	REAL	30.0		True	False	Publish Only	Paper thickness learning: MAX window length (m of paper)
+RwWinGrow_mm	REAL	2.5		True	False	Publish Only	Paper thickness learning: window = this diameter growth (mm), 4 m .. RwWinLen_m

@@ -9,8 +9,9 @@
            _Pls = encoder pulses (counts)   _Pps = pulses per second
            _Pps2 = pulses per second squared
 
-   v6w: paper thickness window is LENGTH-based (RwWinLen_m, 30 m) instead of
-        10 s: same accuracy at every speed; stopped window = dropped.
+   v6w: paper thickness window is LENGTH-based instead of 10 s, modulated by
+        the diameter (RwWinGrow_mm 2.5 mm of growth, 4 m .. RwWinLen_m 30 m):
+        same accuracy at every speed and roll size; stopped window = dropped.
    v6v: BrakeHold released on the SIGNED web speed (Velocity_M_min < 5),
         so a web pulled back after the stop releases the T-one at once.
    v6u: stop learning: a stop shorter than the reaction distance or faster
@@ -158,11 +159,25 @@ IF Tick THEN
         LearnInit := TRUE;
     ELSE
         LearnWinRunning := LearnWinRunning AND O_MotorStart;
-        (* v6w: LENGTH-based window: closes after RwWinLen_m of paper,    *)
-        (* whatever the speed (accuracy = diameter growth vs DT35 noise). *)
+        (* v6w: LENGTH-based window, modulated by the diameter: closes    *)
+        (* when the roll should have grown RwWinGrow_mm (2.5 mm), so the  *)
+        (* accuracy vs DT35 noise is the same at every speed and size.    *)
+        (* Pulses = growth x diameter / K (K = learned RwMat_K).          *)
+        (* Limits: min 4 m, max RwWinLen_m (30 m). K not learned: max.    *)
         (* Motor stopped during the window -> window dropped (no fault).  *)
-        IF (RwWinLen_m > 0.0) AND (MmPerPulse > 0.0) THEN
-            LearnWinLen_Pls := RwWinLen_m * 1000.0 / MmPerPulse;
+        IF MmPerPulse > 0.0 THEN
+            IF (RwMat_K > 0.0) AND (RwWinGrow_mm > 0.0) THEN
+                LearnWinLen_Pls := RwWinGrow_mm * MAX(RwDiam, 100.0) / RwMat_K;
+            ELSE
+                LearnWinLen_Pls := RwWinLen_m * 1000.0 / MmPerPulse;
+            END_IF;
+            IF LearnWinLen_Pls < 4000.0 / MmPerPulse THEN
+                LearnWinLen_Pls := 4000.0 / MmPerPulse;              (* 4 m *)
+            END_IF;
+            IF (RwWinLen_m > 0.0)
+               AND (LearnWinLen_Pls > RwWinLen_m * 1000.0 / MmPerPulse) THEN
+                LearnWinLen_Pls := RwWinLen_m * 1000.0 / MmPerPulse;
+            END_IF;
         ELSE
             LearnWinLen_Pls := 300000.0;
         END_IF;
