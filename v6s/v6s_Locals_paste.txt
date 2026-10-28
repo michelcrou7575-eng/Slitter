@@ -1,2 +1,2 @@
 MatChangeCnt	INT			False	False	v6s: consecutive learning windows far from RwMat_K
-T_MatReset	TON			False	False	v6s: RwMatReset stays ON 3 s
+T_MatReset	TON			False	False	v6s: RwMatReset must be held 3 s

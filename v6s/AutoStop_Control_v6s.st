@@ -129,14 +129,13 @@ RwSpeed := SpdAct_Pps * MmPerPulse * 0.06;          (* m/min *)
 
 (* ---- 4a. v6s: NEW PAPER button: forget the learned thickness ----------- *)
 (* RwMat_K = 0 -> the first valid 10 s window sets it directly.            *)
-(* The bit stays ON 3 s (HMI feedback), then the PLC resets it.            *)
+(* HMI momentary button: must be HELD 3 s, then the reset is done once and *)
+(* the PLC clears the bit (HMI lamp goes off = done).                      *)
 T_MatReset(In := RwMatReset, PT := T#3s);
-IF RwMatReset THEN
+IF T_MatReset.Q THEN
     RwMat_K := 0.0;
     LearnFailCnt := 0;
     MatChangeCnt := 0;
-END_IF;
-IF T_MatReset.Q THEN
     RwMatReset := FALSE;
 END_IF;
 
