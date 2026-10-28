@@ -1,0 +1,1 @@
+RwWinLen_m	REAL	30.0		True	False	Publish Only	Paper thickness learning: window length (m of paper), same accuracy at every speed

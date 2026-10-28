@@ -1,0 +1,1 @@
+LearnWinLen_Pls	REAL			False	False	v6w: learning window length in encoder pulses
