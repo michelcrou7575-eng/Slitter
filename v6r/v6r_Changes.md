@@ -55,6 +55,6 @@ END_IF;
 Small roll: high Hz/s but little energy (no problem for the drive). Big roll: low Hz/s but most energy → check VBUS on the first stops with a big roll at 400 m/min.
 
 ## Test
-1. 200 m/min, any roll, STOP once: stop time ≈ 6667/2/a… e.g. 400 mm/s² → ≈ 8 s. Watch tab: `TaglMonoTRM.SoftStopRatio` (≈ 7.5 at 445 mm), `Decel_Ramp`.
+1. 200 m/min, any roll, STOP once: stop time ≈ speed (mm/s) / SoftStopDecel, e.g. 3333 / 400 ≈ 8 s. Watch tab: `TaglMonoTRM.SoftStopRatio` (≈ 7.5 at 445 mm), `Decel_Ramp`.
 2. Same at another diameter: same stop time.
 3. Big roll at 300–400 m/min with the SoMove scope (VBUS) before raising `SoftStopDecel` above 400.
