@@ -29,6 +29,11 @@
 **Directly after** rung 14 "Acceleration/deceleration factor selection (1 = 250 mm/s²)" and **before** rung 15 "Soft Stop - SoftStopDecel (mm/s2), same for every roll" (it must act after V7). If the v6q S-curve rung is added later, it goes after V7 too.
 Comment: `V7: coarse ramps in real web mm/s2`. Content: `V7_MotorManager_rung.st`.
 
+## 2b. Motor_Manager rung 5: setting limits (clamps)
+Append `V7_MotorManager_rung5_clamps.st` at the end of rung 5 (after the `JogSpd_SP` clamp, before `Output_Ratio`):
+`SpdDelta_Percent` 2–15, `AccelTrim`/`DecelTrim` 0.02–0.5, `AccelCoarse`/`DecelCoarse` 0.2–4, `DecelWeb`/`AccelWeb` 0 or 50–1000, `SoftStopDecel` ≤ 1500, **`RwMaxDiam` 300–1450 (mechanical limit, adjust if the real limit differs)**, `RwMaxSlowFallback` < `RwMaxDiam`.
+Also set the same limits on the HMI numeric inputs (EasyBuilder: Numeric → Limits), so a wrong entry is refused instead of being corrected silently.
+
 ## 3. AutoStop_Control
 Replace the ST with `AutoStop_Control_V7.st` (= v6x + section 6 change; uses `RwCoreDiameter`).
 
