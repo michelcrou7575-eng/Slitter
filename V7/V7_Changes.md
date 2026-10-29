@@ -1,6 +1,6 @@
 # V7: all AUTO ramps in REAL web mm/s² (same on every roll size)
 
-**Base:** print 1027 + AutoStop v6x + Motor_Manager v6q (S-curve) + v6r (soft stop). Check against the next PDF before transferring.
+**Base:** checked against **print 1028_2** (10/29/2026): AutoStop = v6x (one extra blank line at 171, cosmetic), Motor_Manager rung 15 = v6r soft stop, **v6q S-curve not loaded**, password 33 (Console rung 4, correct).
 **When:** after the first order (100 → 300 mm). Until then: v6x + `DecelCoarse` 2.0.
 
 ## Why
@@ -26,7 +26,7 @@
 - Internals: paste `V7_Locals_paste.txt` (`WebRatio`, `RatioMeas`).
 
 ## 2. Motor_Manager: new inline-ST rung
-**Directly after** rung "Acceleration/deceleration factor selection (1 = 250 mm/s²)" and **before** "Optional faster decel" (soft stop) and the v6q "S-curve start" rung (they must act after it).
+**Directly after** rung 14 "Acceleration/deceleration factor selection (1 = 250 mm/s²)" and **before** rung 15 "Soft Stop - SoftStopDecel (mm/s2), same for every roll" (it must act after V7). If the v6q S-curve rung is added later, it goes after V7 too.
 Comment: `V7: coarse ramps in real web mm/s2`. Content: `V7_MotorManager_rung.st`.
 
 ## 3. AutoStop_Control
