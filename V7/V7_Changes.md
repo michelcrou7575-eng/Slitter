@@ -1,0 +1,44 @@
+# V7: all AUTO ramps in REAL web mm/s² (same on every roll size)
+
+**Base:** print 1027 + AutoStop v6x + Motor_Manager v6q (S-curve) + v6r (soft stop). Check against the next PDF before transferring.
+**When:** after the first order (100 → 300 mm). Until then: v6x + `DecelCoarse` 2.0.
+
+## Why
+`DecelCoarse` / `AccelCoarse` are a fixed **Hz/s**. The motor drives the rewinder, so the web decel/accel is proportional to the diameter:
+| Rewinder Ø | `DecelCoarse` 1.0 on the web | V7 `DecelWeb` 250 |
+|---|---|---|
+| 100 mm | ≈ 45 mm/s² | 250 mm/s² |
+| 300 mm | ≈ 135 | 250 |
+| 600 mm | ≈ 270 | 250 |
+| 1000 mm | ≈ 450 | 250 |
+| 1400 mm | ≈ 630 | 250 |
+→ Small rolls: slow-downs/accelerations much shorter. Big (heavy) rolls: gentler. And the slow-down length is **known** from the setting: no more learning delay, no wrong K.
+
+## How
+- **Ratio** drive counts per m/min of web = **`RwRatioD` / diameter** (web speed per Hz grows with the diameter). `RwRatioD` (Retain, initial **2780** from the 10/27–28 scopes: 400 m/min = 28 Hz at 595 mm, 150 m/min = 16.7 Hz at 375 mm) is learned while running steady in AUTO (> 30 m/min, inside the band, DT35 OK), filtered ≈ 4 s.
+- **Motor_Manager:** when the coarse ramp is active (more than `SpdDelta_Percent` from the set speed), `Decel_Ramp` / `Accel_Ramp` are computed from **`DecelWeb` / `AccelWeb`** (mm/s²) × ratio. Same formula as v6r (checked on the scope). Max 8.0 (9 Hz/s). Inside the band the trim ramps stay (loop gain).
+- **AutoStop section 6:** slow-down length = manual `RwSlowDecel` > **`DecelWeb` (coarse) + trim tail converted to web units** > learned (fallback) > old model.
+- `DecelWeb` / `AccelWeb` = 0 → old `DecelCoarse` / `AccelCoarse` behaviour (way back).
+- Soft stop (v6r `SoftStopDecel`) and the S-curve start (v6q) are unchanged.
+
+## 1. Variables
+- Global Variables: paste `V7_Globals_paste.txt` (`DecelWeb` 250, `AccelWeb` 200, `RwRatioD` 2780, Retain, Publish Only). Externals: type the 3 names.
+- Internals: paste `V7_Locals_paste.txt` (`WebRatio`, `RatioMeas`).
+
+## 2. Motor_Manager: new inline-ST rung
+**Directly after** rung "Acceleration/deceleration factor selection (1 = 250 mm/s²)" and **before** "Optional faster decel" (soft stop) and the v6q "S-curve start" rung (they must act after it).
+Comment: `V7: coarse ramps in real web mm/s2`. Content: `V7_MotorManager_rung.st`.
+
+## 3. AutoStop_Control
+Replace the ST with `AutoStop_Control_V7.st` (= v6x + section 6 change; uses `RwCoreDiameter`).
+
+## 4. HMI page 22 (ramps)
+- "DECELERATION RAMP OUTSIDE THE BAND" → tag **`DecelWeb`**, format ####, unit mm/s², limits 50–1000.
+- "ACCELERATION RAMP OUTSIDE THE BAND" → tag **`AccelWeb`**, same.
+- Optional display `RwRatioD` (####) on a technician page.
+
+## 5. Test
+1. Watch: `RwRatioD` stays ≈ 2700–2900 while running (if very different: DT35 diameter calibration).
+2. Auto slow-down on a small roll (≈ 200 mm) and on a big roll: SoMove scope → web decel ≈ `DecelWeb` on both (Hz/s higher on the small roll).
+3. "SLOW DOWN AT" from the first run after a core change (no learning delay); final speed reached just before the target.
+4. Start from the core: no jerk (S-curve) and the acceleration noticeably shorter than before.

@@ -1,0 +1,2 @@
+WebRatio	REAL			False	False	V7: drive counts per m/min of web at the current diameter
+RatioMeas	REAL			False	False	V7: measured RwRatioD (steady running)
