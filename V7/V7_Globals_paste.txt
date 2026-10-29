@@ -1,3 +1,4 @@
-DecelWeb	REAL	250.0		True	False	Publish Only	V7: AUTO decel ramp outside the band, real web mm/s2 (0 = old DecelCoarse)
-AccelWeb	REAL	200.0		True	False	Publish Only	V7: AUTO accel ramp outside the band, real web mm/s2 (0 = old AccelCoarse)
-RwRatioD	REAL	2780.0		True	False	Publish Only	V7: learned drive counts per m/min x rewinder diameter (mm)
+DecelWeb	REAL	250.0		True	False	Publish Only	V7: AUTO decel ramp, real web mm/s2 (0 = DecelCoarse)
+AccelWeb	REAL	200.0		True	False	Publish Only	V7: AUTO accel ramp, real web mm/s2 (0 = AccelCoarse)
+RwRatioD	REAL	2900.0		True	False	Publish Only	V7: drive counts per m/min x rewinder diameter (mm), adapted while running
+FFEnable	BOOL	True		True	False	Publish Only	V7: feed-forward speed loop ON (FALSE = old loop of rung 16)

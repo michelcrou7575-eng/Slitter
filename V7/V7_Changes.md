@@ -1,52 +1,53 @@
-# V7: all AUTO ramps in REAL web mm/s² (same on every roll size)
+# V7: feed-forward speed loop + ramps in real web mm/s² (+ setting clamps)
 
-**Base:** checked against **print 1029** (10/29/2026) = 1028_2 + **v6y** (Motor_Manager rungs 5/6/7/8, AutoStop v6y, `RwAutoMaxSpd`, `RwWinLen_m`). `AutoStop_Control_V7.st` = the printed v6y + the V7 section 6 change only. v6q S-curve not loaded.
-**When:** after the first order (100 → 300 mm). Until then: v6x + `DecelCoarse` 2.0.
+**Base:** print **1029** (= 1028_2 + v6y). Check against the next PDF before transferring.
+**Way back at any time:** `FFEnable` = FALSE → the old loop (rung 16) runs exactly as before.
 
-## Why
-`DecelCoarse` / `AccelCoarse` are a fixed **Hz/s**. The motor drives the rewinder, so the web decel/accel is proportional to the diameter:
-| Rewinder Ø | `DecelCoarse` 1.0 on the web | V7 `DecelWeb` 250 |
+## Why (traces 10/29/2026, roll ≈ 970–1010 mm, 450 m/min)
+The original loop **searches** the drive frequency (+/− a fixed Hz/s while out of the ±`SpdDelta_Percent` band). On a big roll the web speed reacts ≈ 0.9 s late → overshoot → **hunting** (±32 m/min, 3.5 s period, current 5 ↔ 36 A, 93 % of the time out of the band). The same happened on the original machine above 450–500 m/min. With coarse 0.3 / band 12 it is stable, but every ramp becomes 3× slower.
+
+## How V7 works
+1. **Ratio** (rung A): drive counts per m/min of web = **`RwRatioD` / rewinder diameter** (motor drives the rewinder). `RwRatioD` ≈ 2780–2950 from the traces (initial **2900**).
+2. **Feed-forward** (rung B): the reference goes **straight to the frequency of the set speed** (`VelSet` × ratio) along a ramp in **real web mm/s²**: `AccelWeb` (200), `DecelWeb` (250), `SoftStopDecel` during a soft stop. The ramp does not depend on the measured speed → **cannot hunt**, whatever the roll.
+3. **Correction:** once at the target for 2 s, the measured speed adapts `RwRatioD` slowly (time constant ≈ 10 s, dead band 0.3 %, max ±5 % error per step). Not at the 60 Hz limit, not during soft stop / jog / below 15 m/min. `RwRatioD` is Retain → the next run starts right.
+4. **Slow-down length** (AutoStop section 6): one ramp at `DecelWeb` → exact, no learning needed.
+5. Same web decel on every roll: small roll fast (in Hz/s), big roll gentle.
+
+| Rewinder Ø | Old `DecelCoarse` 1.0 on the web | V7 `DecelWeb` 250 |
 |---|---|---|
-| 100 mm | ≈ 45 mm/s² | 250 mm/s² |
+| 100 mm | ≈ 45 mm/s² | 250 |
 | 300 mm | ≈ 135 | 250 |
-| 600 mm | ≈ 270 | 250 |
-| 1000 mm | ≈ 450 | 250 |
-| 1400 mm | ≈ 630 | 250 |
-→ Small rolls: slow-downs/accelerations much shorter. Big (heavy) rolls: gentler. And the slow-down length is **known** from the setting: no more learning delay, no wrong K.
+| 1000 mm | ≈ 450 (→ hunting) | 250 |
 
-## How
-- **Ratio** drive counts per m/min of web = **`RwRatioD` / diameter** (web speed per Hz grows with the diameter). `RwRatioD` (Retain, initial **2780** from the 10/27–28 scopes: 400 m/min = 28 Hz at 595 mm, 150 m/min = 16.7 Hz at 375 mm) is learned while running steady in AUTO (> 30 m/min, inside the band, DT35 OK), filtered ≈ 4 s.
-- **Motor_Manager:** when the coarse ramp is active (more than `SpdDelta_Percent` from the set speed), `Decel_Ramp` / `Accel_Ramp` are computed from **`DecelWeb` / `AccelWeb`** (mm/s²) × ratio. Same formula as v6r (checked on the scope). Max 8.0 (9 Hz/s). Inside the band the trim ramps stay (loop gain).
-- **AutoStop section 6:** slow-down length = manual `RwSlowDecel` > **`DecelWeb` (coarse) + trim tail converted to web units** > learned (fallback) > old model.
-- `DecelWeb` / `AccelWeb` = 0 → old `DecelCoarse` / `AccelCoarse` behaviour (way back).
-- Soft stop (v6r `SoftStopDecel`) and the S-curve start (v6q) are unchanged.
+Not changed: manual mode (rung 18), jog speed, auto stop at the target (drive ramp), E-stop, soft stop logic (General rung 9), AutoStop learning (fallback).
 
 ## 1. Variables
-- Global Variables: paste `V7_Globals_paste.txt` (`DecelWeb` 250, `AccelWeb` 200, `RwRatioD` 2780, Retain, Publish Only). Externals: type the 3 names.
-- Internals: paste `V7_Locals_paste.txt` (`WebRatio`, `RatioMeas`).
+- Global Variables: paste `V7_Globals_paste.txt` (`DecelWeb` 250, `AccelWeb` 200, `RwRatioD` 2900, **`FFEnable` True**, Retain, Publish Only). Externals: type the 4 names.
+- Internals: paste `V7_Locals_paste.txt` (`WebRatio`, `FFActive`, `FFWasActive`, `FFTarget`, `RampRef`, `StepAcc`, `StepDec`, `FFSteadyTicks`, `FFErr`).
 
-## 2. Motor_Manager: new inline-ST rung
-**Directly after** rung 14 "Acceleration/deceleration factor selection (1 = 250 mm/s²)" and **before** rung 15 "Soft Stop - SoftStopDecel (mm/s2), same for every roll" (it must act after V7). If the v6q S-curve rung is added later, it goes after V7 too.
-Comment: `V7: coarse ramps in real web mm/s2`. Content: `V7_MotorManager_rung.st`.
-
-## 2b. Motor_Manager rung 5: setting limits (clamps)
-Append `V7_MotorManager_rung5_clamps.st` in rung 5 after the v6y lines (after `RwAutoMaxSpdAct := RwAutoMaxSpd; END_IF;`, before `Output_Ratio`):
-`SpdDelta_Percent` 2–15, `AccelTrim`/`DecelTrim` 0.02–0.5, `AccelCoarse`/`DecelCoarse` 0.2–4, `DecelWeb`/`AccelWeb` 0 or 50–1000, `SoftStopDecel` ≤ 1500, **`RwMaxDiam` 300–1450 (mechanical limit, adjust if the real limit differs)**, `RwMaxSlowFallback` < `RwMaxDiam`.
-Also set the same limits on the HMI numeric inputs (EasyBuilder: Numeric → Limits), so a wrong entry is refused instead of being corrected silently.
-
-## 2c. v6y
-Already in the PLC (print 1029): nothing to add.
+## 2. Motor_Manager
+| New rung | Where | File |
+|---|---|---|
+| **A** "V7: web ratio + web ramps" | directly **after rung 14** (factor selection), before rung 15 (soft stop) | `V7_MotorManager_rung.st` |
+| **B** "V7: feed-forward speed loop (AUTO)" | **after rung 16** (speed correction, ladder), before rung 17 (inverter reference) | `V7_MotorManager_FF_rung.st` |
+| rung 5: clamps | append after the v6y lines, before `Output_Ratio` | `V7_MotorManager_rung5_clamps.st` |
+Rungs 14, 15, 16, 17 stay unchanged (rung B overwrites `Vfd_SP_Modif` after rung 16 when `FFEnable`).
 
 ## 3. AutoStop_Control
-Replace the ST with `AutoStop_Control_V7.st` (= v6x + section 6 change; uses `RwCoreDiameter`).
+Replace the ST with `AutoStop_Control_V7.st` (= printed v6y + section 6 change).
 
-## 4. HMI page 22 (ramps)
-- "DECELERATION RAMP OUTSIDE THE BAND" → tag **`DecelWeb`**, format ####, unit mm/s², limits 50–1000.
-- "ACCELERATION RAMP OUTSIDE THE BAND" → tag **`AccelWeb`**, same.
-- Optional display `RwRatioD` (####) on a technician page.
+## 4. HMI (password page 22)
+- "ACCELERATION RAMP COARSE" → **`AccelWeb`**, "DECELERATION RAMP COARSE" → **`DecelWeb`**: format ####, mm/s², limits 50–1000.
+- New toggle **FEED-FORWARD ON/OFF** → `FFEnable` (enabled only when `MotStop`).
+- Display **SPEED RATIO** → `RwRatioD` (####).
+- `SpdDelta_Percent`, `AccelTrim`, `DecelTrim`, `AccelCoarse`, `DecelCoarse`: only used with `FFEnable` OFF.
 
-## 5. Test
-1. Watch: `RwRatioD` stays ≈ 2700–2900 while running (if very different: DT35 diameter calibration).
-2. Auto slow-down on a small roll (≈ 200 mm) and on a big roll: SoMove scope → web decel ≈ `DecelWeb` on both (Hz/s higher on the small roll).
-3. "SLOW DOWN AT" from the first run after a core change (no learning delay); final speed reached just before the target.
-4. Start from the core: no jerk (S-curve) and the acceleration noticeably shorter than before.
+## 5. Tests (with Data Trace 20 ms + SoMove scope, like 10/29)
+Trace: `Velocity_M_min`, `VelSet`, `InvRef`, `TaglMonoTRM.RampRef`, `TaglMonoTRM.FFTarget`, `TaglMonoTRM.FFActive`, `TaglMonoTRM.FFSteadyTicks`, `RwRatioD`, `RwDiam`, `SoftStop`, `TaglMonoTRM.SlowDown`.
+1. **Small roll, 200 m/min:** start → straight ramp, no overshoot; after ≈ 10 s `Velocity_M_min` = set speed ±1 %; `RwRatioD` settles.
+2. **Big roll, 450 → 500 m/min:** steady, **no hunting** (current steady), unlike 10/29.
+3. Pot changes up/down while running: straight ramps, no overshoot.
+4. Auto slow-down: decel ≈ `DecelWeb`, final speed reached just before "SLOW DOWN AT"; stop at the target.
+5. Soft stop from 450: straight decel ≈ `SoftStopDecel`.
+6. `FFEnable` OFF (machine stopped) → old behaviour; ON again → V7.
+If a speed error stays > 2 % at steady speed: check `RwRatioD` moves; if it sits at 1000/8000 → DT35 diameter calibration.

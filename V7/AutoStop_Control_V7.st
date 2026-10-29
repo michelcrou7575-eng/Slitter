@@ -9,9 +9,11 @@
            _Pls = encoder pulses (counts)   _Pps = pulses per second
            _Pps2 = pulses per second squared
 
-   V7 : PLC ramps in REAL web mm/s2 (Motor_Manager: DecelWeb / AccelWeb,
-        ratio RwRatioD / diameter). Section 6: the slow-down length uses
-        DecelWeb directly (known) + the trim tail; learning only as fallback.
+   V7 : FEED-FORWARD speed loop (Motor_Manager rung B): reference = set speed
+        x RwRatioD / diameter along a ramp in real web mm/s2 (DecelWeb /
+        AccelWeb), RwRatioD adapted slowly -> no hunting on big rolls.
+        Section 6: slow-down length = one ramp at DecelWeb (FFEnable), else
+        web coarse ramp + trim tail; learning only as fallback.
    v6y: rewinder AUTO stop (RwStopEnable) limits the work speed to
         RwAutoMaxSpd (500 m/min), taken over at standstill only; section 6
         uses the limited speed.
@@ -387,10 +389,14 @@ StopLen_Pls := StopLen_Pls * RwTrim;
 SlowLenBase_Pls := 0.0;  RwSlowLen_Pls := 0.0;  UwSlowLen_Pls := 0.0;
 IF MmPerPulse > 0.0 THEN
     (* v6f: manual > learned > PLC ramp model                           *)
-    (* V7: manual > web decel DecelWeb (known, real mm/s2, coarse ramp + *)
-    (*     trim tail) > learned > old PLC ramp model                     *)
+    (* V7: manual > feed-forward (one ramp at DecelWeb, real web mm/s2)  *)
+    (*     > old loop with web ramps (coarse DecelWeb + trim tail)       *)
+    (*     > learned > old PLC ramp model                                *)
     IF RwSlowDecel > 0.0 THEN
         SlowDecel_Pps2 := RwSlowDecel / MmPerPulse;
+        SlowOneRamp := TRUE;
+    ELSIF FFEnable AND (DecelWeb > 0.0) AND (WebRatio > 0.0) AND NOT ManMode THEN
+        SlowDecel_Pps2 := DecelWeb / MmPerPulse;
         SlowOneRamp := TRUE;
     ELSIF (DecelWeb > 0.0) AND (WebRatio > 0.0) THEN
         SlowDecel_Pps2 := DecelWeb / MmPerPulse;

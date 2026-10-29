@@ -1,2 +1,9 @@
 WebRatio	REAL			False	False	V7: drive counts per m/min of web at the current diameter
-RatioMeas	REAL			False	False	V7: measured RwRatioD (steady running)
+FFActive	BOOL			False	False	V7: feed-forward loop active
+FFWasActive	BOOL			False	False	V7: edge memory
+FFTarget	REAL			False	False	V7: reference for the set speed (mm/s of the 0-10 V scale)
+RampRef	REAL			False	False	V7: ramped reference (mm/s of the 0-10 V scale)
+StepAcc	REAL			False	False	V7: accel step per scan
+StepDec	REAL			False	False	V7: decel step per scan
+FFSteadyTicks	INT			False	False	V7: scans at target
+FFErr	REAL			False	False	V7: relative speed error
