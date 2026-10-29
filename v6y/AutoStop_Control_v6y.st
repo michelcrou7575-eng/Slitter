@@ -10,7 +10,8 @@
            _Pps2 = pulses per second squared
 
    v6y: rewinder AUTO stop (RwStopEnable) limits the work speed to
-        RwAutoMaxSpd (500 m/min); section 6 uses the limited speed.
+        RwAutoMaxSpd (500 m/min), taken over at standstill only; section 6
+        uses the limited speed.
    v6x: new parent roll on the unwinder -> GsmAsk (HMI popup "did you change
         the paper?"); GsmAskYes forgets the learned thickness.
    v6w: paper thickness window is LENGTH-based instead of 10 s, modulated by
@@ -414,10 +415,11 @@ IF MmPerPulse > 0.0 THEN
         SpdFinal_Pps := LowSpd_Display * 1000.0 / 60.0 / MmPerPulse;
         SpdWork_Pps  := Speed_Display  * 1000.0 / 60.0 / MmPerPulse;
     END_IF;
-    (* v6y: rewinder AUTO stop -> work speed limited to RwAutoMaxSpd    *)
-    IF RwStopEnable AND (RwAutoMaxSpd > 0.0) AND NOT ManMode
-       AND (SpdWork_Pps > RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse) THEN
-        SpdWork_Pps := RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse;
+    (* v6y: rewinder AUTO stop -> work speed limited to RwAutoMaxSpdAct *)
+    (* (limit + value taken over only at standstill, Motor_Manager rung 5) *)
+    IF RwAutoLimAct AND NOT ManMode
+       AND (SpdWork_Pps > RwAutoMaxSpdAct * 1000.0 / 60.0 / MmPerPulse) THEN
+        SpdWork_Pps := RwAutoMaxSpdAct * 1000.0 / 60.0 / MmPerPulse;
     END_IF;
     SpdRef_Pps := MAX(SpdAct_Pps, SpdWork_Pps);
 

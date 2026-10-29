@@ -4,14 +4,15 @@
 
 ## Behaviour
 - Rewinder AUTO stop ON (`RwStopEnable`) in AUTO mode → the work speed set point is limited to **`RwAutoMaxSpd`** (new global, REAL, Retain, **500** m/min, Publish Only). 0 = no limit.
-- The work pot keeps its scale; above 500 it has no effect while rewinder AUTO is ON.
-- AUTO switched ON while running faster → the speed comes down to 500 (normal coarse ramp).
+- **Changes are taken over at standstill only** (like the pot ranges, v6n): switching rewinder AUTO on/off or changing `RwAutoMaxSpd` while running has no effect on the speed until the next stop. Meanwhile **`SpdMax_Pending`** is ON (HMI "NEW RANGE AT NEXT STOP" already uses it).
+- The work pot keeps its scale; above the limit it has no effect.
 - The HMI WORK SPEED display shows the limited value.
 - The slow-down length (AutoStop section 6) is computed with the limited speed.
 - Unwinder AUTO (meters), manual mode, jog: unchanged.
 
 ## 1. Variables
-Global Variables: paste `v6y_Globals_paste.txt`. Externals: type `RwAutoMaxSpd`.
+- Global Variables: paste `v6y_Globals_paste.txt` (`RwAutoMaxSpd`). Externals: type `RwAutoMaxSpd`.
+- Internals: paste `v6y_Locals_paste.txt` (`RwAutoLimAct`, `RwAutoMaxSpdAct`).
 
 ## 2. Motor_Manager rung 5: add at the end (after the JogSpd_SP clamp)
 ```
@@ -21,6 +22,19 @@ IF RwAutoMaxSpd > VelMax THEN
 ELSIF (RwAutoMaxSpd > REAL#0) AND (RwAutoMaxSpd < REAL#50) THEN
     RwAutoMaxSpd := REAL#50;
 END_IF;
+// taken over at standstill only
+IF NOT StartMotor_Cmd THEN
+    RwAutoLimAct := RwStopEnable AND (RwAutoMaxSpd > REAL#0);
+    RwAutoMaxSpdAct := RwAutoMaxSpd;
+END_IF;
+```
+
+## 2b. Motor_Manager rung 6: SpdMax_Pending (lines 19–20) becomes
+```
+SpdMax_Pending := (WorkSpd_Max <> WorkSpd_Max_Set)
+               OR (FinalSpd_Max <> FinalSpd_Max_Set)
+               OR (RwAutoLimAct <> (RwStopEnable AND (RwAutoMaxSpd > REAL#0)))
+               OR (RwAutoLimAct AND (RwAutoMaxSpdAct <> RwAutoMaxSpd));
 ```
 
 ## 3. Motor_Manager rung 7 ("Updating the set speed"): ManMode = FALSE branch, after the 2 lines
@@ -29,8 +43,8 @@ IF ManMode = FALSE THEN;
     Speed_Display := UINT_TO_REAL(Pot1_Mem) / Input_Ratio;
     LowSpd_Display := UINT_TO_REAL(Pot2_Mem) / Input_Ratio;
     // v6y: rewinder AUTO stop -> work speed limited
-    IF RwStopEnable AND (RwAutoMaxSpd > 0.0) AND (Speed_Display > RwAutoMaxSpd) THEN
-        Speed_Display := RwAutoMaxSpd;
+    IF RwAutoLimAct AND (Speed_Display > RwAutoMaxSpdAct) THEN
+        Speed_Display := RwAutoMaxSpdAct;
     END_IF;
 ELSE;
     ... (unchanged)
@@ -43,8 +57,8 @@ IF SoftStop THEN
 ELSIF SlowDown = FALSE THEN
     VelSet := UINT_TO_REAL(Pot1_Mem) / Input_Ratio;
     // v6y: rewinder AUTO stop -> work speed limited
-    IF RwStopEnable AND (RwAutoMaxSpd > 0.0) AND (VelSet > RwAutoMaxSpd) THEN
-        VelSet := RwAutoMaxSpd;
+    IF RwAutoLimAct AND (VelSet > RwAutoMaxSpdAct) THEN
+        VelSet := RwAutoMaxSpdAct;
     END_IF;
 ELSE
     VelSet := UINT_TO_REAL(Pot2_Mem) / Input_Ratio;
@@ -59,4 +73,4 @@ Replace the ST with `AutoStop_Control_v6y.st` (= v6x + 5 lines in section 6). (W
 Password page: input **REWINDER AUTO MAX SPEED [m/min]** → `RwAutoMaxSpd`, format ###, limits 0–800.
 
 ## Test
-Rewinder AUTO ON, work pot at max (> 500): speed = 500, WORK SPEED display = 500, "SLOW DOWN AT" consistent. AUTO OFF: back to the pot value.
+Machine stopped, rewinder AUTO ON, start with the work pot at max (> 500): speed = 500, display = 500. While running: AUTO OFF or `RwAutoMaxSpd` changed → speed unchanged, "NEW RANGE AT NEXT STOP" shown; after STOP + START the new setting applies.

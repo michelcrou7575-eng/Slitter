@@ -425,10 +425,11 @@ IF MmPerPulse > 0.0 THEN
         SpdFinal_Pps := LowSpd_Display * 1000.0 / 60.0 / MmPerPulse;
         SpdWork_Pps  := Speed_Display  * 1000.0 / 60.0 / MmPerPulse;
     END_IF;
-    (* v6y: rewinder AUTO stop -> work speed limited to RwAutoMaxSpd    *)
-    IF RwStopEnable AND (RwAutoMaxSpd > 0.0) AND NOT ManMode
-       AND (SpdWork_Pps > RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse) THEN
-        SpdWork_Pps := RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse;
+    (* v6y: rewinder AUTO stop -> work speed limited to RwAutoMaxSpdAct *)
+    (* (limit + value taken over only at standstill, Motor_Manager rung 5) *)
+    IF RwAutoLimAct AND NOT ManMode
+       AND (SpdWork_Pps > RwAutoMaxSpdAct * 1000.0 / 60.0 / MmPerPulse) THEN
+        SpdWork_Pps := RwAutoMaxSpdAct * 1000.0 / 60.0 / MmPerPulse;
     END_IF;
     SpdRef_Pps := MAX(SpdAct_Pps, SpdWork_Pps);
 
