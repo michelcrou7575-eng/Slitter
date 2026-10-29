@@ -66,3 +66,17 @@ steady counter now counts while `ABS(FFTarget - RampRef) <= FFTarget * 0.005 + 2
 
 Expected after V7a: about 2 s after reaching the speed, RwRatioD climbs to
 ≈ 2950–2960 within ~20 s and Velocity_M_min = VelSet ± 0.3 %.
+
+## V7b (10/29): JOG not working with V7
+Jog / slow button (`I_LowSpd_OS`, VelSet = JogSpd_SP 10 m/min) ran through the
+feed-forward: 10 m/min x WebRatio on a 1090 mm roll = InvRef ≈ 27 counts ≈ 0.4 Hz,
+too low to move the web, and RwRatioD does not adapt below 15 m/min.
+The old loop integrates until the web really moves, so jog goes back to it.
+
+Change (rung B, first line):
+```
+FFActive := FFEnable AND NOT ManMode AND NOT I_LowSpd_OS AND StartMotor_Cmd
+            AND ControlVoltage AND (WebRatio > 0.0) AND (Vel_Max_mms > 0.0);
+```
+Switch-over is bumpless both ways (the old loop starts from the last Vfd_SP_Modif,
+rung B starts RampRef from it). Jog uses the rung 14 ramps exactly as before V7.
