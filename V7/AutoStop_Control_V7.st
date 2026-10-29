@@ -9,6 +9,7 @@
            _Pls = encoder pulses (counts)   _Pps = pulses per second
            _Pps2 = pulses per second squared
 
+   V7 : (+ v6y: rewinder AUTO stop limits the work speed to RwAutoMaxSpd)
    V7 : PLC ramps in REAL web mm/s2 (Motor_Manager: DecelWeb / AccelWeb,
         ratio RwRatioD / diameter). Section 6: the slow-down length uses
         DecelWeb directly (known) + the trim tail; learning only as fallback.
@@ -423,6 +424,11 @@ IF MmPerPulse > 0.0 THEN
     ELSE
         SpdFinal_Pps := LowSpd_Display * 1000.0 / 60.0 / MmPerPulse;
         SpdWork_Pps  := Speed_Display  * 1000.0 / 60.0 / MmPerPulse;
+    END_IF;
+    (* v6y: rewinder AUTO stop -> work speed limited to RwAutoMaxSpd    *)
+    IF RwStopEnable AND (RwAutoMaxSpd > 0.0) AND NOT ManMode
+       AND (SpdWork_Pps > RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse) THEN
+        SpdWork_Pps := RwAutoMaxSpd * 1000.0 / 60.0 / MmPerPulse;
     END_IF;
     SpdRef_Pps := MAX(SpdAct_Pps, SpdWork_Pps);
 

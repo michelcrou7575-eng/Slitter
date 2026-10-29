@@ -34,6 +34,9 @@ Append `V7_MotorManager_rung5_clamps.st` at the end of rung 5 (after the `JogSpd
 `SpdDelta_Percent` 2–15, `AccelTrim`/`DecelTrim` 0.02–0.5, `AccelCoarse`/`DecelCoarse` 0.2–4, `DecelWeb`/`AccelWeb` 0 or 50–1000, `SoftStopDecel` ≤ 1500, **`RwMaxDiam` 300–1450 (mechanical limit, adjust if the real limit differs)**, `RwMaxSlowFallback` < `RwMaxDiam`.
 Also set the same limits on the HMI numeric inputs (EasyBuilder: Numeric → Limits), so a wrong entry is refused instead of being corrected silently.
 
+## 2c. Includes v6y
+V7 includes v6y (work speed limited to `RwAutoMaxSpd` when the rewinder AUTO stop is ON): apply the v6y variables and Motor_Manager rungs 5/7/8 too (see `v6y/v6y_Changes.md`).
+
 ## 3. AutoStop_Control
 Replace the ST with `AutoStop_Control_V7.st` (= v6x + section 6 change; uses `RwCoreDiameter`).
 
