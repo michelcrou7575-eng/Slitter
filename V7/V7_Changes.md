@@ -51,3 +51,18 @@ Trace: `Velocity_M_min`, `VelSet`, `InvRef`, `TaglMonoTRM.RampRef`, `TaglMonoTRM
 5. Soft stop from 450: straight decel ≈ `SoftStopDecel`.
 6. `FFEnable` OFF (machine stopped) → old behaviour; ON again → V7.
 If a speed error stays > 2 % at steady speed: check `RwRatioD` moves; if it sits at 1000/8000 → DT35 diameter calibration.
+
+## V7a (10/29, after the first V7 trace `Traces/GSM20261029150003_00001_V7.csv`)
+Result of the first test (roll ≈ 1080–1093 mm, 400 → 517 → 495 m/min, soft stop):
+- No hunting. RampRef/InvRef flat at target, accel exactly AccelWeb (≈ 12 m/min/s).
+- Steady error about −2 % (411 → 404, 518 → 507, 495 → 484) : RwRatioD 2900 is ~2 % low.
+- **Bug:** FFSteadyTicks never passed 8 -> RwRatioD never adapted. The pot (±0.2 m/min)
+  and RwDiam noise move FFTarget by ±2 counts each scan, more than the ±StepAcc
+  (0.4 count) "at target" window, so the counter reset all the time.
+
+Fix (rung B only, "Ramp generator" part): the ramp itself is unchanged, the
+steady counter now counts while `ABS(FFTarget - RampRef) <= FFTarget * 0.005 + 2.0`
+(within 0.5 %). Copy the new block from `V7_MotorManager_FF_rung.st`, no new variables.
+
+Expected after V7a: about 2 s after reaching the speed, RwRatioD climbs to
+≈ 2950–2960 within ~20 s and Velocity_M_min = VelSet ± 0.3 %.

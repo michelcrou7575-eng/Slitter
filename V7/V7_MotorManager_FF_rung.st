@@ -51,15 +51,19 @@ IF FFActive THEN
     // Ramp generator
     IF RampRef < FFTarget - StepAcc THEN
         RampRef := RampRef + StepAcc;
-        FFSteadyTicks := 0;
     ELSIF RampRef > FFTarget + StepDec THEN
         RampRef := RampRef - StepDec;
-        FFSteadyTicks := 0;
     ELSE
         RampRef := FFTarget;                             // at target
+    END_IF;
+    // V7a: "at target" = within 0.5 % of the target (the pot and RwDiam noise
+    // move FFTarget by a few counts every scan -> the counter never reached 500)
+    IF ABS(FFTarget - RampRef) <= FFTarget * 0.005 + 2.0 THEN
         IF FFSteadyTicks < 30000 THEN
             FFSteadyTicks := FFSteadyTicks + 1;
         END_IF;
+    ELSE
+        FFSteadyTicks := 0;
     END_IF;
 
     // Slow adaptation of RwRatioD on the relative speed error (2 s after the
