@@ -80,3 +80,11 @@ FFActive := FFEnable AND NOT ManMode AND NOT I_LowSpd_OS AND StartMotor_Cmd
 ```
 Switch-over is bumpless both ways (the old loop starts from the last Vfd_SP_Modif,
 rung B starts RampRef from it). Jog uses the rung 14 ramps exactly as before V7.
+
+Rung A, same idea (the web ramps of the FFEnable = FALSE fallback are not used in jog):
+```
+IF NOT FFEnable AND NOT I_LowSpd_OS AND StartMotor_Cmd AND (UnderSpeed OR OverSpeed)
+   AND (WebRatio > 0.0) THEN
+```
+With both lines, a jog runs exactly like v6y, whatever FFEnable is.
+Seen on 10/29 before V7b: jog with FF ON = no motor current (≈ 0.4 Hz), FF OFF = 35 A, erratic.
