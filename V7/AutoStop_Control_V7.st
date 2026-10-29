@@ -9,10 +9,12 @@
            _Pls = encoder pulses (counts)   _Pps = pulses per second
            _Pps2 = pulses per second squared
 
-   V7 : (+ v6y: rewinder AUTO stop limits the work speed to RwAutoMaxSpd)
    V7 : PLC ramps in REAL web mm/s2 (Motor_Manager: DecelWeb / AccelWeb,
         ratio RwRatioD / diameter). Section 6: the slow-down length uses
         DecelWeb directly (known) + the trim tail; learning only as fallback.
+   v6y: rewinder AUTO stop (RwStopEnable) limits the work speed to
+        RwAutoMaxSpd (500 m/min), taken over at standstill only; section 6
+        uses the limited speed.
    v6x: new parent roll on the unwinder -> GsmAsk (HMI popup "did you change
         the paper?"); GsmAskYes forgets the learned thickness.
    v6w: paper thickness window is LENGTH-based instead of 10 s, modulated by
