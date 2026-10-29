@@ -22,7 +22,7 @@ Base print 1028_2. In this order, F7 = 0 errors after each:
 
 ## Day 8: backups
 - Sysmac: **save the project (.smc2)**, Export the global variables, **Tools → Backup → Variables backup** (Retain values) to a file.
-- **SD-card backup of the controller** (Controller → SD Memory Card → backup) → full restore possible later **without** Sysmac Studio (NX1P2 SD backup / restore by DIP switch).
+- **SD-card backup of the controller** (Controller → SD Memory Card → backup) → a full copy of program + data on the card. Check in the NX1P2 manual (SD Memory Card backup / restore) how this unit restores it without Sysmac Studio.
 - SoMove: drive configuration .psx + export.
 - EasyBuilder: project .emtp/.cmtp + downloaded copy.
 - Copy everything to GitHub (except passwords).
