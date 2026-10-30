@@ -88,3 +88,12 @@ IF NOT FFEnable AND NOT I_LowSpd_OS AND StartMotor_Cmd AND (UnderSpeed OR OverSp
 ```
 With both lines, a jog runs exactly like v6y, whatever FFEnable is.
 Seen on 10/29 before V7b: jog with FF ON = no motor current (≈ 0.4 Hz), FF OFF = 35 A, erratic.
+
+## V7e (10/30): AutoStop slow-down model in ManMode
+AutoStop section 6, line 401: the "old loop with web ramps" branch also caught ManMode,
+where the drive ramps on its own (raw pots) -> the slow-down length used DecelWeb instead
+of the learned `RwSlowDecelLrn`. Fix (same as before V7 for ManMode):
+```
+    ELSIF (DecelWeb > 0.0) AND (WebRatio > 0.0) AND NOT ManMode THEN  (* V7e *)
+```
+AUTO with FFEnable ON / OFF is not changed.

@@ -398,7 +398,7 @@ IF MmPerPulse > 0.0 THEN
     ELSIF FFEnable AND (DecelWeb > 0.0) AND (WebRatio > 0.0) AND NOT ManMode THEN
         SlowDecel_Pps2 := DecelWeb / MmPerPulse;
         SlowOneRamp := TRUE;
-    ELSIF (DecelWeb > 0.0) AND (WebRatio > 0.0) THEN
+    ELSIF (DecelWeb > 0.0) AND (WebRatio > 0.0) AND NOT ManMode THEN  (* V7e *)
         SlowDecel_Pps2 := DecelWeb / MmPerPulse;
         SlowOneRamp := FALSE;
     ELSIF RwSlowDecelLrn > 0.0 THEN
