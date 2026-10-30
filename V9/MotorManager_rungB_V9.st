@@ -106,10 +106,18 @@ IF FFActive THEN
             FFJerk := StepDec * 0.004 / SCurveTime;
         END_IF;
         // rate allowed so that it can still fall to 0 at the target
+        // (no MIN(): Sysmac refuses MIN with a function result inside)
         IF FFTarget >= RampRef THEN
-            FFRateSet := MIN(StepAcc, SQRT(REAL#2.0 * FFJerk * (FFTarget - RampRef)));
+            FFRateSet := SQRT(REAL#2.0 * FFJerk * (FFTarget - RampRef));
+            IF FFRateSet > StepAcc THEN
+                FFRateSet := StepAcc;
+            END_IF;
         ELSE
-            FFRateSet := -MIN(StepDec, SQRT(REAL#2.0 * FFJerk * (RampRef - FFTarget)));
+            FFRateSet := SQRT(REAL#2.0 * FFJerk * (RampRef - FFTarget));
+            IF FFRateSet > StepDec THEN
+                FFRateSet := StepDec;
+            END_IF;
+            FFRateSet := -FFRateSet;
         END_IF;
         IF FFRateSet > FFRate + FFJerk THEN
             FFRate := FFRate + FFJerk;
