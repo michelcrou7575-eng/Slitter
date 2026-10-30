@@ -1,0 +1,5 @@
+UwSlowDiamCalc	REAL			False	False	V7c: speed-dependent unwinder slow-down diameter (mm)
+UwSlowDiamLatch	BOOL			False	False	V7c: unwinder diameter slow-down reached (frozen)
+FFRate	REAL			False	False	V7f: ramp rate (reference per 4 ms scan)
+FFRateSet	REAL			False	False	V7f: rate allowed to still stop at the target
+FFJerk	REAL			False	False	V7f: max rate change per scan
