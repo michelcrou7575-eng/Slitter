@@ -38,8 +38,12 @@ If V8 is already loaded, the steps marked **(V8)** are already done: skip them, 
 | 2c | 18 "Slow adaptation of RwRatioD…" (V7 rung B) | **replace all the code** | `MotorManager_rungB_V9.st` |
 | 2d | 11 "Read the current value of the encoder" + 12 "Speed calculation" | **delete both**, insert ONE ST rung (no contact) at their place | `MotorManager_rung11_12_speed_V9.st` |
 
-## 3. AutoStop_Control
-Replace all the ST with `AutoStop_Control_V9.st` (ends with `UwTeachUndo := FALSE; END_IF;`).
+## 3. AutoStop_Control (now 2 inline ST rungs — Sysmac max 1000 rows per inline ST)
+- **Rung 0:** replace all its ST with `AutoStop_Control_V9_part1_rung0.st` (475 lines, sections 1–5c,
+  ends with `RwSlowDecelLrn := 0.0; END_IF;`).
+- **Rung 1 (new):** insert a rung below rung 0 with an inline ST box (no contact) and paste
+  `AutoStop_Control_V9_part2_rung1.st` (521 lines, sections 6–14c, ends with `UwTeachUndo := FALSE; END_IF;`).
+Same variables, same order of execution (rung 0 then rung 1 every scan).
 
 ## 4. General (ladder edits + 1 new ST rung)
 | Step | Rung | Edit |

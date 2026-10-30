@@ -107,9 +107,9 @@ IF FFActive THEN
         END_IF;
         // rate allowed so that it can still fall to 0 at the target
         IF FFTarget >= RampRef THEN
-            FFRateSet := MIN(StepAcc, SQRT(2.0 * FFJerk * (FFTarget - RampRef)));
+            FFRateSet := MIN(StepAcc, SQRT(REAL#2.0 * FFJerk * (FFTarget - RampRef)));
         ELSE
-            FFRateSet := -MIN(StepDec, SQRT(2.0 * FFJerk * (RampRef - FFTarget)));
+            FFRateSet := -MIN(StepDec, SQRT(REAL#2.0 * FFJerk * (RampRef - FFTarget)));
         END_IF;
         IF FFRateSet > FFRate + FFJerk THEN
             FFRate := FFRate + FFJerk;
