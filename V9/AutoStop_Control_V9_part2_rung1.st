@@ -192,8 +192,8 @@ END_IF;
 (* a new roll (diameter 30 mm above the frozen point).                     *)
 IF UwSlowDiamAuto AND (RwMat_K > 0.0) AND (UwDiamStop > 0.0)
    AND (UwSlowLen_Pls > 0.0) THEN
-    UwSlowDiamCalc := SQRT(UwDiamStop * UwDiamStop
-                           + REAL#2.0 * RwMat_K * UwSlowLen_Pls);
+    SqrtArg := UwDiamStop * UwDiamStop + 2.0 * RwMat_K * UwSlowLen_Pls;
+    UwSlowDiamCalc := SQRT(SqrtArg);               (* same pattern as 6b *)
 ELSE
     UwSlowDiamCalc := UwSlowDown_Diam;
 END_IF;
