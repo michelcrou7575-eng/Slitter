@@ -106,14 +106,17 @@ IF FFActive THEN
             FFJerk := StepDec * 0.004 / SCurveTime;
         END_IF;
         // rate allowed so that it can still fall to 0 at the target
-        // (no MIN(): Sysmac refuses MIN with a function result inside)
+        // (no MIN(), argument in a REAL variable first: Sysmac data type rules,
+        //  same pattern as SqrtArg / SQRT(SqrtArg) in AutoStop)
         IF FFTarget >= RampRef THEN
-            FFRateSet := SQRT(REAL#2.0 * FFJerk * (FFTarget - RampRef));
+            FFSqrtArg := REAL#2.0 * FFJerk * (FFTarget - RampRef);
+            FFRateSet := SQRT(FFSqrtArg);
             IF FFRateSet > StepAcc THEN
                 FFRateSet := StepAcc;
             END_IF;
         ELSE
-            FFRateSet := SQRT(REAL#2.0 * FFJerk * (RampRef - FFTarget));
+            FFSqrtArg := REAL#2.0 * FFJerk * (RampRef - FFTarget);
+            FFRateSet := SQRT(FFSqrtArg);
             IF FFRateSet > StepDec THEN
                 FFRateSet := StepDec;
             END_IF;

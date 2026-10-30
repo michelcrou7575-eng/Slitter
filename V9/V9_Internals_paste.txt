@@ -3,6 +3,7 @@ UwSlowDiamLatch	BOOL			False	False	V7c: unwinder diameter slow-down reached (fro
 FFRate	REAL			False	False	V7f: ramp rate (reference per 4 ms scan)
 FFRateSet	REAL			False	False	V7f: rate allowed to still stop at the target
 FFJerk	REAL			False	False	V7f: max rate change per scan
+FFSqrtArg	REAL			False	False	V9: SQRT argument (REAL)
 SpdScanCnt	INT			False	False	V9: scan counter for the 100 ms speed window
 HornRun	BOOL			False	False	V9: slow-down / final speed running
 HornRunMem	BOOL			False	False	V9: edge memory
