@@ -14,12 +14,20 @@ FFActive := FFEnable AND NOT ManMode AND NOT I_LowSpd_OS AND StartMotor_Cmd
 
 IF NOT StartMotor_Cmd THEN
     RampRef := 0.0;
+    FFRate := 0.0;
     FFSteadyTicks := 0;
+END_IF;
+// V7f: S-curve time (s), 0 = off, max 2 s
+IF SCurveTime < 0.0 THEN
+    SCurveTime := 0.0;
+ELSIF SCurveTime > 2.0 THEN
+    SCurveTime := 2.0;
 END_IF;
 
 IF FFActive THEN
     IF NOT FFWasActive THEN
         RampRef := Vel_Max_mms - Vfd_SP_Modif;          // bumpless start / switch-over
+        FFRate := 0.0;
     END_IF;
 
     // Target reference (mm/s of the 0..10 V scale) for the set speed
@@ -51,12 +59,43 @@ IF FFActive THEN
     END_IF;
 
     // Ramp generator
-    IF RampRef < FFTarget - StepAcc THEN
-        RampRef := RampRef + StepAcc;
-    ELSIF RampRef > FFTarget + StepDec THEN
-        RampRef := RampRef - StepDec;
+    // V7f: S-curve. FFRate (reference per scan) changes at most FFJerk per scan,
+    // so the full ramp is reached after SCurveTime (s) and is rounded off the
+    // same way before the target -> the T-one / brake air can follow.
+    // SCurveTime = 0 -> plain linear ramp as V7a.
+    IF SCurveTime > 0.0 THEN
+        IF (FFRate > 0.0) OR ((FFRate = 0.0) AND (FFTarget > RampRef)) THEN
+            FFJerk := StepAcc * 0.004 / SCurveTime;
+        ELSE
+            FFJerk := StepDec * 0.004 / SCurveTime;
+        END_IF;
+        // rate allowed so that it can still fall to 0 at the target
+        IF FFTarget >= RampRef THEN
+            FFRateSet := MIN(StepAcc, SQRT(2.0 * FFJerk * (FFTarget - RampRef)));
+        ELSE
+            FFRateSet := -MIN(StepDec, SQRT(2.0 * FFJerk * (RampRef - FFTarget)));
+        END_IF;
+        IF FFRateSet > FFRate + FFJerk THEN
+            FFRate := FFRate + FFJerk;
+        ELSIF FFRateSet < FFRate - FFJerk THEN
+            FFRate := FFRate - FFJerk;
+        ELSE
+            FFRate := FFRateSet;
+        END_IF;
+        RampRef := RampRef + FFRate;
+        IF (ABS(FFTarget - RampRef) <= 3.0) AND (ABS(FFRate) <= 2.0 * FFJerk) THEN
+            RampRef := FFTarget;                         // at target (pot noise)
+            FFRate := 0.0;
+        END_IF;
     ELSE
-        RampRef := FFTarget;                             // at target
+        FFRate := 0.0;
+        IF RampRef < FFTarget - StepAcc THEN
+            RampRef := RampRef + StepAcc;
+        ELSIF RampRef > FFTarget + StepDec THEN
+            RampRef := RampRef - StepDec;
+        ELSE
+            RampRef := FFTarget;                         // at target
+        END_IF;
     END_IF;
     // V7a: "at target" = within 0.5 % of the target (the pot and RwDiam noise
     // move FFTarget by a few counts every scan -> the counter never reached 500)
@@ -92,3 +131,9 @@ IF FFActive THEN
     Vfd_SP_Modif := Vel_Max_mms - RampRef;               // rung 17 -> InvRef
 END_IF;
 FFWasActive := FFActive;
+
+// V7f: T-one decel signal (for a T-one "stop / boost" input, spare PLC output):
+// ON while the feed-forward ramps down (more than 1 % above the target, so the
+// slow drift of the target with the diameter does not pulse it) or soft stop.
+TOneDecel := (FFActive AND (RampRef - FFTarget > FFTarget * 0.01 + 5.0))
+             OR (SoftStop AND StartMotor_Cmd);

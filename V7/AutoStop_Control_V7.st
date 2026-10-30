@@ -472,6 +472,15 @@ IF MmPerPulse > 0.0 THEN
         END_IF;
     END_IF;
 
+    (* V7f: S-curve rounding: the slow-down ends SCurveTime later ->      *)
+    (*      extra length = (SpdRef - SpdFinal) / 2 x SCurveTime            *)
+    IF FFEnable AND NOT ManMode AND (RwSlowDecel <= 0.0) AND (DecelWeb > 0.0)
+       AND (WebRatio > 0.0) AND (SCurveTime > 0.0)
+       AND (SpdRef_Pps > SpdFinal_Pps) THEN
+        SlowLenBase_Pls := SlowLenBase_Pls
+                           + (SpdRef_Pps - SpdFinal_Pps) * 0.5 * SCurveTime;
+    END_IF;
+
     RwSlowLen_Pls := SlowLenBase_Pls + RwSlowMargin_m * 1000.0 / MmPerPulse;
 
     IF UwSlowMargin_m > 0.0 THEN
