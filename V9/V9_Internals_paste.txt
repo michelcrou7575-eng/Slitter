@@ -1,0 +1,41 @@
+UwSlowDiamCalc	REAL			False	False	V7c: speed-dependent unwinder slow-down diameter (mm)
+UwSlowDiamLatch	BOOL			False	False	V7c: unwinder diameter slow-down reached (frozen)
+FFRate	REAL			False	False	V7f: ramp rate (reference per 4 ms scan)
+FFRateSet	REAL			False	False	V7f: rate allowed to still stop at the target
+FFJerk	REAL			False	False	V7f: max rate change per scan
+SpdScanCnt	INT			False	False	V9: scan counter for the 100 ms speed window
+HornRun	BOOL			False	False	V9: slow-down / final speed running
+HornRunMem	BOOL			False	False	V9: edge memory
+HornStartMem	BOOL			False	False	V9: start edge memory
+HornTicks	INT			False	False	V9: scans since slow-down start
+HornCnt	INT			False	False	V9: scans in the beep period
+HornPer	INT			False	False	V9: beep period in scans
+HornStartScans	INT			False	False	V9: start beep in scans
+HornLenScans	INT			False	False	V9: short beep in scans
+HornSlowBeep	BOOL			False	False	V9: slow-down beep
+HornStopPend	BOOL			False	False	V9: stopped after a slow-down, waiting for standstill
+HornStopTicks	INT			False	False	V9: stop beep counter
+LongActive	BOOL			False	False	V9: long-baseline learning running
+LongValid	BOOL			False	False	V9: long baseline >= 20 mm growth, replaces the windows
+LongStartPos	DINT			False	False	V9: encoder at the start of the long baseline
+LongStartD	REAL			False	False	V9: rewinder diameter at the start (mm)
+LongGrow_mm	REAL			False	False	V9: growth since the start (mm)
+LongPls	REAL			False	False	V9: pulses since the start
+LongK	REAL			False	False	V9: K from the long baseline
+RevW	REAL			False	False	V9: encoder pulses summed in the current revolution
+RevDP	DINT			False	False	V9: encoder pulses this scan
+RevPrevPos	DINT			False	False	V9: encoder last scan
+RevSum	REAL			False	False	V9: sum of raw DT35 distance x pulses
+RevMin	REAL			False	False	V9: min raw distance in the revolution
+RevMax	REAL			False	False	V9: max raw distance in the revolution
+RwDiamRevOk	BOOL			False	False	V9: one full revolution averaged since the last fault
+UwEmptyTicks	INT			False	False	V9: unwinder empty time (100 ms ticks)
+UwFullTicks	INT			False	False	V9: new roll seen time (100 ms ticks)
+GsmArmed	BOOL			False	False	V9: roll was empty -> next new roll asks the GSM question
+T_JogStartBlk	TOF			False	False	V9: START blocked while JOG held + 2 s
+StartHeldBlk	BOOL			False	False	V9: START pressed during the block, wait for release
+StartPB_OK	BOOL			False	False	V9: START push-button accepted (replaces I_Start_PB in General 7/8/10)
+FFSoftMem	BOOL			False	False	V9: soft stop last scan (rung B)
+FFSlowAcc	BOOL			False	False	V9: gentle ramp-up after a cancelled soft stop
+FFStartEdge	BOOL			False	False	V9: START push-button edge (rung B)
+FFStartMem	BOOL			False	False	V9: START last scan (rung B)
