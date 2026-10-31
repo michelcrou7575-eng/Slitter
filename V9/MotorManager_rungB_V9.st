@@ -6,9 +6,9 @@
 // The measured speed only adapts RwRatioD slowly (~10 s), once at target.
 // It overwrites Vfd_SP_Modif after rung 16, so rung 16 has no effect in AUTO.
 // FFEnable = FALSE -> old loop (rung 16) exactly as before.
-// V7b: not in jog / slow button (I_LowSpd_OS): at 10 m/min the feed-forward gives
+// V7b: not in jog / slow button (I_Jog_PB): at 10 m/min the feed-forward gives
 // only ~0.4 Hz, too little to move the web -> the old loop (rung 16) runs the jog.
-FFActive := FFEnable AND NOT ManMode AND NOT I_LowSpd_OS AND StartMotor_Cmd
+FFActive := FFEnable AND NOT ManMode AND NOT I_Jog_PB AND StartMotor_Cmd
             AND ControlVoltage AND (WebRatio > 0.0) AND (Vel_Max_mms > 0.0);
 
 IF NOT StartMotor_Cmd THEN
@@ -157,7 +157,7 @@ IF FFActive THEN
 
     // Slow adaptation of RwRatioD on the relative speed error (2 s after the
     // target is reached, not at the 60 Hz limit, not during soft stop / jog)
-    IF (FFSteadyTicks >= 500) AND NOT SoftStop AND NOT I_LowSpd_OS
+    IF (FFSteadyTicks >= 500) AND NOT SoftStop AND NOT I_Jog_PB
        AND (VelSet > 15.0) AND (Velocity_M_min > 10.0) AND NOT RwSensFault
        AND (FFTarget < Vel_Max_mms * 0.98) THEN
         FFErr := (VelSet - Velocity_M_min) / VelSet;

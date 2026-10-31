@@ -1,0 +1,2 @@
+SonarAsk	BOOL	False		False	False	Publish Only	V10 HMI popup: sonar is OFF, turn it on? (HMI NO resets it)
+SonarAskYes	BOOL	False		False	False	Publish Only	V10 HMI popup YES: sonar ON (PLC resets it)

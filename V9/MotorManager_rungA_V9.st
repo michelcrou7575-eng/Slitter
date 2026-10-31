@@ -12,7 +12,7 @@ END_IF;
 // Fallback only (FFEnable = FALSE): old integrating loop (rung 16) with the coarse
 // ramps in real web mm/s2. With FFEnable = TRUE, rung B drives the reference.
 // V7b: never in jog / slow button -> jog keeps the rung 14 ramps exactly as v6y.
-IF NOT FFEnable AND NOT I_LowSpd_OS AND StartMotor_Cmd AND (UnderSpeed OR OverSpeed)
+IF NOT FFEnable AND NOT I_Jog_PB AND StartMotor_Cmd AND (UnderSpeed OR OverSpeed)
    AND (WebRatio > 0.0) THEN
     IF DecelWeb > 0.0 THEN
         Decel_Ramp := DecelWeb * 0.06 * WebRatio * Vel_Max_mms / 1000000.0;

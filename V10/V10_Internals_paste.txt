@@ -1,0 +1,3 @@
+SonarRunMem	BOOL			False	False	V10: motor running last scan (sonar popup)
+SonarInit	BOOL			False	False	V10: first scan done (sonar popup at power-up)
+JogRun	BOOL			False	False	V10: JOG really running (button, not a normal run, not a soft stop)

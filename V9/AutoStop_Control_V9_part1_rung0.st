@@ -343,11 +343,11 @@ END_IF;
 (* ---- 5. Learn real stop deceleration on every stop --------------------- *)
 (* v6d: a run with jog / manual / slow button uses the 2nd ramp (O_AccDec2) *)
 (*      -> its stop must not be learned. Latched for the whole run because  *)
-(*      I_LowSpd_OS is already released on the stop edge.                  *)
+(*      I_Jog_PB is already released on the stop edge.                  *)
 IF O_MotorStart AND NOT MotorRunMem THEN            (* start edge *)
     RunWasJog := FALSE;
 END_IF;
-IF O_MotorStart AND (ManMode OR I_LowSpd_OS) THEN
+IF O_MotorStart AND (ManMode OR I_Jog_PB) THEN
     RunWasJog := TRUE;
 END_IF;
 
@@ -417,7 +417,7 @@ END_IF;
 (* until the stop comes first. a = (v0^2 - v1^2) / (2 * distance).         *)
 (* Not learned in jog / manual / slow button (2nd ramp).                   *)
 IF SlowDown AND NOT SlowMem AND O_MotorStart
-   AND NOT ManMode AND NOT I_LowSpd_OS
+   AND NOT ManMode AND NOT I_Jog_PB
    AND (SpdAct_Pps > SpdFinal_Pps + SpdBand_Pps) THEN
     SlowMeasActive := TRUE;
     SlowStartPos := Encoder_Pos;
@@ -427,7 +427,7 @@ END_IF;
 SlowMem := SlowDown;
 
 IF SlowMeasActive THEN
-    IF NOT SlowDown OR ManMode OR I_LowSpd_OS THEN
+    IF NOT SlowDown OR ManMode OR I_Jog_PB THEN
         SlowMeasActive := FALSE;                    (* aborted *)
     ELSIF Tick AND ((SpdAct_Pps <= SpdFinal_Pps + 0.25 * SpdBand_Pps)
                     OR NOT O_MotorStart) THEN       (* final reached or stopped *)
