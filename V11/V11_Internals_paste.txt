@@ -1,0 +1,2 @@
+T_GuardStill	TON			False	False	V11: web stopped 0.5 s after the stop command
+GuardStopOK	BOOL			False	False	V11: stopped for real -> guard bypass allowed (Output 13)

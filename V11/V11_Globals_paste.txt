@@ -1,0 +1,2 @@
+UwShowStopDiam	BOOL	False		False	False	Publish Only	V11 HMI: show unwinder STOP AT diameter (slow-down reached, decel / final speed)
+UwStopCmdDiam	REAL	0.0		False	False	Publish Only	V11: unwinder stop command diameter (mm) so the web stops at UwDiamStop, HMI "STOP AT"
