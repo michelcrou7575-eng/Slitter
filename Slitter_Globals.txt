@@ -1,0 +1,211 @@
+HOST	NAME	DATATYPE	ADDRESS	COMMENT	TAGLINK	RW	POU
+	Pot1_Work_Velocity	INT	BuiltInIO://opt/#0/Ch1_Analog_Input_Value	Potentiometer 1 value - Work speed -	TRUE	RW	
+	InvRef	INT	BuiltInIO://opt/#0/Ch2_Analog_Output_Value	Inverter speed reference	TRUE	RW	
+	Fix10Vdc	INT	BuiltInIO://opt/#0/Ch1_Analog_Output_Value	Fixed 10 Vdc generator	TRUE	RW	
+	VelMax	REAL		Maximum speed	TRUE	RW	
+	VelSet	REAL		Set speed	TRUE	RW	
+	RwSlowDecelK	REAL		Learned slow-down decel per mm of rewinder diameter (mm/s2 per mm)	TRUE	RW	
+	RwMaxSlowFallback	REAL		Rewinder max: slow-down diameter while K not learned (mm)	TRUE	RW	
+	RwThickMin_mm	REAL		Learning: min plausible paper thickness (mm)	TRUE	RW	
+	RwThickMax_mm	REAL		Learning: max plausible paper thickness (mm)	TRUE	RW	
+	RwDecelMin_mm	REAL		Learning: min plausible stop decel (mm/s2)	TRUE	RW	
+	RwDecelMax_mm	REAL		Learning: max plausible stop decel (mm/s2)	TRUE	RW	
+	RwLearnFailMax	INT		Learning: failed windows before alarm (12 = 2 min)	TRUE	RW	
+	RwStopFailMax	INT		Learning: failed stops before alarm	TRUE	RW	
+	RwThick_mm	REAL		Learned paper thickness (mm)	TRUE	RW	
+	OverSpeed	BOOL		Speed too high	TRUE	RW	
+	WorkSpd_Max	REAL		Work speed pot full scale (m/min), 50..VelMax	TRUE	RW	
+	WorkSpd_Max_Set	REAL		HMI request: work pot full scale (m/min), applied only with motor stopped	TRUE	RW	
+	SonarAsk	BOOL		V10 HMI popup: sonar is OFF, turn it on? (HMI NO resets it)	TRUE	RW	
+	UwSlow_at_D_Req	BOOL		V7c: unwinder diameter slow-down follows the speed (FALSE = fixed UwSlowDown_Diam)	TRUE	RW	
+	UwSlowDiamAct	REAL		V7c: unwinder slows down at this diameter (mm), HMI display	TRUE	RW	
+	RwJogMaxDiam	REAL		V7d: jog blocked above this rewinder diameter (mm), 0 = no limit	TRUE	RW	
+	JogInhibit	BOOL		V7d: jog blocked (rewinder roll too big), HMI lamp	TRUE	RW	
+	SCurveTime	REAL		V7f: S-curve rounding of the AUTO ramps (s), 0 = off, max 2	TRUE	RW	
+	TOneDecel	BOOL		V7f: line decelerating (for a T-one stop/boost input)	TRUE	RW	
+	HornStartBeep_s	REAL		V9 horn: beep when the slow-down starts (s), 0 = off, max 5	TRUE	RW	
+	HornBeepLen_s	REAL		V9 horn: length of the short beeps during slow-down (s), 0 = off, max 2	TRUE	RW	
+	HornBeepPeriod	REAL		V9 horn: one short beep every ... s during slow-down, 0 = off, max 30	TRUE	RW	
+	HornStopBeep_s	REAL		V9 horn: beep when stopped after a slow-down (s), 0 = off, max 10	TRUE	RW	
+	HornTest	BOOL		V9 horn: HMI test button (momentary), machine stopped only	TRUE	RW	
+	RwLockDiam	REAL		V9: paper thickness LOCKED at this rewinder diameter (mm), 0 = never lock	TRUE	RW	
+	RwLockMinGrow_mm	REAL		V9: min diameter growth since the start of learning before locking (mm)	TRUE	RW	
+	RwMatLocked	BOOL		V9: paper thickness locked (HMI lamp), NEW PAPER / GSM YES unlocks	TRUE	RW	
+	LongThick_mm	REAL		V9: thickness from the long baseline (mm), HMI display	TRUE	RW	
+	RwDiamRev	REAL		V9: rewinder diameter averaged over one revolution (mm)	TRUE	RW	
+	RwWave_mm	REAL		V9: diameter wave peak-peak in the last revolution (mm), HMI	TRUE	RW	
+	UwStopLenShow	BOOL		V9 HMI: show unwinder STOP LENGTH (AUTO STOP UNWINDER active)	TRUE	RW	
+	UwSlowDiamShow	BOOL		V9 HMI: show unwinder SLOW AT diameter (normal operation, sonar ON)	TRUE	RW	
+	SoftCancelAccel	REAL		V9: then ramp up at this web accel (mm/s2), 0 = AccelWeb	TRUE	RW	
+	RwMatReset	BOOL		HMI NEW PAPER: forget the learned paper thickness RwMat_K (PLC resets it)	TRUE	RW	
+	FinalSpd_Max_Set	REAL		HMI request: final pot full scale (m/min), applied only with motor stopped	TRUE	RW	
+	FinalSpd_Max	REAL		Final speed pot full scale (m/min), 5..WorkSpd_Max	TRUE	RW	
+	UnderSpeed	BOOL		Speed too low	TRUE	RW	
+	RwLearnReset	BOOL		HMI / Watch: clear learned decels RwStopDecelK, RwStopDecel, RwSlowDecelK (PLC resets it)	TRUE	RW	
+	RwCoreDiameter	REAL		Rewinder core outside diameter for TEACH CORE (mm)	TRUE	RW	
+	RwTeachCore	BOOL		HMI: TEACH CORE request (PLC resets it)	TRUE	RW	
+	RwTeachState	INT		TEACH CORE: 0 idle 1 teaching 2 done 3 refused	TRUE	RW	
+	SpdDelta_Percent	REAL		Speed difference percentage	TRUE	RW	
+	Encoder_Pos	DINT	IOBus://unit#3/Ch1 Encoder Present Position	Encoder counter	TRUE	RW	
+	UwTeachState	INT		Unwinder TEACH CORE: 0 idle 1 teaching 2 done 3 refused	TRUE	RW	
+	PulseRate	UDINT	IOBus://unit#3/Ch1 Pulse Rate	Pulses per 100 ms	TRUE	RW	
+	Encoder_On	BOOL	IOBus://unit#3/Ch1 Encoder Counter Operation Command/Ch1 Counter Enable	Encoder enable	TRUE	RW	
+	Encoder_Reset	BOOL	IOBus://unit#3/Ch1 Encoder Counter Operation Command/Ch1 Internal Reset Execution	Encoder reset	TRUE	RW	
+	HMI_Screen	DINT[0..1]		HMI panel Screen	TRUE	RW	
+	Velocity_M_min	REAL		Speed in m/min	TRUE	RW	
+	Current_Metre	REAL		Current metres	TRUE	RW	
+	I_RsetCnt	BOOL		Metre counter reset button	TRUE	RW	
+	Speed_Display	REAL		Set speed (displayed)	TRUE	RW	
+	I_ControlVoltage	BOOL	BuiltInIO://cpu/#0/Input_Bit_00	Auxiliaries ON	TRUE	RW	
+	I_Start_PB	BOOL	BuiltInIO://cpu/#0/Input_Bit_01	Start button	TRUE	RW	
+	I_Stop_PB	BOOL	BuiltInIO://cpu/#0/Input_Bit_02	Stop button	TRUE	RW	
+	I_Motor_Thermal	BOOL	BuiltInIO://cpu/#0/Input_Bit_03	Motor thermal switch	TRUE	RW	
+	I_Prot_ByPass	BOOL	BuiltInIO://cpu/#0/Input_Bit_04	Guards-bypassed selector switch - Under Panel	TRUE	RW	
+	I_Hub_Position	BOOL	BuiltInIO://cpu/#0/Input_Bit_05	Hub/chuck in extraction position	TRUE	RW	
+	I_FrontGuard_Closed	BOOL	BuiltInIO://cpu/#0/Input_Bit_06	Front guard closed	TRUE	RW	
+	I_Jog_PB	BOOL	BuiltInIO://cpu/#0/Input_Bit_07	Jog Push button	TRUE	RW	
+	I_VFD_Alarm	BOOL	BuiltInIO://cpu/#0/Input_Bit_08	Inverter in alarm	TRUE	RW	
+	I_SafeGuard_Closed	BOOL		Side doors closed	TRUE	RW	
+	I_OverRider_PH	BOOL	BuiltInIO://cpu/#0/Input_Bit_13	Roll diameter photocell	TRUE	RW	
+	I_OR_Position_Sens	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN01 (Pin 1.1)_6000_01	OverRider position sens	TRUE	RW	
+	I_OR_Pressure_Sens	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN02 (Pin 2.1)_6000_02	OverRider pressure switch	TRUE	RW	
+	I_OR_Auto_OS	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN03 (Pin 1.2)_6000_03	OverRider in automatic	TRUE	RW	
+	I_OR_Cont_OS	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN04 (Pin 2.2)_6000_04	OverRider in continuous	TRUE	RW	
+	O_MotorStart	BOOL	BuiltInIO://cpu/#0/Output_Bit_00	Motor start	TRUE	RW	
+	I_FanTemp_Ok	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN06 (Pin 2.3)_6000_06	Motor (fan) thermal OK	TRUE	RW	
+	O_Alarm_Array	BOOL	ECAT://node#[1,1]/IB IL 24 DO 8/HD-ECO Output_OUT01 (Pin 1.1)_7000_01	Alarm lamp	TRUE	RW	
+	O_Prot_ByPass_Lamp	BOOL		Guards bypassed lamp	TRUE	RW	
+	O_Motor_Lamp	BOOL	BuiltInIO://cpu/#0/Output_Bit_01	Motor ON lamp	TRUE	RW	
+	O_RwUnload	BOOL	ECAT://node#[1,1]/IB IL 24 DO 8/HD-ECO Output_OUT03 (Pin 1.2)_7000_03	Unloaders enable - opening	TRUE	RW	
+	O_FrontGuard_ByPass	BOOL	ECAT://node#[1,1]/IB IL 24 DO 8/HD-ECO Output_OUT04 (Pin 2.2)_7000_04	Front guard bypass	TRUE	RW	
+	O_Brake	BOOL	BuiltInIO://cpu/#0/Output_Bit_02	Brake command	TRUE	RW	
+	O_OR_Auto_Lamp	BOOL	BuiltInIO://cpu/#0/Output_Bit_06	OverRider auto/continuous lamp	TRUE	RW	
+	O_OverRider_Up	BOOL	BuiltInIO://cpu/#0/Output_Bit_09	Raise OverRider ~10mm Over Rewinder roll	TRUE	RW	
+	O_OverRider_Hold	BOOL	BuiltInIO://cpu/#0/Output_Bit_04	OverRider Lock 	TRUE	RW	
+	O_CoolingFan	BOOL	BuiltInIO://cpu/#0/Output_Bit_03	Brake and motor fans	TRUE	RW	
+	Fan_Timeout	REAL		Fans stop timeout [min]	TRUE	RW	
+	OverRider_TimeOFF	REAL		OverRider photocell OFF timeout (panel)	TRUE	RW	
+	OverRider_TimeON	REAL		OverRider photocell ON timeout (panel)	TRUE	RW	
+	AlarmOn	BOOL		Alarm active	TRUE	RW	
+	BuzzerOn	BOOL		Panel buzzer command	TRUE	RW	
+	Msg	INT		Message	TRUE	RW	
+	Index_B	INT		Alarm index	TRUE	RW	
+	MotStop	BOOL		Motor stopped	TRUE	RW	
+	Clock1s	BOOL		1 s clock	TRUE	RW	
+	ManMode	BOOL		Manual mode	TRUE	RW	
+	Counter_Reset	BOOL		Counter reset from panel	TRUE	RW	
+	I_FrontGuard_Open	BOOL	BuiltInIO://cpu/#0/Input_Bit_09	Front guard open	TRUE	RW	
+	RwUnload_Enable	BOOL	BuiltInIO://cpu/#0/Output_Bit_07	Unloaders enable - closing	TRUE	RW	
+	JogSpd_SP	REAL		Speed in manual	TRUE	RW	
+	O_AccDec2	BOOL	BuiltInIO://cpu/#0/Output_Bit_05	Second acc/dec ramp	TRUE	RW	
+	AccelTrim	REAL		Acceleration coefficient in run	TRUE	RW	
+	DecelTrim	REAL		Deceleration coefficient in run	TRUE	RW	
+	DecelCoarse	REAL		Acceleration coefficient at start (orig. comment; name suggests decel)	TRUE	RW	
+	AccelCoarse	REAL		Acceleration coefficient at start (orig. comment; name suggests accel)	TRUE	RW	
+	UwStopDiamShow	BOOL		V11 HMI: show unwinder STOP AT diameter (slow-down reached, decel / final speed)	TRUE	RW	
+	O_AcousticSignal	BOOL	BuiltInIO://cpu/#0/Output_Bit_08	Horn / Acoustic signal	TRUE	RW	
+	Pot2_Slow_Velocity	INT	BuiltInIO://opt/#0/Ch2_Analog_Input_Value	Potentiometer 2 value - Final speed -	TRUE	RW	
+	I_AutoStop_OS	BOOL	BuiltInIO://cpu/#0/Input_Bit_10	Stop on metre counter	TRUE	RW	
+	I_RollEnd_SlowDown	BOOL	BuiltInIO://cpu/#0/Input_Bit_11	Slow down at end of roll	TRUE	RW	
+	I_WebBreak_Monitor	BOOL	BuiltInIO://cpu/#0/Input_Bit_12	Paper break monitoring ON	TRUE	RW	
+	I_Vacuum_OK	BOOL	IOBus://unit#3/Ch1 Reset/External Input Status/Ch1 External Input 0 Status	Extractor fan thermal OK	TRUE	RW	
+	I_SlowSens_PH	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN05 (Pin 1.3)_6000_05	Slow-down photocell	TRUE	RW	
+	I_WebBreak_PH	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN07 (Pin 1.4)_6000_07	Paper break photocell	TRUE	RW	
+	UwStop_at_M_Val	REAL		Unwinder Stop at metres	TRUE	RW	
+	UwSlowMargin_m	REAL		Unwinder Slow-down metres	TRUE	RW	
+	LowSpd_Display	REAL		Slow-down speed (displayed)	TRUE	RW	
+	RwMaxDiam	REAL		Rewinder max diameter protection (mm)	TRUE	RW	
+	RwMaxStop	BOOL		Rewinder max diameter STOP (latched)	TRUE	RW	
+	Encoder_Pulse	INT		Encoder pulses/Rotation	TRUE	RW	
+	RwSlowDecelLrn	REAL		Learned real slow-down decel (mm/s2) - 0 = not learned	TRUE	RW	
+	CountReset_Req	BOOL		Counter reset requested	TRUE	RW	
+	Psw	INT		Password	TRUE	RW	
+	Language	DINT		Language	TRUE	RW	
+	I_RsetAlarm	BOOL	ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN08 (Pin 2.4)_6000_08	Alarm reset	TRUE	RW	
+	EncoderWheel_Diam	REAL		Encoder wheel diameter	TRUE	RW	
+	AlarmCodeSV	BOOL[0..32]		Panel alarms	TRUE	RW	
+	SafeGuard_ByPass	BOOL		Guards bypassed	TRUE	RW	
+	FrontGuard_Closed	BOOL		Front guard closed	TRUE	RW	
+	SoftStop	BOOL		Soft stop in progress (HMI)	TRUE	RW	
+	SoftStopEnable	BOOL		STOP button = soft stop (False = immediate as before)	TRUE	RW	
+	SoftStopEndSpd	REAL		Soft stop: run command drops below this speed (m/min)	TRUE	RW	
+	UwDiam_Measure	REAL		Measured distance	TRUE	RW	
+	UwCoreDiameter	REAL		Core Outside diameter [mm]	TRUE	RW	
+	Core_Measure	BOOL		Stored core value	TRUE	RW	
+	UwCoreDistance	REAL		Sonar distance to empty core. [mm]	TRUE	RW	
+	AI_Diam_Unwinder	INT	IOBus://unit#2/Ch1 Analog Input Value	Analog value - UnWinder Diameter	TRUE	RW	
+	Measure_ON	BOOL		Measurement enabled	TRUE	RW	
+	UwDiam_Act	REAL		Measured roll diameter	TRUE	RW	
+	UwSlow_at_D_Val	REAL		Unwinder Slow-down diameter [mm]	TRUE	RW	
+	UwStopDiam_Limit	REAL		Stop diameter	TRUE	RW	
+	Alarm_Reset	BOOL		Alarm reset from panel	TRUE	RW	
+	Psw22	BOOL		Password 22	TRUE	RW	
+	Psw44	BOOL		Password 44	TRUE	RW	
+	I_Roll_OK	BOOL		Roll OK / Broken Holder Joint	TRUE	RW	
+	I_RollEnd_PH	BOOL		End-of-roll photocell	TRUE	RW	
+	AI_Diam_Rewinder	INT	IOBus://unit#2/Ch2 Analog Input Value	Analog value - ReWinder Diameter	TRUE	RW	
+	RwStopEnable	BOOL		Rewinder diameter stop enabled	TRUE	RW	
+	RwTargetDiam	REAL		Rewinder final diameter (mm)	TRUE	RW	
+	RwUseSlow	BOOL		Slow down before target	TRUE	RW	
+	RwSlowMargin_m	REAL		Rewinder Metres at slow speed before stop	TRUE	RW	
+	RwSlowDecel	REAL		Rewinder Slow-down decel mm/s2 - 0 = auto from DecStart	TRUE	RW	
+	RwResetHyst	REAL		Reset requests below target - this [mm]	TRUE	RW	
+	RwDist0V	REAL		DT35 distance at 0 V (mm)	TRUE	RW	
+	RwDist10V	REAL		DT35 distance at 10 V (mm)	TRUE	RW	
+	RwRawMin	INT		Raw below = sensor fault	TRUE	RW	
+	RwRawMax	INT		Raw above = sensor fault	TRUE	RW	
+	RwStopOnFault	BOOL		Stop on sensor fault	TRUE	RW	
+	RwAxisDist	REAL		Sensor to shaft centre (mm) - teach	TRUE	RW	
+	RwFilter_K	REAL		Distance filter per 100 ms (0..1)	TRUE	RW	
+	RwMinPulses	DINT		Min pulses in window to learn	TRUE	RW	
+	RwLearn_K	REAL		Material factor filter weight	TRUE	RW	
+	RwMat_K	REAL		Learned material factor	TRUE	RW	
+	RwLearnStop	BOOL		Learn stop decel on every stop	TRUE	RW	
+	RwMinLearnSpd	REAL		Min speed to learn a stop (m/min)	TRUE	RW	
+	RwStopDecel	REAL		Learned stop decel (pulses/s2)	TRUE	RW	
+	RwTreact	REAL		Stop reaction time (s)	TRUE	RW	
+	RwTstopDef	REAL		Stop time until decel learned (s)	TRUE	RW	
+	RwTrim	REAL		Stop length trim (>1 = earlier)	TRUE	RW	
+	RwDist	REAL		Filtered distance (mm)	TRUE	RW	
+	RwDiam	REAL		Rewinder diameter (mm)	TRUE	RW	
+	RwSpeed	REAL		Line speed from encoder (m/min)	TRUE	RW	
+	RwRemain_m	REAL		Metres to target diameter	TRUE	RW	
+	RwStopLen_m	REAL		Stopping length now (m)	TRUE	RW	
+	RwSlowLen_m	REAL		Rewinder Slow-down length [m]	TRUE	RW	
+	RwStop_at_D_Req	BOOL		Rewinder diameter STOP request	TRUE	RW	
+	RwSlow_at_D_Req	BOOL		Rewinder diameter SLOW request	TRUE	RW	
+	RwSensFault	BOOL		Rewinder DT35 sensor fault	TRUE	RW	
+	UwAutoStopEnable	BOOL		Unwnder Auto Stop - Enable	TRUE	RW	
+	SlowAtDisp	REAL		HMI: slow-down starts at (m or mm, see SlowAtMode)	TRUE	RW	
+	SlowAtMode	INT		HMI: 0=none 1=unwinder [m] 2=rewinder [mm]	TRUE	RW	
+	SlowAtShow	BOOL		HMI: show slow-down display	TRUE	RW	
+	UwSlow_at_M_Val	REAL		Unwinder: slow-down starts at [m]	TRUE	RW	
+	UwSlow_at_M_Req	BOOL		Unwinder metre slow-down request (latched)	TRUE	RW	
+	RwSlow_at_D_Val	REAL		Rewinder slow-down starts at diameter [mm]	TRUE	RW	
+	RwStop_at_D_Val	REAL		Rewinder: stop command at diameter (mm)	TRUE	RW	
+	RwMaxSlow	BOOL		Rewinder max diameter SLOW (latched)	TRUE	RW	
+	UwEmptyHyst	REAL		Unwinder Empty Hysteresis	TRUE	RW	
+	GSM_Learned_OK	BOOL		Paper [Grams / Square Meter]  FALSE until GSM learned	TRUE	RW	
+	RwMaxSlowAtDiam	REAL		Rewinder max: slow-down starts at diameter (mm)	TRUE	RW	
+	RwStopDecelK	REAL		Learned stop decel per mm of rewinder diameter (mm/s2 per mm)	TRUE	RW	
+	SoftStopDecel	REAL		Soft stop decel (mm/s2), 0 = DecelCoarse	TRUE	RW	
+	SpdMax_Pending	BOOL		New pot range waiting for the motor to stop	TRUE	RW	
+	RwAxisDist_Prev	REAL		Rewinder: RwAxisDist before the last TEACH (for UNDO)	TRUE	RW	
+	UwCoreDist_Prev	REAL		Unwinder: UwCoreDistance before the last TEACH (for UNDO)	TRUE	RW	
+	RwTeachUndo	BOOL		HMI: UNDO rewinder TEACH (PLC resets it)	TRUE	RW	
+	UwTeachUndo	BOOL		HMI: UNDO unwinder TEACH (PLC resets it)	TRUE	RW	
+	Psw33	BOOL		Password 33	TRUE	RW	
+	RwMatChangePct	REAL		Paper change detection: window deviation (%), 2 windows in a row = new paper, 0 = off	TRUE	RW	
+	RwSlowFallbackMm	REAL		Rewinder: slow-down this many mm before the target while the paper thickness is not learned (0 = off)	TRUE	RW	
+	RwAutoMaxSpd	REAL		Rewinder AUTO stop ON: maximum work speed (m/min), 0 = no limit	TRUE	RW	
+	RwWinLen_m	REAL		Paper thickness learning: MAX window length (m of paper)	TRUE	RW	
+	RwWinGrow_mm	REAL		Paper thickness learning: window = this diameter growth (mm), 4 m .. RwWinLen_m	TRUE	RW	
+	GsmAsk	BOOL		HMI popup: new parent roll, did you change the paper? (HMI NO resets it)	TRUE	RW	
+	GsmAskYes	BOOL		HMI popup YES: forget the learned thickness (PLC resets it)	TRUE	RW	
+	DecelWeb	REAL		V7: AUTO decel ramp, real web mm/s2 (0 = DecelCoarse)	TRUE	RW	
+	AccelWeb	REAL		AUTO accel ramp, real web mm/s2 (0 = AccelCoarse)	TRUE	RW	
+	RwRatioD	REAL		V7: drive counts per m/min x rewinder diameter (mm), adapted while running	TRUE	RW	
+	FFEnable	BOOL		V7: feed-forward speed loop ON (FALSE = old loop of rung 16)	TRUE	RW	
+	SpdHold	BOOL		V9: speed held after START during a soft stop, START again = ramp up (HMI lamp)	TRUE	RW	
+	SonarAskYes	BOOL		V10 HMI popup YES: sonar ON (PLC resets it)	TRUE	RW	
+	UwStop_at_D_Val	REAL		V11: unwinder stop command diameter (mm) so the web stops at UwDiamStop, HMI "STOP AT"	TRUE	RW	
