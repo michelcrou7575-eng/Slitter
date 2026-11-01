@@ -1,0 +1,2 @@
+FinalStopDecel	REAL	500.0		True	False	Publish Only	V12: end-of-roll stop ramp, web decel (mm/s2), 0 = drive DEC ramp as before, 50..2000
+FinalStopRamp	BOOL	False		False	False	Publish Only	V12: end-of-roll stop ramp running (HMI lamp)

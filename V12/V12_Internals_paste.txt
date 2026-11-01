@@ -1,0 +1,4 @@
+EndStopReq	BOOL			False	False	V12: end-of-roll stop requested (AutoStopCmd or unwinder diameter)
+EndRampOK	BOOL			False	False	V12: end-of-roll ramp usable (FinalStopDecel, FF active, running)
+EndRampHard	BOOL			False	False	V12: safety net during the ramp -> immediate stop
+EndStopNow	BOOL			False	False	V12: immediate end-of-roll stop (Motor_Manager rung 4)
