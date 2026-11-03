@@ -19,7 +19,7 @@ The relays are **not latched**: they follow the tension. No hysteresis given →
 
 ## 2. Wiring
 - T-one **pin 15** ← +24 V (same 24 V supply as the Inline DI 8 module)
-- T-one **pin 16** → Inline **IB IL 24 DI 8/HD-ECO, IN05, pin 1.3** (was the unused "slow-down photocell")
+- T-one **pin 16** → Inline **IB IL 24 DI 8/HD-ECO, IN05, pin 1.3** (was the "slow-down photocell", Alarms rung 18)
 - Dry relay contact (Alarm 0 = 15-16, Alarm 1 = 17-18 spare).
 - Check first that nothing else is wired to pin 1.3.
 
