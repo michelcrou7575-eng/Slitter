@@ -25,7 +25,7 @@ The relays are **not latched**: they follow the tension. No hysteresis given →
 
 ## 3. Variables
 - **I/O Map:** rename `I_SlowSens_PH` → **`I_T_one_TensionOK`** (same `_IN05 (Pin 1.3)` mapping),
-  comment "T-one Alarm 0 (15-16): tension established". Cross Reference before: no rung uses it.
+  comment "T-one Alarm 0 (15-16): tension established". It was used in Alarms rung 18 (`Alarm_Array[13]`), see 4c.
 - **Global Variables:** paste `TensionOK_Globals_paste.txt` lines 2–6 (line 1 = the renamed input, for reference).
   Set Network Publish = **Publish Only**. `TensCheckEnable`, `TensWaitSpd` are **Retain**.
 - **TaglMonoTRM Externals:** add `I_T_one_TensionOK`, `TensCheckEnable`, `TensWaitSpd`, `TensionOK`, `TensWait`, `TensLostWarn`.
@@ -36,7 +36,7 @@ The relays are **not latched**: they follow the tension. No hysteresis given →
 |---|---|---|---|
 | 4a | General, **new ST rung (no contact) directly below rung 7** (JogRun / GuardStopOK) | paste | `General_TensionOK.st` |
 | 4b | Motor_Manager rung B "V7: feed-forward speed loop", after the `FFTarget` clamp, before `IF SpdHold THEN` | insert 3 lines | `MotorManager_rungB_TensWait_insert.st` |
-| 4c | Alarms rung 0 (later) | `TensLostWarn` on a free alarm index, add the index to the warning `CASE` | — (index to choose) |
+| 4c | Alarms rung 18 "Web Tension Monitor" (was slow-down photocell) | contact `I_T_one_TensionOK` (NO) → **`TensLostWarn` (NO)**, coil `Alarm_Array[13]` stays (13 = already a warning: 1 s beep, no stop) | — |
 
 Build → 0 errors.
 
@@ -47,6 +47,7 @@ Build → 0 errors.
 | Settings | Numeric "WAIT TENSION SPEED (m/min)" | `TensWaitSpd` | ###, 5–50 |
 | Main | Lamp "WAITING FOR TENSION" | `TensWait` | |
 | Main / I/O | Lamp "T-ONE TENSION OK" | `I_T_one_TensionOK` | |
+| Alarm list | Text of alarm 13 | "Web tension lost (T-one)" | |
 
 ## 6. Tests
 1. `TensCheckEnable` OFF: start as before.
