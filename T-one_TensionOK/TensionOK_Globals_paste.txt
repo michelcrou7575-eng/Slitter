@@ -1,0 +1,6 @@
+I_T_one_TensionOK	BOOL		ECAT://node#[1,0]/IB IL 24 DI 8/HD-ECO Input-_IN05 (Pin 1.3)_6000_05	False	False	Publish Only	T-one Alarm 0 (15-16): tension established (replaces I_SlowSens_PH)
+TensCheckEnable	BOOL	False		True	False	Publish Only	Tension check ON (HMI switch); OFF = start as before
+TensWaitSpd	REAL	15.0		True	False	Publish Only	Speed held after START until tension established (m/min)
+TensionOK	BOOL	False		False	False	Publish Only	Tension established (debounced T-one Alarm 0)
+TensWait	BOOL	False		False	False	Publish Only	Waiting for tension (speed held at TensWaitSpd, HMI lamp)
+TensLostWarn	BOOL	False		False	False	Publish Only	Tension lost while running (warning)

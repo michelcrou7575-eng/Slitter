@@ -1,0 +1,3 @@
+TensSeen	BOOL	False	False	False	Tension reached once since START
+T_TensOn	TON		False	False	Tension ON debounce 0.5 s
+T_TensOff	TON		False	False	Tension OFF debounce 2 s
