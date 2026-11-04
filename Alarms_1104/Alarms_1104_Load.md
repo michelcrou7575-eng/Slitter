@@ -3,7 +3,7 @@
 | Index | Type | Text (HMI alarm list) | Condition |
 |---|---|---|---|
 | **17** | ALARM (buzzer, latched) | "Unwinder diameter sensor fault" | `AI_Diam_Unwinder` < `UwRawMin` (10) or > `UwRawMax` (3990) for 1 s, with `Measure_ON` and (unwinder AutoStop ON or motor running). RESET once the sensor is OK. |
-| **21** | WARNING (1 s beep) | "AutoStop: paper thickness not learned" | Running, AutoStop ON (unwinder or rewinder), `RwMat_K` = 0, rewinder Ø > 300 mm. Not latched. |
+| **21** | WARNING (1 s beep) | "Paper thickness not learned" | `Thickness_Fault`: running, `RwMat_K` = 0, rewinder Ø > 300 mm (any mode: learning always runs, UNWINDER AUTO-SLOW uses it). Not latched. |
 
 ## Load
 1. **Global Variables:** paste `Alarms_1104_Globals_paste.txt` (Publish Only; `UwRawMin` / `UwRawMax` Retain).
@@ -21,7 +21,7 @@
   buzzer. Fix (restore `UwRawMax` 3990) → RESET clears it.
 - Watch the live `AI_Diam_Unwinder` at the empty core and the full roll first: both must stay inside 10..3990.
   If the UC2000 holds its last value on lost echo (instead of going to 0 / 10 V), alarm 17 will not see it.
-- NEW PAPER, AutoStop ON, run past 300 mm before `RwMat_K` is learned → warning 21 (1 s beep, yellow bar).
+- NEW PAPER, run past 300 mm before `RwMat_K` is learned → warning 21 (1 s beep, yellow bar).
 
 ## Still open (from the 11/04 alarm review)
 - Rungs 16 and 21 both write `Alarm_Array[14]` and are always FALSE → can be deleted (frees index 14).

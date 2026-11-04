@@ -13,9 +13,10 @@ ELSIF NOT UwSensFault AND (I_RsetAlarm OR Alarm_Reset) THEN
     Alarm_Array[17] := FALSE;
 END_IF;
 
-// ---- Alarm 21 (WARNING): AutoStop ON but paper thickness not learned ----
-// RwMat_K = 0 -> diameter / stop-length targets use the fixed fallback.
+// ---- Alarm 21 (WARNING): paper thickness not learned ----
+// RwMat_K = 0 -> unwinder diameter slow-down (UNWINDER AUTO-SLOW), stop lengths and
+// diameter targets use the fixed fallback. Learning always runs, so no AutoStop condition.
 // Only above 300 mm rewinder diameter (learning needs ~20 mm growth after NEW PAPER),
 // so it does not beep at every new roll. Not latched.
-Alarm_Array[21] := ControlVoltage AND StartMotor_Cmd AND (UwAutoStopEnable OR RwStopEnable)
-                   AND (RwMat_K <= 0.0) AND (RwDiam > 300.0);
+Thickness_Fault := ControlVoltage AND StartMotor_Cmd AND (RwMat_K <= 0.0) AND (RwDiam > 300.0);
+Alarm_Array[21] := Thickness_Fault;

@@ -1,3 +1,4 @@
 UwRawMin	INT	10		True	False	Publish Only	Unwinder sonar raw min (below = sensor fault, alarm 17)
 UwRawMax	INT	3990		True	False	Publish Only	Unwinder sonar raw max (above = sensor fault / no echo, alarm 17)
 UwSensFault	BOOL	False		False	False	Publish Only	Unwinder sonar fault (raw out of range 1 s)
+Thickness_Fault	BOOL	False		False	False	Publish Only	Paper thickness not learned above 300 mm (warning 21)
