@@ -1,0 +1,1 @@
+T_UwSensFlt	TON		False	False	Unwinder sonar fault debounce 1 s
