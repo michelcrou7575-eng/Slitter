@@ -1,3 +1,5 @@
+> **Superseded by `V12_1106/V12_1106_Changes.md`** (program V12_1106_6 on the PLC; alarm numbers differ: 14 sonar, 17 thickness, 18-21).
+
 # Alarms add-on (11/04) — on top of V12_1103_2 (not V13)
 
 | Index | Type | Text (HMI alarm list) | Condition |

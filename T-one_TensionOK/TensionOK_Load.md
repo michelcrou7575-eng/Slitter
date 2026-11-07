@@ -1,3 +1,5 @@
+> **Superseded by `V12_1106/V12_1106_Changes.md`** (program V12_1106_6 on the PLC; alarm numbers differ: 14 sonar, 17 thickness, 18-21).
+
 # T-one "Tension OK" add-on (11/03) — on top of V12 (not V13)
 
 After START in AUTO, the slitter holds `TensWaitSpd` (15 m/min) until the T-one reports
