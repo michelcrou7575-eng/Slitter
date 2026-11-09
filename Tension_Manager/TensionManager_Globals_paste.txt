@@ -1,0 +1,16 @@
+PaperKraft	BOOL	False		True	False	Publish Only	Paper type: TRUE = kraft, FALSE = bleached (tension factor)
+TensFactorBleached	REAL	0.54		True	False	Publish Only	Tension factor bleached paper (N/mm width per 100 g/m2)
+TensFactorKraft	REAL	0.80		True	False	Publish Only	Tension factor kraft paper (N/mm width per 100 g/m2), tune on machine
+TensAuto	BOOL	False		True	False	Publish Only	T-one set point from the PLC profile (FALSE = TensManual_kg)
+TensAOEnable	BOOL	False		True	False	Publish Only	AO Ch1 = T-one set point (FALSE = fixed 10 V as old Fix10Vdc)
+TensManual_kg	REAL	40.0		True	False	Publish Only	T-one manual set point (kg) when TensAuto is OFF
+TensTaper	REAL	30.0		True	False	Publish Only	Tension taper core -> max diameter (%), 0..60
+TensCoreBoost	REAL	0.0		True	False	Publish Only	Extra tension at the core (%), 0..50
+TensRate_kg_s	REAL	5.0		True	False	Publish Only	T-one set point max change (kg/s), 1..20
+TensMin_kg	REAL	10.0		True	False	Publish Only	T-one set point at 1 V (= T-one F.38)
+TensMax_kg	REAL	100.0		True	False	Publish Only	T-one set point at 10 V (= T-one F.39)
+TensSet_kg	REAL	0.0		False	False	Publish Only	Live T-one set point sent on AO Ch1 (kg)
+TensAtCore	REAL	0.0		False	False	Publish Only	Profile preview: tension at the core (kg)
+TensAtMid	REAL	0.0		False	False	Publish Only	Profile preview: tension at mid diameter (kg)
+TensAtMax	REAL	0.0		False	False	Publish Only	Profile preview: tension at max diameter (kg)
+TensDiaFrac	REAL	0.0		False	False	Publish Only	Rewinder diameter fraction 0 (core) .. 1 (max)

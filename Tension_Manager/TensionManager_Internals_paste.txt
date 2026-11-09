@@ -1,0 +1,3 @@
+TensTarget	REAL		False	False	Tension Manager: target before rate limit (kg)
+TensStep	REAL		False	False	Tension Manager: max change per 4 ms scan (kg)
+TensAOReal	REAL		False	False	Tension Manager: AO counts before INT conversion
