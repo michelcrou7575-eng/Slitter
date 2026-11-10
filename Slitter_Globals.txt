@@ -6,9 +6,10 @@ HOST	NAME	DATATYPE	ADDRESS	COMMENT	TAGLINK	RW	POU
 	VelSet	REAL		Set speed	TRUE	RW	
 	RwSlowDecelK	REAL		Learned slow-down decel per mm of rewinder diameter (mm/s2 per mm)	TRUE	RW	
 	RwMaxSlowFallback	REAL		Rewinder max: slow-down diameter while K not learned (mm)	TRUE	RW	
-	PaperDensity	REAL			TRUE	RW	
 	Language	DINT		Language	TRUE	RW	
+	TensJogLatch	bool		threading tension active (HMI lamp)	TRUE	RW	
 	TensTrim_kg	REAL		Operator trim on the AUTO tension (kg), ±10	TRUE	RW	
+	TensJogBoost	REAL		Threading preset: % extra while JOG / until START (0–100)	TRUE	RW	
 	RwThickMin_mm	REAL		Learning: min plausible paper thickness (mm)	TRUE	RW	
 	PulseRate	UDINT	IOBus://unit#3/Ch1 Pulse Rate	Pulses per 100 ms	TRUE	RW	
 	RwThickMax_mm	REAL		Learning: max plausible paper thickness (mm)	TRUE	RW	
@@ -260,3 +261,4 @@ HOST	NAME	DATATYPE	ADDRESS	COMMENT	TAGLINK	RW	POU
 	GuardOpen	BOOL			TRUE	RW	
 	SideDoorOpen	BOOL			TRUE	RW	
 	TensDiaFrac	REAL		Rewinder diameter fraction 0 (core) .. 1 (max)	TRUE	RW	
+	Psw40	BOOL		Password 40 for Popup 40	TRUE	RW	
