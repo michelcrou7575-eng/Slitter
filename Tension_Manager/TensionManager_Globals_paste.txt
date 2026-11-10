@@ -14,3 +14,6 @@ TensAtCore	REAL	0.0		False	False	Publish Only	Profile preview: tension at the co
 TensAtMid	REAL	0.0		False	False	Publish Only	Profile preview: tension at mid diameter (kg)
 TensAtMax	REAL	0.0		False	False	Publish Only	Profile preview: tension at max diameter (kg)
 TensDiaFrac	REAL	0.0		False	False	Publish Only	Rewinder diameter fraction 0 (core) .. 1 (max)
+TensTrim_kg	REAL	0.0		True	False	Publish Only	Operator trim on the AUTO tension (kg), +/-10, reset when paper changes
+TensJogBoost	REAL	30.0		True	False	Publish Only	Threading preset: % extra tension from JOG until START, 0..100
+TensJogLatch	BOOL	False		False	False	Publish Only	Threading tension active (JOG -> START), HMI lamp

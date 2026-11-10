@@ -1,8 +1,9 @@
-// ===================== TENSION MANAGER =====================
+// ===================== TENSION MANAGER (kg only) =====================
 // Section "Tension_Manager" (was Tension_Helper), rung 0, ST, no contact.
-// 1. Tension Helper: recommended tension from paper GSM, roll width, paper type
+// 1. Tension Helper: recommended tension (kg) from paper GSM, roll width, paper type
 // 2. T-one remote set point (AO Ch1 -> isolator -> T-one pins 20/19, F.37 = 1):
-//    helper tension x core boost x taper on the rewinder diameter, rate-limited,
+//    helper x core boost x taper on the rewinder diameter + operator trim (+/-10 kg),
+//    x JOG boost while threading (JOG ... START), rate-limited,
 //    1..10 V = TensMin_kg..TensMax_kg (T-one F.38 / F.39)
 // TensAOEnable = FALSE -> AO Ch1 = fixed 10 V (old Fix10Vdc, pots supply)
 
@@ -31,31 +32,11 @@ ELSIF WebWidth_mm > REAL#3000 THEN
     WebWidth_mm := REAL#3000;
 END_IF;
 
-// ---- 3. Unit button: one press = next unit (kg -> lb -> N)
-IF TensUnitPB AND NOT TensUnitMem THEN
-    TensUnit := TensUnit + 1;
-    IF TensUnit > 2 THEN
-        TensUnit := 0;
-    END_IF;
-END_IF;
-TensUnitMem := TensUnitPB;
-IF (TensUnit < 0) OR (TensUnit > 2) THEN
-    TensUnit := 0;
-END_IF;
-
-// ---- 4. Recommended tension
+// ---- 3. Recommended tension (kg)
 TensIdeal_N := PaperGSM / REAL#100 * WebWidth_mm * TensFactor;
-CASE TensUnit OF
-    1: TensIdeal_Disp := TensIdeal_N / REAL#9.81 * REAL#2.20462;   // lb
-    2: TensIdeal_Disp := TensIdeal_N;                              // N
-ELSE
-    TensIdeal_Disp := TensIdeal_N / REAL#9.81;                     // kg
-END_CASE;
-TensShowKg := (TensUnit = 0);
-TensShowLb := (TensUnit = 1);
-TensShowN  := (TensUnit = 2);
+TensIdeal_Disp := TensIdeal_N / REAL#9.81;
 
-// ---- 5. Setup limits (maintenance popup)
+// ---- 4. Setup limits (maintenance popup)
 IF TensTaper < REAL#0.0 THEN
     TensTaper := REAL#0.0;
 ELSIF TensTaper > REAL#60.0 THEN
@@ -65,6 +46,11 @@ IF TensCoreBoost < REAL#0.0 THEN
     TensCoreBoost := REAL#0.0;
 ELSIF TensCoreBoost > REAL#50.0 THEN
     TensCoreBoost := REAL#50.0;
+END_IF;
+IF TensJogBoost < REAL#0.0 THEN
+    TensJogBoost := REAL#0.0;
+ELSIF TensJogBoost > REAL#100.0 THEN
+    TensJogBoost := REAL#100.0;
 END_IF;
 IF TensRate_kg_s < REAL#1.0 THEN
     TensRate_kg_s := REAL#1.0;
@@ -77,6 +63,19 @@ END_IF;
 IF TensMax_kg < TensMin_kg + REAL#5.0 THEN
     TensMax_kg := TensMin_kg + REAL#5.0;
 END_IF;
+
+// ---- 5. Operator trim (HMI up/down, +/-10 kg), back to 0 when the paper changes
+IF TensTrim_kg < REAL#-10.0 THEN
+    TensTrim_kg := REAL#-10.0;
+ELSIF TensTrim_kg > REAL#10.0 THEN
+    TensTrim_kg := REAL#10.0;
+END_IF;
+IF (PaperGSM <> TensGSMMem) OR (WebWidth_mm <> TensWidthMem) OR (PaperKraft <> TensKraftMem) THEN
+    TensTrim_kg := REAL#0.0;
+END_IF;
+TensGSMMem := PaperGSM;
+TensWidthMem := WebWidth_mm;
+TensKraftMem := PaperKraft;
 
 // ---- 6. Rewinder diameter fraction 0 (core) .. 1 (max diameter)
 IF (RwMaxDiam > RwCoreDiameter + REAL#50.0) AND NOT RwSensFault THEN
@@ -91,15 +90,26 @@ ELSIF TensDiaFrac > REAL#1.0 THEN
 END_IF;
 
 // ---- 7. Profile preview (HMI): core / mid / max
-TensAtCore := TensIdeal_N / REAL#9.81 * (REAL#1.0 + TensCoreBoost / REAL#100.0);
+TensAtCore := TensIdeal_Disp * (REAL#1.0 + TensCoreBoost / REAL#100.0);
 TensAtMid  := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * REAL#0.5);
 TensAtMax  := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0);
 
-// ---- 8. Target (AUTO = profile, OFF = manual kg)
+// ---- 7b. Threading / knife adjustment preset: JOG raises the tension, START resumes normal
+IF JogRun THEN
+    TensJogLatch := TRUE;
+END_IF;
+IF StartPB_OK AND NOT StartBlocked THEN            // START accepted -> normal tension
+    TensJogLatch := FALSE;
+END_IF;
+
+// ---- 8. Target: profile (taper) + trim, or manual; x JOG boost while threading
 IF TensAuto THEN
-    TensTarget := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * TensDiaFrac);
+    TensTarget := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * TensDiaFrac) + TensTrim_kg;
 ELSE
     TensTarget := TensManual_kg;
+END_IF;
+IF TensJogLatch THEN
+    TensTarget := TensTarget * (REAL#1.0 + TensJogBoost / REAL#100.0);
 END_IF;
 IF TensTarget < TensMin_kg THEN
     TensTarget := TensMin_kg;
@@ -107,7 +117,7 @@ ELSIF TensTarget > TensMax_kg THEN
     TensTarget := TensMax_kg;
 END_IF;
 
-// ---- 9. Rate limit (4 ms scan): smooth change of GSM / width / type / mode
+// ---- 9. Rate limit (4 ms scan): smooth change of GSM / width / type / mode / trim / JOG boost
 TensStep := TensRate_kg_s * REAL#0.004;
 IF TensSet_kg < TensTarget - TensStep THEN
     TensSet_kg := TensSet_kg + TensStep;

@@ -15,11 +15,12 @@ remote set point input. AO Ch1 was `Fix10Vdc` (fixed 10 V, supply of the speed p
 
 ## 1. Variables
 - **Rename global** `Fix10Vdc` → **`AO_TOne_SetPoint`** (INT, same AT `BuiltInIO://opt/#0/Ch1_Analog_Output_Value`).
-- **Global Variables:** paste `TensionManager_Globals_paste.txt` (16 lines, Publish Only; settings Retain).
+- **Global Variables:** paste `TensionManager_Globals_paste.txt` (19 lines, Publish Only; settings Retain).
 - **TaglMonoTRM Externals:** add the new globals + `AO_TOne_SetPoint`, `RwDiam`, `RwCoreDiameter`, `RwMaxDiam`, `RwSensFault` if missing.
-- **TaglMonoTRM Internals:** paste `TensionManager_Internals_paste.txt` (`TensTarget`, `TensStep`, `TensAOReal`).
-  Already existing: `TensIdeal_N`, `TensUnitMem`; globals `PaperGSM`, `WebWidth_mm`, `TensFactor`, `TensUnit`, `TensUnitPB`,
-  `TensIdeal_Disp`, `TensShowKg/Lb/N`.
+- **TaglMonoTRM Internals:** paste `TensionManager_Internals_paste.txt` (`TensTarget`, `TensStep`, `TensAOReal`, `TensGSMMem`, `TensWidthMem`, `TensKraftMem`).
+  Already existing: `TensIdeal_N`; globals `PaperGSM`, `WebWidth_mm`, `TensFactor`, `TensIdeal_Disp` (now always kg).
+  **kg only:** `TensUnit`, `TensUnitPB`, `TensUnitMem`, `TensShowKg/Lb/N` are no longer used → delete them (and the HMI UNITS button) after Cross Reference.
+  Also uses `JogRun`, `StartPB_OK`, `StartBlocked` (General rung 7).
 
 ## 2. Program
 | Step | Where | Action |
@@ -66,3 +67,17 @@ If the EBPro Slide Switch does not offer 32-bit Float, use numeric inputs instea
 4. `TensManual_kg` 40 → 60: the T-one set point ramps at 5 kg/s.
 5. AO wire disconnected: note what the T-one does (should hold its minimum).
 6. AUTO ON on a real roll: set point follows diameter; check the coupling knocking (core boost) and the roll quality.
+
+## 6. Operator trim and threading preset (main page)
+| Object | Address | Note |
+|---|---|---|
+| Display TENSION SP | `TensSet_kg` | `###.#` — value sent to the T-one (taper, trim, JOG boost included) |
+| ▲ / ▼ | Function Keys → macros `Tens_Up` / `Tens_Dn` (`HMI_Macros_Tens_Up_Dn.md`) | AUTO: trim ±1 kg (max ±10, back to 0 when GSM / width / paper type changes); MANUAL: `TensManual_kg` ±1 |
+| Lamp JOG BOOST | `TensJogLatch` | ON from the first JOG until START is accepted |
+| Paper popup: JOG TENSION BOOST % | `TensJogBoost` | default 30 % |
+
+- JOG → set point × (1 + `TensJogBoost` %), taper still active; START accepted → back to normal, ramped at `TensRate_kg_s`.
+- At **standstill** the T-one is in STOP (pin 13 = `O_Brake` off) and applies **F.1** (torque when stationary), not the set point:
+  for knife adjustment with the machine stopped, raise F.1 if the web is too slack.
+
+Tests: JOG → lamp ON, TENSION SP +30 %; START → lamp OFF, SP ramps down; ▲ ×3 in AUTO → +3 kg; change GSM → trim back to 0.
