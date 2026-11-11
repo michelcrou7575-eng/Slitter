@@ -1,0 +1,1 @@
+RwSlowLearnMin_mm	REAL	50.0		True	False	Publish Only	Slow-down learning: min decel accepted (mm/s2), below = ignored

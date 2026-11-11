@@ -1,0 +1,1 @@
+UwDiamAtLatch	REAL		False	False	Unwinder diameter when the slow-down point was latched (release check)
