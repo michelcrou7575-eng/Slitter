@@ -1,0 +1,3 @@
+CntResetMode	INT	0		True	False	Publish Only	Metre counter auto reset: 0 manual, 1 with new parent roll, 2 after auto-stop (at next START)
+LastRoll_m	REAL	0.0		True	False	Publish Only	Length of the last roll (m), saved at the auto reset
+CntResetPend	BOOL	False		True	False	Publish Only	Metre counter reset waiting for the next START (HMI lamp)

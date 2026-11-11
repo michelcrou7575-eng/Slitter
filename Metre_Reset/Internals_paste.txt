@@ -1,0 +1,8 @@
+CntUwWasEmpty	BOOL		True	False	Metre reset: unwinder roll was empty since the last reset
+CntStartMem	BOOL		False	False	Metre reset: StartPB_OK memory
+CntPulseReq	BOOL		False	False	Metre reset: start of the reset pulse
+CntPulseDone	BOOL		False	False	Metre reset: pulse given, waiting for counter ~0
+CntAutoReset	BOOL		False	False	Metre reset: pulse to Encoder_Reset (Motor_Manager rung 2)
+T_CntNewRoll	TON		False	False	Metre reset: new parent roll confirmed 3 s
+T_CntResetPulse	TP		False	False	Metre reset: 50 ms reset pulse
+T_CntDone	TON		False	False	Metre reset: safety 2 s after the pulse
