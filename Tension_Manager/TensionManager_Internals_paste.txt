@@ -1,6 +1,6 @@
-TensTarget	REAL		False	False	Tension Manager: target before rate limit (kg)
-TensStep	REAL		False	False	Tension Manager: max change per 4 ms scan (kg)
-TensAOReal	REAL		False	False	Tension Manager: AO counts before INT conversion
-TensGSMMem	REAL		False	False	Tension Manager: last PaperGSM (trim reset)
-TensWidthMem	REAL		False	False	Tension Manager: last WebWidth_mm (trim reset)
-TensKraftMem	BOOL		False	False	Tension Manager: last PaperKraft (trim reset)
+TensTarget	REAL			False	False	Tension Manager: target before rate limit (kg)
+TensStep	REAL			False	False	Tension Manager: max change per 4 ms scan (kg)
+TensAOReal	REAL			False	False	Tension Manager: AO counts before INT conversion
+TensGSMMem	REAL			False	False	Tension Manager: last PaperGSM (trim reset)
+TensWidthMem	REAL			False	False	Tension Manager: last WebWidth_mm (trim reset)
+TensKraftMem	BOOL			False	False	Tension Manager: last PaperKraft (trim reset)
