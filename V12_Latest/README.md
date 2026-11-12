@@ -1,11 +1,11 @@
 # V12_Latest — latest version of every program section
 
-Source: `Slitter_Program_261110_compressed.pdf` (V12_1110_6) + Fix 11/11 + Metre reset (pending), assembled 11/12.
+Source: `Slitter_1112PDF_C_compressed (1).pdf` = **V12_1112_1** (Fix 11/11 + metre reset at START loaded), updated 11/12.
 
 | File | Section | Content |
 |---|---|---|
 | `1_General.st` | General | rungs 0–19 (ST verbatim; ladder as equations) |
-| `2_Motor_Manager.st` | Motor_Manager | rungs 0–20 + **1b metre reset (pending)**; rung 17 = feed-forward with tension hold |
+| `2_Motor_Manager.st` | Motor_Manager | rungs 0–20 (rung 1 also holds the metre reset at START); rung 17 = feed-forward with tension hold |
 | `3_OverRider_Manager.st` | OverRider_Manager | rungs 0–4 (ladder as equations) |
 | `4_Console.st` | Console | rungs 0–6 |
 | `5_Alarms.st` | Alarms | rung 0/1 ST; rungs 2–33 as equations, alarm numbers 1–21 |
@@ -15,5 +15,5 @@ Source: `Slitter_Program_261110_compressed.pdf` (V12_1110_6) + Fix 11/11 + Metre
 | `8_Tension_Manager_rung0.st` | Tension_Manager | complete rung 0 |
 
 Notation in ladder lines: `A AND NOT B -> ( C )` coil, `(S)` / `(R)` set / reset, `RISING()` / `FALLING()` edge.
-Lines marked **pending** are not in 1110_6 yet (Metre_Reset package, `OR CntResetPend` in section 6b).
+Open: `PulseRate` I/O mapping (HMI I/O page), `CntAutoReset` Retain → False.
 The PDF printout stays the reference for the exact ladder graphics.

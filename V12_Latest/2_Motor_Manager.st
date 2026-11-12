@@ -1,10 +1,10 @@
 (* =====================================================================
-   SECTION: Motor_Manager  (V12_1110_6 + pending Metre reset)
+   SECTION: Motor_Manager  (V12_1112_1)
    ===================================================================== *)
 
 // Rung 0  "Enable encoder reading"   T_PlcOn.Q -> ( Encoder_On )
 
-// Rung 1  "mm per encoder pulse" (ST)
+// Rung 1  "mm per encoder pulse + Metre counter auto reset at the next START" (ST)
 
 IF Encoder_Pulse = INT#0 THEN
     Encoder_Pulse := INT#1;
@@ -16,7 +16,7 @@ IF EncoderWheel_Circumf = REAL#0 THEN
 END_IF;
 EncoderPulse_to_mm := EncoderWheel_Circumf / (INT_TO_REAL(Encoder_Pulse) * REAL#4);
 
-// Rung 1b "Metre counter auto reset at the next START" (ST)  -- PENDING (Metre_Reset)
+// (same rung 1, continued: metre counter auto reset)
 // ==== Motor_Manager: NEW ST rung (no contact), directly BEFORE rung 2 ("Reset encoder counter")
 // ==== Comment: "Metre counter auto reset at the next START"
 // CntResetMode: 0 = manual only, 1 = with new roll (new parent roll on the unwinder),
@@ -70,8 +70,7 @@ IF CntPulseDone AND NOT T_CntResetPulse.Q
 END_IF;
 
 // Rung 2  "Reset encoder counter"
-//   (Counter_Reset AND NOT StartMotor_Cmd) OR CntAutoReset (pending)    -> ( Encoder_Reset )
-//   (1110_6: only Counter_Reset AND NOT StartMotor_Cmd; I_RsetCnt not used)
+//   (Counter_Reset AND NOT StartMotor_Cmd) OR CntAutoReset              -> ( Encoder_Reset )
 
 // Rung 3  "Checking the slowdown point"
 //   (AutoSlowCmd OR (Measure_ON AND SlowByDiam)) AND StartMotor_Cmd     -> ( SlowDown )
