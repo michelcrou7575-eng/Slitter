@@ -1,0 +1,3 @@
+TensDecBoost	REAL	0.0		True	False	Publish Only	Decel boost: extra T-one tension while the line slows down (%), 0 = off, 0..60
+TensDecRate_kg_s	REAL	40.0		True	False	Publish Only	Decel boost: T-one set point change rate while decelerating (kg/s), 5..100
+TensDecActive	BOOL	False		False	False	Publish Only	Decel boost active (HMI lamp)
