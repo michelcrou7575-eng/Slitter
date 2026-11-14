@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Slitter D903 – Operator Manual</title>
+<link rel="stylesheet" href="style.css"></head><body>
+
+<h1>Slitter D903 – Operator Manual</h1>
+<div class="sub">Mono Canada II · La Meccanica Fumagalli D903 (comm. 04820) · PLC program V12_1106 · HMI Weintek cMT2108X2 · Edition 2026-11-09</div>
+
+<ol class="toc">
+<li>Main screen</li>
+<li>Before starting</li>
+<li>Threading the paper (JOG)</li>
+<li>Running: START, STOP, soft stop</li>
+<li>AUTO STOP (end of roll)</li>
+<li>New roll / new paper (GSM)</li>
+<li>Tension check (T-one)</li>
+<li>Guards and doors</li>
+<li>Alarms and warnings – what to do</li>
+<li>Setup pages (supervisor)</li>
+<li>I/O status page (maintenance)</li>
+</ol>
+
+<div class="box"><b>Safety.</b> Never reach into the machine while it is turning. JOG with the front gate open is for threading only, at low speed, hands away from the nip and the knives. The key switch "guards bypassed" (5SA1, under the panel) is for maintenance only.</div>
+
+<h2>1. Main screen</h2>
+<figure><img src="161047.png"><figcaption>Main screen (English). The yellow window is the "DIFFERENT GSM?" question shown after a new parent roll (see §6).</figcaption></figure>
+<figure><img src="050958.png"><figcaption>Main screen (French). Press the flags at the top right to change the language.</figcaption></figure>
+
+<table>
+<tr><th>Zone</th><th>What it shows / does</th></tr>
+<tr><td>UNWINDER – ACT. DIAMETER</td><td>Parent roll diameter measured by the sonar (mm).</td></tr>
+<tr><td>UNWINDER – second field</td><td>Changes with the mode (one field at a time):<br>
+• AUTO STOP selector OFF: <b>SLOWS at DIAM</b> (where the slow-down will start), then <b>STOPS at DIAM</b> once slowing down.<br>
+• AUTO STOP selector ON, unwinder AUTO OFF: <b>STOP METRES</b> – white field, enter the metres.<br>
+• Unwinder AUTO ON: STOP METRES locked (grey, cannot be changed during the roll).</td></tr>
+<tr><td>REWINDER – ACT. DIAMETER</td><td>Rewound roll diameter (DT35 laser, mm).</td></tr>
+<tr><td>REWINDER – STOP DIAMETER</td><td>Target diameter for the rewinder AUTO STOP. Editable only when the AUTO STOP selector is ON and rewinder AUTO is OFF.</td></tr>
+<tr><td>AUTO STOP UNWINDER / REWINDER</td><td>Arm the automatic stop (yellow = armed). Only possible with the AUTO STOP selector ON. One at a time.</td></tr>
+<tr><td>FINAL VELOCITY / VELOCITY</td><td>Set speeds from the two potentiometers: final (slow) speed and work speed (m/min).</td></tr>
+<tr><td>ACTUAL VELOCITY</td><td>Real web speed from the encoder (m/min).</td></tr>
+<tr><td>SOFT STOP (button lamp)</td><td>Lit while a soft stop is running.</td></tr>
+<tr><td>DECEL. START – DIAM</td><td>Rewinder: diameter where the slow-down will start.</td></tr>
+<tr><td>GSM OK! (+ small value)</td><td>Green when the paper thickness is learned; the small field is the learned thickness (mm).</td></tr>
+<tr><td>FRONTAL SAFETY GATE</td><td>Green = closed, yellow = open.</td></tr>
+<tr><td>ACTUAL METRES + eraser</td><td>Metre counter. Eraser = reset (machine stopped).</td></tr>
+<tr><td>NEW GSM</td><td>Hold 3 s: forget the learned paper thickness (new paper).</td></tr>
+<tr><td>AUTO STOP CONSOLE ACTIVE / DISABLED</td><td>State of the AUTO STOP selector on the console (12SA5).</td></tr>
+<tr><td>AUTOMATIC VELOCITY CONTROL</td><td>Green = automatic speed control (normal). Do not switch to manual unless told to.</td></tr>
+<tr><td>SONAR ON / OFF</td><td>Unwinder diameter measurement. Must be ON in production.</td></tr>
+<tr><td>I/Os STATUS · TENSION HELPER · RUN SETUP · STOP SETUP</td><td>Other pages (§7, §10, §11).</td></tr>
+<tr><td>Bottom bar + WARNING / ALARMS RESET</td><td>Messages scroll in the bar (blue = warning, red = alarm). The button on the right resets / silences (§9).</td></tr>
+</table>
+
+<h2 class="pb">2. Before starting</h2>
+<ol>
+<li>Auxiliaries ON (no red "Emergency" message).</li>
+<li><b>SONAR ON</b> (green). If the popup "Sonar is OFF – turn it on?" appears, answer YES.</li>
+<li>Front gate down and <b>side door closed</b>.</li>
+<li>Check the speeds: VELOCITY (work) and FINAL VELOCITY (slow) potentiometers.</li>
+<li>AUTOMATIC VELOCITY CONTROL green.</li>
+<li>If the paper changed: answer the GSM question or press NEW GSM (§6).</li>
+<li>Set the T-one tension (TENSION HELPER, §7).</li>
+</ol>
+
+<h2>3. Threading the paper (JOG)</h2>
+<ul>
+<li>Hold the <b>JOG</b> button: the machine turns slowly (jog speed). Release = stop.</li>
+<li>JOG is allowed with the <b>front gate open</b> (threading).</li>
+<li>JOG is <b>not</b> allowed with the <b>side door open</b> (message "SIDE DOOR NOT CLOSED"). If the door opens during JOG, the machine stops.</li>
+<li>JOG is blocked when the rewinder roll is too big (above "JOG MAX Ø").</li>
+<li>After releasing JOG, START is ignored for 2 s.</li>
+<li>No paper at the web break photocell: JOG still works (to thread), START does not.</li>
+</ul>
+
+<h2>4. Running: START, STOP, soft stop</h2>
+<h3>START</h3>
+<ul>
+<li>Press <b>START</b>. The machine accelerates to the work speed with a smooth ramp.</li>
+<li>START is refused (nothing moves) and a message tells why if: front gate open, side door open, no paper at the web break photocell, or an AUTO STOP target already reached.</li>
+<li>With the tension check ON, the machine first turns slowly until the T-one reports tension, then accelerates (§7).</li>
+</ul>
+<h3>STOP</h3>
+<table>
+<tr><th>Action</th><th>Result</th></tr>
+<tr><td>STOP pressed once</td><td><b>Soft stop</b>: smooth ramp down, SOFT STOP lamp lit.</td></tr>
+<tr><td>STOP pressed again, or held 1 s</td><td>Immediate stop (drive ramp).</td></tr>
+<tr><td>STOP held 2 s</td><td>Immediate stop + red message "Emergency stop by holding STOP" – press ALARMS RESET.</td></tr>
+<tr><td>START during a soft stop</td><td>Speed is <b>held</b> (START lamp blinks). START again = back to work speed.</td></tr>
+<tr><td>Side door opened while running</td><td>Soft stop, START cannot cancel it until the door is closed.</td></tr>
+</table>
+<p>Emergency stop buttons: immediate stop of everything (red "Emergency" message). Release the button, restore the auxiliaries, press ALARMS RESET.</p>
+
+<h2 class="pb">5. AUTO STOP (end of roll)</h2>
+<p>The machine can slow down and stop by itself at a <b>metre count</b> (unwinder) or at a <b>rewinder diameter</b>.</p>
+<ol>
+<li>Turn the <b>AUTO STOP selector</b> on the console ON → "AUTO STOP CONSOLE ACTIVE" (green).</li>
+<li>Enter the value while the AUTO button is still OFF:
+<ul><li>Unwinder: <b>STOP METRES</b> (m) in the unwinder column.</li>
+<li>Rewinder: <b>STOP DIAMETER</b> (mm) in the rewinder column.</li></ul></li>
+<li>Press <b>AUTO STOP UNWINDER</b> or <b>AUTO STOP REWINDER</b> (yellow = armed, value locked). Only one at a time.</li>
+<li>Run normally. Near the target: horn beep, slow-down to the final speed, then a smooth stop exactly at the target.</li>
+<li>Message "AUTO STOP done" for a few seconds; one horn beep at standstill.</li>
+</ol>
+<table>
+<tr><th>Situation</th><th>What to do</th></tr>
+<tr><td>Message "<b>AUTO STOP refused – unwinder</b>": metres already reached</td><td>Reset the metre counter (eraser) or enter higher STOP METRES, then arm again.</td></tr>
+<tr><td>Message "<b>AUTO STOP refused – rewinder</b>": roll already ≥ target</td><td>Enter a larger STOP DIAMETER or load a new core, then arm again.</td></tr>
+<tr><td>AUTO STOP selector turned OFF</td><td>Both AUTO buttons switch OFF; the unwinder column shows the diameters again.</td></tr>
+</table>
+<div class="tip">Without AUTO STOP, the unwinder still slows down and stops by itself at the minimum parent roll diameter (sonar ON), and the rewinder always stops at its maximum diameter (protection).</div>
+
+<h2>6. New roll / new paper (GSM)</h2>
+<ul>
+<li>After a new parent roll is loaded, the HMI asks <b>"DIFFERENT GSM?"</b>:
+<ul><li><b>YES</b> = different paper → the machine forgets the learned thickness and learns it again.</li>
+<li><b>NO</b> = same paper → keeps the learned thickness.</li></ul></li>
+<li><b>NEW GSM</b> button (hold 3 s): same as YES, at any time.</li>
+<li>The thickness is learned automatically during the first metres of the roll ("GSM OK!" green, small value = thickness in mm). It is locked at 300 mm of rewinder diameter.</li>
+<li>Rewinder new core: if the rewinder diameter reads wrong, ask the supervisor for "TEACH CORE" (§10).</li>
+</ul>
+
+<h2 class="pb">7. Tension check (T-one) and Tension Helper</h2>
+<figure class="small"><img src="162215.png"><figcaption>TENSION HELPER: enter the paper weight (g/m²) and the roll width (mm); the recommended T-one tension is shown. UNITS = kg → lb → N.</figcaption></figure>
+<ul>
+<li>Set the T-one controller to the value shown (the T-one displays kg).</li>
+<li>With <b>START TENSION CHECK ON</b> (RUN SETUP), after START the machine turns slowly until the T-one reports that the tension is established, then accelerates to the work speed. This avoids starting on a slack web.</li>
+<li>If the tension is lost while running, the warning "<b>Web tension too low / slack</b>" appears (the machine does not stop). Check the paper path and the T-one.</li>
+</ul>
+
+<h2>8. Guards and doors</h2>
+<figure class="small"><img src="051932.png"><figcaption>Side door not closed (START or JOG pressed with the side door open).</figcaption></figure>
+<figure class="small"><img src="052232.png"><figcaption>Front safety gate not down (START pressed with the gate open).</figcaption></figure>
+<table>
+<tr><th></th><th>START</th><th>JOG</th><th>While running</th></tr>
+<tr><td>Front gate open</td><td>refused + message</td><td>allowed (threading)</td><td>safety stop</td></tr>
+<tr><td>Side door open</td><td>refused + message</td><td>refused + message</td><td>soft stop (JOG: immediate stop)</td></tr>
+<tr><td>No paper at web break photocell</td><td>refused + alarm "Web break"</td><td>allowed</td><td>stop + alarm "Web break"</td></tr>
+</table>
+<p>Close the gate / door, then press ALARMS RESET to clear the message.</p>
+
+<h2 class="pb">9. Alarms and warnings – what to do</h2>
+<figure class="small"><img src="051429.png"><figcaption>Red bar = alarm. The button on the right: ALARMS RESET.</figcaption></figure>
+<p><span class="a">Alarm</span> (red bar, buzzer pulses, lamp blinks): the cause must be removed. ALARMS RESET silences the buzzer for 1 minute and clears the alarm once the cause is gone.<br>
+<span class="w">Warning</span> (blue bar, one short beep, lamp steady): information, the machine keeps going unless stated.</p>
+<table>
+<tr><th>#</th><th>Message</th><th>Type</th><th>What to do</th></tr>
+<tr><td>1</td><td>Motor fan thermal</td><td class="a">Alarm</td><td>Call maintenance (fan / thermal relay). Reset when OK.</td></tr>
+<tr><td>2</td><td>Drive (inverter) fault</td><td class="a">Alarm</td><td>Note the code on the drive, call maintenance.</td></tr>
+<tr><td>3</td><td>Emergency stop</td><td class="a">Alarm</td><td>Release the E-stop, restore auxiliaries, reset.</td></tr>
+<tr><td>4</td><td>Motor thermal</td><td class="a">Alarm</td><td>Let the motor cool, call maintenance if repeated.</td></tr>
+<tr><td>5</td><td>Front guard moving</td><td class="w">Warning</td><td>Gate between open and closed – finish moving it.</td></tr>
+<tr><td>6</td><td>Web break / no paper</td><td class="a">Alarm</td><td>Re-thread the paper (JOG), reset.</td></tr>
+<tr><td>7</td><td>Extractor (vacuum) fan thermal</td><td class="a">Alarm</td><td>Call maintenance.</td></tr>
+<tr><td>8</td><td>Encoder off</td><td class="a">Alarm</td><td>The measuring roll does not turn: check the encoder wheel on the paper.</td></tr>
+<tr><td>9</td><td>Not aligned – motor / rewinder joint</td><td class="a">Alarm</td><td>Hub in extraction position: put it back in place.</td></tr>
+<tr><td>10</td><td>Rewinder diameter sensor fault (DT35)</td><td class="a">Alarm</td><td>Clean the laser, check nothing blocks it. Reset when OK.</td></tr>
+<tr><td>11</td><td>Rewinder max diameter</td><td class="a">Alarm</td><td>Roll full: unload, reset.</td></tr>
+<tr><td>12</td><td>Emergency stop by holding STOP</td><td class="a">Alarm</td><td>STOP held 2 s – reset.</td></tr>
+<tr><td>13</td><td>Web tension too low / slack</td><td class="w">Warning</td><td>Check paper path and T-one.</td></tr>
+<tr><td>14</td><td>Unwinder diameter sensor fault (sonar)</td><td class="a">Alarm</td><td>Clean / check the sonar, reset when OK.</td></tr>
+<tr><td>15</td><td>Unwinder roll empty</td><td class="w">Warning</td><td>Load a new parent roll.</td></tr>
+<tr><td>16</td><td>GSM learning fault</td><td class="w">Warning</td><td>Press NEW GSM; call the supervisor if it repeats.</td></tr>
+<tr><td>17</td><td>Paper thickness not learned</td><td class="w">Warning</td><td>Normal at the start of a roll; if it stays, NEW GSM.</td></tr>
+<tr><td>18</td><td>Side door not closed</td><td class="w">Warning</td><td>Close the side door, reset.</td></tr>
+<tr><td>19</td><td>Front safety gate not down</td><td class="w">Warning</td><td>Lower the gate, reset.</td></tr>
+<tr><td>20</td><td>AUTO STOP done</td><td class="w">Warning</td><td>Information: roll finished.</td></tr>
+<tr><td>21</td><td>AUTO STOP refused (unwinder / rewinder)</td><td class="w">Warning</td><td>See §5.</td></tr>
+</table>
+
+<h2 class="pb">10. Setup pages (supervisor)</h2>
+<p>These pages are protected by a password. Change values only if you know their effect.</p>
+<figure class="small"><img src="161256.png"><figcaption>Popup: JOG velocity and LOW VELOCITY START – WAIT TENSION (speed while waiting for the T-one tension).</figcaption></figure>
+<figure class="small"><img src="053930.png"><figcaption>RUN SETUP (French): unwinder slow-down / stop diameters, work and final velocity full scale, TEACH CORE, mode buttons.</figcaption></figure>
+<table>
+<tr><th>Setting</th><th>Meaning</th></tr>
+<tr><td>Unwinder final-velocity diameter</td><td>Unwinder diameter where the slow-down to the final speed starts (when AUTO-SLOW is OFF).</td></tr>
+<tr><td>Unwinder stop diameter</td><td>Minimum parent roll diameter: the machine stops there.</td></tr>
+<tr><td>WORK / FINAL VELOCITY MAX</td><td>Full scale of the two potentiometers (taken over when the machine is stopped).</td></tr>
+<tr><td>Minimum diameter + TEACH CORE / CANCEL</td><td>With an <b>empty core</b> on the shaft and the machine stopped: enter the core diameter, press TEACH CORE (2 s). CANCEL goes back to the previous value.</td></tr>
+<tr><td>FEED-FORWARD MODE ON</td><td>Normal speed control (keep ON).</td></tr>
+<tr><td>UNWINDER AUTO-SLOW ON</td><td>The unwinder slow-down point follows the speed (keep ON).</td></tr>
+<tr><td>START TENSION CHECK ON</td><td>Wait for the T-one tension after START (§7).</td></tr>
+</table>
+
+<h2>11. I/O status page (maintenance)</h2>
+<figure><img src="162329.png"><figcaption>I/O status: green / lit = active. Useful to check a sensor, door, gate or photocell before calling maintenance.</figcaption></figure>
+
+<div class="tip">Questions or a repeated alarm: note the message, the time (shown in the bar) and what the machine was doing, then call the supervisor.</div>
+</body></html>

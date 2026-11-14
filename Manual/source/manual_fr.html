@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Slitter D903 – Manuel opérateur</title>
+<link rel="stylesheet" href="style.css"></head><body>
+
+<h1>Slitter D903 – Manuel opérateur</h1>
+<div class="sub">Mono Canada II · La Meccanica Fumagalli D903 (comm. 04820) · Programme automate V12_1106 · Écran Weintek cMT2108X2 · Édition 2026-11-09</div>
+
+<ol class="toc">
+<li>Écran principal</li>
+<li>Avant de démarrer</li>
+<li>Passage du papier (JOG)</li>
+<li>Production : START, STOP, arrêt doux</li>
+<li>ARRÊT AUTO (fin de rouleau)</li>
+<li>Nouveau rouleau / nouveau papier (GSM)</li>
+<li>Contrôle de tension (T-one)</li>
+<li>Garde et portes</li>
+<li>Alarmes et avertissements – que faire</li>
+<li>Pages de réglage (superviseur)</li>
+<li>Page état des E/S (maintenance)</li>
+</ol>
+
+<div class="box"><b>Sécurité.</b> Ne jamais mettre les mains dans la machine en rotation. Le JOG avec la garde avant ouverte sert uniquement au passage du papier, à basse vitesse, mains loin de la pince et des couteaux. Le commutateur à clé « gardes shuntées » (5SA1, sous le pupitre) est réservé à la maintenance.</div>
+
+<h2>1. Écran principal</h2>
+<figure><img src="050958.png"><figcaption>Écran principal (français). Les drapeaux en haut à droite changent la langue.</figcaption></figure>
+<figure><img src="161047.png"><figcaption>Écran principal (anglais). La fenêtre jaune est la question « DIFFERENT GSM ? » après un nouveau rouleau dérouleur (voir §6).</figcaption></figure>
+
+<table>
+<tr><th>Zone</th><th>Affichage / fonction</th></tr>
+<tr><td>DÉROULEUR – ACT. DIAMÈTRES</td><td>Diamètre du rouleau dérouleur mesuré par le sonar (mm).</td></tr>
+<tr><td>DÉROULEUR – deuxième champ</td><td>Change selon le mode (un seul champ à la fois) :<br>
+• Sélecteur ARRÊT AUTO hors fonction : <b>diamètre de ralentissement</b>, puis <b>diamètre d'arrêt</b> une fois en ralentissement.<br>
+• Sélecteur ARRÊT AUTO en fonction, AUTO dérouleur hors fonction : <b>STOP MÈTRES</b> – champ blanc, entrer les mètres.<br>
+• AUTO dérouleur actif : STOP MÈTRES verrouillé (gris, non modifiable pendant le rouleau).</td></tr>
+<tr><td>ENROULEUR – ACT. DIAMÈTRES</td><td>Diamètre du rouleau enroulé (laser DT35, mm).</td></tr>
+<tr><td>ENROULEUR – STOP DIAMÈTRES</td><td>Diamètre cible de l'arrêt auto enrouleur. Modifiable seulement avec le sélecteur ARRÊT AUTO en fonction et l'AUTO enrouleur hors fonction.</td></tr>
+<tr><td>AUTO STOP DÉROULEUR / ENROULEUR</td><td>Arme l'arrêt automatique (jaune « ARRÊT AUTO ACTIVÉ »). Seulement avec le sélecteur ARRÊT AUTO en fonction. Un seul à la fois.</td></tr>
+<tr><td>VÉLOCITÉ FINALE / VÉLOCITÉ</td><td>Vitesses réglées par les deux potentiomètres : vitesse finale (lente) et vitesse de travail (m/min).</td></tr>
+<tr><td>VÉLOCITÉ ACT.</td><td>Vitesse réelle du papier, mesurée par l'encodeur (m/min).</td></tr>
+<tr><td>SOFT STOP (bouton-voyant)</td><td>Allumé pendant un arrêt doux.</td></tr>
+<tr><td>DECEL. START – DIAM</td><td>Enrouleur : diamètre où le ralentissement commencera.</td></tr>
+<tr><td>GSM OK ! (+ petite valeur)</td><td>Vert quand l'épaisseur du papier est apprise ; la petite valeur est l'épaisseur apprise (mm).</td></tr>
+<tr><td>GARDE DE SÉCURITÉ AVANT</td><td>Vert = fermée, jaune = ouverte.</td></tr>
+<tr><td>MÈTRES ACTUELLE + gomme</td><td>Compteur de mètres. Gomme = remise à zéro (machine arrêtée).</td></tr>
+<tr><td>NEW GSM</td><td>Maintenir 3 s : oublier l'épaisseur apprise (nouveau papier).</td></tr>
+<tr><td>AUTO STOP CONSOLE ACTIVÉ / DÉSACTIVÉ</td><td>État du sélecteur ARRÊT AUTO du pupitre (12SA5).</td></tr>
+<tr><td>CONTRÔLE DE VÉLOCITÉ AUTOMATIQUE</td><td>Vert = contrôle automatique de la vitesse (normal). Ne pas passer en manuel sans instruction.</td></tr>
+<tr><td>SONAR ACTIVÉ / DÉSACTIVÉ</td><td>Mesure du diamètre dérouleur. Doit être ACTIVÉ en production.</td></tr>
+<tr><td>I/Os STATUS · TENSION CALCUL · RUN SETUP · STOP SETUP</td><td>Autres pages (§7, §10, §11).</td></tr>
+<tr><td>Barre du bas + WARNING / RÉINITIALISATION ALARMES</td><td>Les messages défilent dans la barre (bleu = avertissement, rouge = alarme). Le bouton de droite réinitialise / coupe le buzzer (§9).</td></tr>
+</table>
+
+<h2 class="pb">2. Avant de démarrer</h2>
+<ol>
+<li>Auxiliaires sous tension (pas de message rouge « Arrêt d'urgence »).</li>
+<li><b>SONAR ACTIVÉ</b> (vert). Si la fenêtre « Sonar hors fonction – l'activer ? » apparaît, répondre OUI.</li>
+<li>Garde avant descendue et <b>porte de côté fermée</b>.</li>
+<li>Vérifier les vitesses : potentiomètres VÉLOCITÉ (travail) et VÉLOCITÉ FINALE (lente).</li>
+<li>CONTRÔLE DE VÉLOCITÉ AUTOMATIQUE en vert.</li>
+<li>Si le papier a changé : répondre à la question GSM ou appuyer sur NEW GSM (§6).</li>
+<li>Régler la tension du T-one (TENSION CALCUL, §7).</li>
+</ol>
+
+<h2>3. Passage du papier (JOG)</h2>
+<ul>
+<li>Maintenir le bouton <b>JOG</b> : la machine tourne lentement (vitesse JOG). Relâcher = arrêt.</li>
+<li>Le JOG est permis avec la <b>garde avant ouverte</b> (passage du papier).</li>
+<li>Le JOG est <b>interdit</b> avec la <b>porte de côté ouverte</b> (message « PORTE DE CÔTÉ N'EST PAS FERMÉE »). Si la porte s'ouvre pendant le JOG, la machine s'arrête.</li>
+<li>Le JOG est bloqué quand le rouleau enrouleur est trop gros (au-dessus de « JOG MAX Ø »).</li>
+<li>Après avoir relâché le JOG, le START est ignoré pendant 2 s.</li>
+<li>Pas de papier à la cellule de casse papier : le JOG fonctionne (pour passer le papier), le START non.</li>
+</ul>
+
+<h2>4. Production : START, STOP, arrêt doux</h2>
+<h3>START</h3>
+<ul>
+<li>Appuyer sur <b>START</b>. La machine accélère jusqu'à la vitesse de travail avec une rampe douce.</li>
+<li>Le START est refusé (rien ne bouge) et un message en donne la raison si : garde avant ouverte, porte de côté ouverte, pas de papier à la cellule de casse, ou cible d'ARRÊT AUTO déjà atteinte.</li>
+<li>Avec le contrôle de tension actif, la machine tourne d'abord lentement jusqu'à ce que le T-one indique la tension, puis accélère (§7).</li>
+</ul>
+<h3>STOP</h3>
+<table>
+<tr><th>Action</th><th>Résultat</th></tr>
+<tr><td>STOP appuyé une fois</td><td><b>Arrêt doux</b> : rampe de descente douce, voyant SOFT STOP allumé.</td></tr>
+<tr><td>STOP appuyé une 2<sup>e</sup> fois, ou maintenu 1 s</td><td>Arrêt immédiat (rampe du variateur).</td></tr>
+<tr><td>STOP maintenu 2 s</td><td>Arrêt immédiat + message rouge « Arrêt d'urgence par tenu du STOP PB » – appuyer sur RÉINITIALISATION ALARMES.</td></tr>
+<tr><td>START pendant un arrêt doux</td><td>La vitesse est <b>maintenue</b> (le voyant START clignote). START à nouveau = retour à la vitesse de travail.</td></tr>
+<tr><td>Porte de côté ouverte en marche</td><td>Arrêt doux ; le START ne peut pas l'annuler tant que la porte est ouverte.</td></tr>
+</table>
+<p>Boutons d'arrêt d'urgence : arrêt immédiat de tout (message rouge « Arrêt d'urgence »). Déverrouiller le bouton, remettre les auxiliaires, appuyer sur RÉINITIALISATION ALARMES.</p>
+
+<h2 class="pb">5. ARRÊT AUTO (fin de rouleau)</h2>
+<p>La machine peut ralentir et s'arrêter seule à un <b>nombre de mètres</b> (dérouleur) ou à un <b>diamètre enrouleur</b>.</p>
+<ol>
+<li>Mettre le <b>sélecteur ARRÊT AUTO</b> du pupitre en fonction → « AUTO STOP CONSOLE ACTIVÉ » (vert).</li>
+<li>Entrer la valeur pendant que le bouton AUTO est encore hors fonction :
+<ul><li>Dérouleur : <b>STOP MÈTRES</b> (m) dans la colonne dérouleur.</li>
+<li>Enrouleur : <b>STOP DIAMÈTRES</b> (mm) dans la colonne enrouleur.</li></ul></li>
+<li>Appuyer sur <b>AUTO STOP DÉROULEUR</b> ou <b>AUTO STOP ENROULEUR</b> (jaune = armé, valeur verrouillée). Un seul à la fois.</li>
+<li>Produire normalement. Près de la cible : bip du klaxon, ralentissement à la vitesse finale, puis arrêt doux exactement à la cible.</li>
+<li>Message « Arrêt auto terminé » quelques secondes ; un bip du klaxon à l'arrêt.</li>
+</ol>
+<table>
+<tr><th>Situation</th><th>Que faire</th></tr>
+<tr><td>Message « <b>Arrêt auto refusé – dérouleur</b> » : mètres déjà atteints</td><td>Remettre le compteur à zéro (gomme) ou entrer plus de STOP MÈTRES, puis réarmer.</td></tr>
+<tr><td>Message « <b>Arrêt auto refusé – enrouleur</b> » : rouleau déjà ≥ cible</td><td>Entrer un STOP DIAMÈTRES plus grand ou mettre un nouveau mandrin, puis réarmer.</td></tr>
+<tr><td>Sélecteur ARRÊT AUTO mis hors fonction</td><td>Les deux boutons AUTO se désactivent ; la colonne dérouleur affiche de nouveau les diamètres.</td></tr>
+</table>
+<div class="tip">Sans ARRÊT AUTO, le dérouleur ralentit et s'arrête quand même seul au diamètre minimum du rouleau dérouleur (sonar actif), et l'enrouleur s'arrête toujours à son diamètre maximum (protection).</div>
+
+<h2>6. Nouveau rouleau / nouveau papier (GSM)</h2>
+<ul>
+<li>Après le chargement d'un nouveau rouleau dérouleur, l'écran demande <b>« DIFFERENT GSM ? »</b> :
+<ul><li><b>YES (OUI)</b> = papier différent → la machine oublie l'épaisseur apprise et la réapprend.</li>
+<li><b>NO (NON)</b> = même papier → garde l'épaisseur apprise.</li></ul></li>
+<li>Bouton <b>NEW GSM</b> (maintenir 3 s) : même effet que OUI, à tout moment.</li>
+<li>L'épaisseur s'apprend automatiquement pendant les premiers mètres du rouleau (« GSM OK ! » vert, petite valeur = épaisseur en mm). Elle est verrouillée à 300 mm de diamètre enrouleur.</li>
+<li>Nouveau mandrin enrouleur : si le diamètre enrouleur affiché est faux, demander au superviseur un « TEACH CORE » (§10).</li>
+</ul>
+
+<h2 class="pb">7. Contrôle de tension (T-one) et calcul de tension</h2>
+<figure class="small"><img src="162215.png"><figcaption>TENSION CALCUL : entrer le grammage du papier (g/m²) et la largeur du rouleau (mm) ; la tension T-one recommandée s'affiche. UNITS = kg → lb → N.</figcaption></figure>
+<ul>
+<li>Régler le T-one à la valeur affichée (le T-one affiche des kg).</li>
+<li>Avec <b>START TENSION CHECK ON</b> (RUN SETUP), après le START la machine tourne lentement jusqu'à ce que le T-one indique que la tension est établie, puis accélère à la vitesse de travail. Cela évite de démarrer avec un papier mou.</li>
+<li>Si la tension se perd en marche, l'avertissement « <b>Tension papier trop basse / mou</b> » apparaît (la machine ne s'arrête pas). Vérifier le passage du papier et le T-one.</li>
+</ul>
+
+<h2>8. Garde et portes</h2>
+<figure class="small"><img src="051932.png"><figcaption>Porte de côté pas fermée (START ou JOG appuyé avec la porte de côté ouverte).</figcaption></figure>
+<figure class="small"><img src="052232.png"><figcaption>Garde de sécurité avant non descendue (START appuyé avec la garde ouverte).</figcaption></figure>
+<table>
+<tr><th></th><th>START</th><th>JOG</th><th>En marche</th></tr>
+<tr><td>Garde avant ouverte</td><td>refusé + message</td><td>permis (passage du papier)</td><td>arrêt de sécurité</td></tr>
+<tr><td>Porte de côté ouverte</td><td>refusé + message</td><td>refusé + message</td><td>arrêt doux (JOG : arrêt immédiat)</td></tr>
+<tr><td>Pas de papier à la cellule de casse</td><td>refusé + alarme « Casse papier »</td><td>permis</td><td>arrêt + alarme « Casse papier »</td></tr>
+</table>
+<p>Fermer la garde / la porte, puis appuyer sur RÉINITIALISATION ALARMES pour effacer le message.</p>
+
+<h2 class="pb">9. Alarmes et avertissements – que faire</h2>
+<figure class="small"><img src="051429.png"><figcaption>Barre rouge = alarme. Bouton de droite : RÉINITIALISATION ALARMES.</figcaption></figure>
+<p><span class="a">Alarme</span> (barre rouge, buzzer intermittent, voyant clignotant) : il faut éliminer la cause. RÉINITIALISATION ALARMES coupe le buzzer 1 minute et efface l'alarme une fois la cause disparue.<br>
+<span class="w">Avertissement</span> (barre bleue, un bip court, voyant fixe) : information, la machine continue sauf indication contraire.</p>
+<table>
+<tr><th>#</th><th>Message</th><th>Type</th><th>Que faire</th></tr>
+<tr><td>1</td><td>Thermique ventilateur moteur</td><td class="a">Alarme</td><td>Appeler la maintenance (ventilateur / relais thermique). Réinitialiser une fois réglé.</td></tr>
+<tr><td>2</td><td>Défaut variateur</td><td class="a">Alarme</td><td>Noter le code affiché sur le variateur, appeler la maintenance.</td></tr>
+<tr><td>3</td><td>Arrêt d'urgence</td><td class="a">Alarme</td><td>Déverrouiller l'arrêt d'urgence, remettre les auxiliaires, réinitialiser.</td></tr>
+<tr><td>4</td><td>Thermique moteur</td><td class="a">Alarme</td><td>Laisser refroidir le moteur ; appeler la maintenance si cela se répète.</td></tr>
+<tr><td>5</td><td>Garde avant en mouvement</td><td class="w">Avert.</td><td>Garde entre ouverte et fermée – terminer le mouvement.</td></tr>
+<tr><td>6</td><td>Casse papier / pas de papier</td><td class="a">Alarme</td><td>Repasser le papier (JOG), réinitialiser.</td></tr>
+<tr><td>7</td><td>Thermique ventilateur aspiration</td><td class="a">Alarme</td><td>Appeler la maintenance.</td></tr>
+<tr><td>8</td><td>Encodeur arrêté</td><td class="a">Alarme</td><td>Le rouleau de mesure ne tourne pas : vérifier la roue de l'encodeur sur le papier.</td></tr>
+<tr><td>9</td><td>Non aligné – joint moteur / enrouleur</td><td class="a">Alarme</td><td>Moyeu en position d'extraction : le remettre en place.</td></tr>
+<tr><td>10</td><td>Défaut capteur diamètre enrouleur (DT35)</td><td class="a">Alarme</td><td>Nettoyer le laser, vérifier que rien ne le bloque. Réinitialiser une fois réglé.</td></tr>
+<tr><td>11</td><td>Diamètre maximum enrouleur</td><td class="a">Alarme</td><td>Rouleau plein : décharger, réinitialiser.</td></tr>
+<tr><td>12</td><td>Arrêt d'urgence par tenu du STOP PB</td><td class="a">Alarme</td><td>STOP maintenu 2 s – réinitialiser.</td></tr>
+<tr><td>13</td><td>Tension papier trop basse / mou</td><td class="w">Avert.</td><td>Vérifier le passage du papier et le T-one.</td></tr>
+<tr><td>14</td><td>Défaut capteur diamètre dérouleur (sonar)</td><td class="a">Alarme</td><td>Nettoyer / vérifier le sonar, réinitialiser une fois réglé.</td></tr>
+<tr><td>15</td><td>Rouleau dérouleur vide</td><td class="w">Avert.</td><td>Charger un nouveau rouleau dérouleur.</td></tr>
+<tr><td>16</td><td>Défaut d'apprentissage GSM</td><td class="w">Avert.</td><td>Appuyer sur NEW GSM ; appeler le superviseur si cela se répète.</td></tr>
+<tr><td>17</td><td>Étude du papier GSM non terminée</td><td class="w">Avert.</td><td>Normal en début de rouleau ; si cela reste, NEW GSM.</td></tr>
+<tr><td>18</td><td>Porte de côté n'est pas fermée</td><td class="w">Avert.</td><td>Fermer la porte de côté, réinitialiser.</td></tr>
+<tr><td>19</td><td>Garde de sécurité avant non descendue</td><td class="w">Avert.</td><td>Descendre la garde, réinitialiser.</td></tr>
+<tr><td>20</td><td>Arrêt auto terminé</td><td class="w">Avert.</td><td>Information : rouleau terminé.</td></tr>
+<tr><td>21</td><td>Arrêt auto refusé (dérouleur / enrouleur)</td><td class="w">Avert.</td><td>Voir §5.</td></tr>
+</table>
+
+<h2 class="pb">10. Pages de réglage (superviseur)</h2>
+<p>Ces pages sont protégées par mot de passe. Ne modifier une valeur que si l'on connaît son effet.</p>
+<figure class="small"><img src="161256.png"><figcaption>Fenêtre : vitesse JOG et LOW VELOCITY START – WAIT TENSION (vitesse pendant l'attente de la tension T-one).</figcaption></figure>
+<figure class="small"><img src="053930.png"><figcaption>RUN SETUP : diamètres de ralentissement / d'arrêt dérouleur, pleine échelle des vitesses, TEACH CORE, boutons de mode.</figcaption></figure>
+<table>
+<tr><th>Réglage</th><th>Signification</th></tr>
+<tr><td>Diamètre vélocité finale dérouleur</td><td>Diamètre dérouleur où commence le ralentissement à la vitesse finale (quand AUTO-SLOW est hors fonction).</td></tr>
+<tr><td>Diamètre arrêt dérouleur</td><td>Diamètre minimum du rouleau dérouleur : la machine s'arrête à ce diamètre.</td></tr>
+<tr><td>WORK / FINAL VELOCITY MAX</td><td>Pleine échelle des deux potentiomètres (prise en compte machine arrêtée).</td></tr>
+<tr><td>Diamètre minimum + TEACH CORE / ANNULER</td><td>Avec un <b>mandrin vide</b> sur l'arbre et la machine arrêtée : entrer le diamètre du mandrin, appuyer sur TEACH CORE (2 s). ANNULER revient à la valeur précédente.</td></tr>
+<tr><td>FEED-FORWARD MODE ON</td><td>Contrôle de vitesse normal (laisser ON).</td></tr>
+<tr><td>UNWINDER AUTO-SLOW ON</td><td>Le point de ralentissement dérouleur suit la vitesse (laisser ON).</td></tr>
+<tr><td>START TENSION CHECK ON</td><td>Attente de la tension T-one après le START (§7).</td></tr>
+</table>
+
+<h2>11. Page état des E/S (maintenance)</h2>
+<figure><img src="162329.png"><figcaption>État des E/S : vert / allumé = actif. Utile pour vérifier un capteur, une porte, la garde ou une cellule avant d'appeler la maintenance.</figcaption></figure>
+
+<div class="tip">Questions ou alarme répétée : noter le message, l'heure (affichée dans la barre) et ce que faisait la machine, puis appeler le superviseur.</div>
+</body></html>
