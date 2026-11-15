@@ -1,6 +1,7 @@
 # V12_Latest — latest version of every program section
 
 Source: `Slitter_1112PDF_C_compressed (1).pdf` = **V12_1112_1** (Fix 11/11 + metre reset at START loaded), updated 11/12.
+`8_Tension_Manager_rung0.st` re-taken from `Slitter_Program_1114_compressed.pdf` (TensSPMin_kg, decel boost) + the 11/15 changes below.
 
 | File | Section | Content |
 |---|---|---|
@@ -15,5 +16,27 @@ Source: `Slitter_1112PDF_C_compressed (1).pdf` = **V12_1112_1** (Fix 11/11 + met
 | `8_Tension_Manager_rung0.st` | Tension_Manager | complete rung 0 |
 
 Notation in ladder lines: `A AND NOT B -> ( C )` coil, `(S)` / `(R)` set / reset, `RISING()` / `FALLING()` edge.
-Open: `PulseRate` I/O mapping (HMI I/O page), `CntAutoReset` Retain → False.
 The PDF printout stays the reference for the exact ladder graphics.
+
+## V12_1115 changes (to load in Sysmac / EasyBuilder)
+
+**Tension_Manager** (`8_Tension_Manager_rung0.st`)
+- 8a: AUTO -> MANUAL bumpless: `TensManual_kg := TensAutoBase` (last AUTO level, without JOG / decel boost), `TensTrim_kg := 0`.
+- 8: `TensAutoBase := TensTarget;` in the AUTO branch.
+- Trim limit +/-20 kg (section 5; was +/-10). HMI ▲/▼ trim macros: limits -20 / +20.
+- `TensTrimPos := TensTrim_kg > 0.05;` -> HMI Bit Lamp (no shape, state 0 = blank, state 1 = "+") just left of the trim Numeric (Numeric left-aligned).
+- Header comment: old `TensAOEnable` line removed (global `TensAOEnable` no longer used, can be deleted).
+- Internals: `Internals_1115_Tension_Manager_paste.txt`.
+
+**Alarms** (`5_Alarms.st`)
+- Rung 0: `WarnLastIdx := Index_A;` on each new warning (show it on a maintenance screen to find the flashing warning).
+- Rung 6 (warning 5, front guard moving): `ControlVoltage` + `T_GuardMove` TON 500 ms before the coil (sensor flicker flashed the warning bar + 1 s beep).
+- Internals: `Internals_1115_Alarms_paste.txt`.
+
+**Globals**
+- New: `Globals_1115_paste.txt` (`TensTrimPos`, `WarnLastIdx`).
+- Initial values: `TensMin_kg` 10.0 -> **0.0**, `TensMax_kg` 100.0 -> **250.0** (T-one F.34 full scale; with 100 a memory clear would give 2.5 x the tension).
+- Comments: `TensMin_kg` "T-one set point at 1 V (= 0 kg, F.38)", `TensMax_kg` "at 10 V (= 250 kg, F.34/F.39)",
+  `CntResetMode` "1 = new parent roll, 2 = after auto-stop, 4 = manual (HMI lamps .0/.1/.2)", `TensTrim_kg` "+/-20".
+
+Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.

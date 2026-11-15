@@ -21,6 +21,7 @@ FOR Index_A := 0 TO 32 DO
 
                 IF NOT AlarmMem[Index_A] THEN
                     WarnBeepTicks := 250;           // NEW warning -> 1 s beep
+                    WarnLastIdx   := Index_A;       // V12_1115: last warning that appeared (HMI diagnostic)
                 END_IF;
         ELSE                                        // alarms
             AlarmOn := TRUE;
@@ -71,7 +72,9 @@ Thickness_Fault := ControlVoltage AND StartMotor_Cmd
 // 3  [2]  A  ControlVoltage AND (NOT I_VFD_Alarm OR latch)                       Inverter fault
 // 4  [3]  A  NOT ControlVoltage                                                  Emergency stop
 // 5  [4]  A  ControlVoltage AND (NOT I_Motor_Thermal OR latch)                   Motor thermal
-// 6  [5]  W  NOT I_FrontGuard_Closed AND NOT I_FrontGuard_Open                   Front guard moving
+// 6  [5]  W  ControlVoltage AND NOT I_FrontGuard_Closed AND NOT I_FrontGuard_Open
+//              -> T_GuardMove (TON 500 ms) -> ( Alarm_Array[5] )                 Front guard moving
+//              V12_1115: filter + ControlVoltage (was unfiltered: sensor flicker = warning bar flash + beep)
 // 7  [6]  A  ControlVoltage AND ((StartMotor_Cmd AND NOT I_Jog_PB) OR latch OR I_Start_PB)
 //              AND I_WebBreak_Monitor AND I_WebBreak_PH                          Web break / no paper
 // 8  [7]  A  ControlVoltage AND NOT I_Vacuum_OK                                  Extractor fan thermal

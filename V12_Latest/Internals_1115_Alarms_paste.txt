@@ -1,0 +1,1 @@
+T_GuardMove	TON			FALSE	FALSE	Front guard moving: 500 ms filter (Alarms rung 6)

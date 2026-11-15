@@ -1,0 +1,2 @@
+TensAutoMem	BOOL	FALSE		FALSE	FALSE	AUTO state last scan (edge AUTO -> MANUAL)
+TensAutoBase	REAL	0.0		FALSE	FALSE	Last AUTO set point without boosts (kg), copied to TensManual_kg on AUTO -> MANUAL

@@ -2,10 +2,11 @@
 // Section "Tension_Manager" (was Tension_Helper), rung 0, ST, no contact.
 // 1. Tension Helper: recommended tension (kg) from paper GSM, roll width, paper type
 // 2. T-one remote set point (AO Ch1 -> isolator -> T-one pins 20/19, F.37 = 1):
-//    helper x core boost x taper on the rewinder diameter + operator trim (+/-10 kg),
-//    x JOG boost while threading (JOG ... START), rate-limited,
-//    1..10 V = TensMin_kg..TensMax_kg (T-one F.38 / F.39)
-// TensAOEnable = FALSE -> AO Ch1 = fixed 10 V (old Fix10Vdc, pots supply)
+//    helper x core boost x taper on the rewinder diameter + operator trim (+/-20 kg),
+//    x JOG boost while threading (JOG ... START), x decel boost, rate-limited,
+//    1..10 V = TensMin_kg..TensMax_kg (T-one F.38 / F.39: 0..250 kg, F.34 full scale)
+// V12_1115: AUTO -> MANUAL bumpless (manual takes the AUTO level, trim back to 0),
+//           trim +/-20 kg, TensTrimPos for the HMI "+" sign.
 
 // ---- 1. Paper type: KRAFT / BLEACHED selects the factor (N/mm width per 100 g/m2)
 
@@ -38,6 +39,7 @@ ELSIF WebWidth_mm > REAL#3000 THEN
 END_IF;
 
 // ---- 3. Recommended tension (kg)
+
 TensIdeal_N := PaperGSM / REAL#100 * WebWidth_mm * TensFactor;
 TensIdeal_Disp := TensIdeal_N / REAL#9.81;
 
@@ -75,17 +77,24 @@ IF TensMax_kg < TensMin_kg + REAL#5.0 THEN
     TensMax_kg := TensMin_kg + REAL#5.0;
 END_IF;
 
-// ---- 5. Operator trim (HMI up/down, +/-10 kg), back to 0 when the paper changes
+IF TensSPMin_kg < TensMin_kg THEN
+    TensSPMin_kg := TensMin_kg;
+ELSIF TensSPMin_kg > TensMax_kg - REAL#5.0 THEN
+    TensSPMin_kg := TensMax_kg - REAL#5.0;
+END_IF;
 
-IF TensTrim_kg < REAL#-10.0 THEN
-    TensTrim_kg := REAL#-10.0;
-ELSIF TensTrim_kg > REAL#10.0 THEN
-    TensTrim_kg := REAL#10.0;
+// ---- 5. Operator trim (HMI up/down, +/-20 kg), back to 0 when the paper changes
+
+IF TensTrim_kg < REAL#-20.0 THEN
+    TensTrim_kg := REAL#-20.0;
+ELSIF TensTrim_kg > REAL#20.0 THEN
+    TensTrim_kg := REAL#20.0;
 END_IF;
 
 IF (PaperGSM <> TensGSMMem) OR (WebWidth_mm <> TensWidthMem) OR (PaperKraft <> TensKraftMem) THEN
     TensTrim_kg := REAL#0.0;
 END_IF;
+
 TensGSMMem := PaperGSM;
 TensWidthMem := WebWidth_mm;
 TensKraftMem := PaperKraft;
@@ -95,7 +104,7 @@ TensKraftMem := PaperKraft;
 IF (RwMaxDiam > RwCoreDiameter + REAL#50.0) AND NOT RwSensFault THEN
     TensDiaFrac := (RwDiam - RwCoreDiameter) / (RwMaxDiam - RwCoreDiameter);
 ELSE
-    TensDiaFrac := REAL#0.0;                       // DT35 fault: no taper
+    TensDiaFrac := REAL#0.0;                    // DT35 fault: no taper
 END_IF;
 
 IF TensDiaFrac < REAL#0.0 THEN
@@ -105,6 +114,7 @@ ELSIF TensDiaFrac > REAL#1.0 THEN
 END_IF;
 
 // ---- 7. Profile preview (HMI): core / mid / max
+
 TensAtCore := TensIdeal_Disp * (REAL#1.0 + TensCoreBoost / REAL#100.0);
 TensAtMid  := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * REAL#0.5);
 TensAtMax  := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0);
@@ -115,30 +125,89 @@ IF JogRun THEN
     TensJogLatch := TRUE;
 END_IF;
 
-IF StartPB_OK AND NOT StartBlocked THEN            // START accepted -> normal tension
+IF StartPB_OK AND NOT StartBlocked THEN         // START accepted -> normal tension
     TensJogLatch := FALSE;
 END_IF;
+
+// ---- 8a. Bumpless AUTO -> MANUAL: manual starts at the last AUTO level,
+//          trim back to 0 (AUTO always comes back on the recommended profile)
+
+IF TensAutoMem AND NOT TensAuto THEN
+    TensManual_kg := TensAutoBase;
+    TensTrim_kg   := REAL#0.0;
+END_IF;
+
+TensAutoMem := TensAuto;
 
 // ---- 8. Target: profile (taper) + trim, or manual; x JOG boost while threading
 
 IF TensAuto THEN
-    TensTarget := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * TensDiaFrac) + TensTrim_kg;
+    TensProfile := TensAtCore * (REAL#1.0 - TensTaper / REAL#100.0 * TensDiaFrac);
+
+    // trim may not take the set point under TensSPMin_kg (also as the taper lowers the profile)
+
+    IF TensTrim_kg < TensSPMin_kg - TensProfile THEN
+        TensTrim_kg := TensSPMin_kg - TensProfile;
+    END_IF;
+
+    TensTarget := TensProfile + TensTrim_kg;
+    TensAutoBase := TensTarget;                 // AUTO level without JOG / decel boost (AUTO -> MANUAL transfer)
 ELSE
     TensTarget := TensManual_kg;
 END_IF;
+
+// HMI: "+" in front of the trim when positive (Numeric object only shows "-")
+
+TensTrimPos := TensTrim_kg > REAL#0.05;
 
 IF TensJogLatch THEN
     TensTarget := TensTarget * (REAL#1.0 + TensJogBoost / REAL#100.0);
 END_IF;
 
-IF TensTarget < TensMin_kg THEN
-    TensTarget := TensMin_kg;
+// Decel boost: more unwinder brake while the line slows down, so the web keeps
+// the rewind coupling loaded (no knock) and the unwinder does not overrun.
+// TOneDecel (Motor_Manager rung 17): ramping down / soft stop / end-of-roll ramp.
+// BrakeHold: T-one kept in AUTO after the stop until < 5 m/min.
+
+IF TensDecelBoost < REAL#0.0 THEN
+    TensDecelBoost := REAL#0.0;
+ELSIF TensDecelBoost > REAL#60.0 THEN
+    TensDecelBoost := REAL#60.0;
+END_IF;
+
+TensDecelActive := TOneDecel OR (BrakeHold AND NOT StartMotor_Cmd);
+
+IF TensDecelActive THEN
+    TensTarget := TensTarget * (REAL#1.0 + TensDecelBoost / REAL#100.0);
+END_IF;
+
+// lowest set point: AUTO >= TensSPMin_kg (10 kg), MANUAL down to TensMin_kg (0 kg)
+
+IF TensAuto THEN
+    TensSPLow := TensSPMin_kg;
+ELSE
+    TensSPLow := TensMin_kg;
+END_IF;
+
+IF TensTarget < TensSPLow THEN
+    TensTarget := TensSPLow;
 ELSIF TensTarget > TensMax_kg THEN
     TensTarget := TensMax_kg;
 END_IF;
 
 // ---- 9. Rate limit (4 ms scan): smooth change of GSM / width / type / mode / trim / JOG boost
-TensStep := TensRate_kg_s * REAL#0.004;
+
+IF TensDecelRate_kg_s < REAL#5.0 THEN
+    TensDecelRate_kg_s := REAL#5.0;
+ELSIF TensDecelRate_kg_s > REAL#100.0 THEN
+    TensDecelRate_kg_s := REAL#100.0;
+END_IF;
+
+IF TensDecelActive THEN
+    TensStep := TensDecelRate_kg_s * REAL#0.004;    // fast while decelerating
+ELSE
+    TensStep := TensRate_kg_s * REAL#0.004;
+END_IF;
 
 IF TensSet_kg < TensTarget - TensStep THEN
     TensSet_kg := TensSet_kg + TensStep;
@@ -149,17 +218,14 @@ ELSE
 END_IF;
 
 // ---- 10. Analog output Ch1
+// 1..10 V (400..4000) = TensMin_kg..TensMax_kg ; 0 V = wire broken (below range)
 
-IF TensAOEnable THEN
-    // 1..10 V (400..4000) = TensMin_kg..TensMax_kg ; 0 V = wire broken (below range)
-    TensAOReal := REAL#400.0 + REAL#3600.0 * (TensSet_kg - TensMin_kg) / (TensMax_kg - TensMin_kg);
+TensAOReal := REAL#400.0 + REAL#3600.0 * (TensSet_kg - TensMin_kg) / (TensMax_kg - TensMin_kg);
 
-    IF TensAOReal < REAL#400.0 THEN
-        TensAOReal := REAL#400.0;
-    ELSIF TensAOReal > REAL#4000.0 THEN
-        TensAOReal := REAL#4000.0;
-    END_IF;
-    AO_TOne_SetPoint := REAL_TO_INT(TensAOReal);
-ELSE
-    AO_TOne_SetPoint := INT#4000;                  // fixed 10 V (pots supply, as Fix10Vdc)
+IF TensAOReal < REAL#400.0 THEN
+    TensAOReal := REAL#400.0;
+ELSIF TensAOReal > REAL#4000.0 THEN
+    TensAOReal := REAL#4000.0;
 END_IF;
+
+AO_TOne_SetPoint := REAL_TO_INT(TensAOReal);

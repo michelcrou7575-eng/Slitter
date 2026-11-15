@@ -1,0 +1,2 @@
+TensTrimPos	BOOL	False		False	False	Publish Only	HMI: trim > 0 -> show "+" in front of the trim value (Bit Lamp)
+WarnLastIdx	INT	0		False	False	Publish Only	Last warning that appeared (Alarm_Array index, HMI diagnostic)
