@@ -289,6 +289,16 @@ END_IF;
 // ---- Refuse AUTO STOP when its target is already reached (HMI warning 21) ----
 // AutoEnWhy: 1 = unwinder metres already reached, 2 = rewinder roll >= target
 
+// ---- 8a. V12_1115 default mode: 12SA5 switched ON with no mode chosen -> metres (unwinder AUTO).
+//          Edge only: the refusal below (metres already reached) and an operator who
+//          switches metres OFF on purpose are respected until 12SA5 goes OFF and ON again.
+
+IF I_AutoStop_OS AND NOT AutoOSMem AND NOT UwStopEnable AND NOT RwStopEnable THEN
+    UwStopEnable := TRUE;
+END_IF;
+
+AutoOSMem := I_AutoStop_OS;
+
 IF I_AutoStop_OS AND RwStopEnable AND NOT RwArmMem AND NOT RwSensFault
    AND (RwTargetDiam > REAL#0.0) AND (RwDiam >= RwTargetDiam - RwResetHyst) THEN
     RwStopEnable := FALSE;                          // refused

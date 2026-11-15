@@ -1,0 +1,1 @@
+AutoOSMem	BOOL	FALSE		FALSE	FALSE	12SA5 state last scan (default mode metres on switch-on)

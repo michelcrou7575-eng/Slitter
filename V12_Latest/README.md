@@ -39,4 +39,11 @@ The PDF printout stays the reference for the exact ladder graphics.
 - Comments: `TensMin_kg` "T-one set point at 1 V (= 0 kg, F.38)", `TensMax_kg` "at 10 V (= 250 kg, F.34/F.39)",
   `CntResetMode` "1 = new parent roll, 2 = after auto-stop, 4 = manual (HMI lamps .0/.1/.2)", `TensTrim_kg` "+/-20".
 
+**AutoStop_Control rung 1** (`7b_AutoStop_Control_part2_rung1.st`)
+- 8a: 12SA5 (`I_AutoStop_OS`) switched ON with neither `UwStopEnable` nor `RwStopEnable` -> `UwStopEnable := TRUE` (metres by default). Edge only, placed above the refusal checks.
+- Internals: `Internals_1115_AutoStop_paste.txt` (`AutoOSMem`).
+
+**Output_Manager** (`6_Output_Manager.st`, horn ST)
+- `O_AcousticSignal`: use `Alarm_Array[5] AND Clock1s` instead of the raw guard sensors (filtered like the warning).
+
 Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.

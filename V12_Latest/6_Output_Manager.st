@@ -112,7 +112,8 @@ END_IF;
 HornRunMem := HornRun;
 
 // HMI test button: horn while pressed (machine stopped only)
-O_AcousticSignal := (NOT I_FrontGuard_Closed AND NOT I_FrontGuard_Open AND Clock1s)
+// V12_1115: guard moving beep from the filtered warning (Alarms rung 6, T_GuardMove 500 ms)
+O_AcousticSignal := (Alarm_Array[5] AND Clock1s)
                     OR HornSlowBeep OR (HornStopTicks > 0)
                     OR (HornTest AND NOT StartMotor_Cmd);
 
