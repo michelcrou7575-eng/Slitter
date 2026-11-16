@@ -67,6 +67,24 @@ END_IF;
 Thickness_Fault := ControlVoltage AND StartMotor_Cmd
                    AND (RwMat_K <= 0.0) AND (RwDiam > 300.0);
 
+// ---- V12_1116: web STALLED while the motor is commanded (alarm 8 + stop) ----
+// 11/16: unwinder empty at 121 mm (stop limit 110 never reached), paper tail held on
+// the core: the motor pulled at 103 % torque, 34 A, for minutes. Rung 9 (InvRef > 200)
+// did not see it at final speed (InvRef ~76). Not during the tension wait or JOG.
+// Latched: cleared by ALARM RESET once stopped. Motor_Manager rung 4: StallFault -> Stop.
+
+T_Stall(In := ControlVoltage AND StartMotor_Cmd AND NOT ManMode AND NOT TensWait
+              AND NOT JogRun AND (InvRef > INT#40) AND (Velocity_M_min < REAL#1.0),
+        PT := T#3s);
+
+IF T_Stall.Q THEN
+    StallFault := TRUE;
+END_IF;
+
+IF StallFault AND NOT StartMotor_Cmd AND (I_RsetAlarm OR Alarm_Reset) THEN
+    StallFault := FALSE;
+END_IF;
+
 // Ladder rungs (equations). "latch" = OR Alarm_Array[n] AND NOT I_RsetAlarm AND NOT Alarm_Reset
 // 2  [1]  A  ControlVoltage AND (NOT I_FanTemp_Ok OR latch)                      Motor fan thermal
 // 3  [2]  A  ControlVoltage AND (NOT I_VFD_Alarm OR latch)                       Inverter fault
@@ -78,8 +96,9 @@ Thickness_Fault := ControlVoltage AND StartMotor_Cmd
 // 7  [6]  A  ControlVoltage AND ((StartMotor_Cmd AND NOT I_Jog_PB) OR latch OR I_Start_PB)
 //              AND I_WebBreak_Monitor AND I_WebBreak_PH                          Web break / no paper
 // 8  [7]  A  ControlVoltage AND NOT I_Vacuum_OK                                  Extractor fan thermal
-// 9  [8]  A  ControlVoltage AND StartMotor_Cmd AND NOT ManMode AND (InvRef > 200)
-//              AND (Velocity = 0) -> T_EncoderStill (TON 3 s)                    Encoder off
+// 9  [8]  A  (ControlVoltage AND StartMotor_Cmd AND NOT ManMode AND (InvRef > 200)
+//              AND (Velocity = 0) -> T_EncoderStill (TON 3 s)) OR StallFault     Encoder off / web stalled
+//              V12_1116: StallFault contact added in parallel to T_EncoderStill.Q before the coil
 // 10 [9]  A  ControlVoltage AND I_Hub_Position AND NOT StartMotor_Cmd AND NOT I_Prot_ByPass
 //              AND I_FrontGuard_Open                                             Hub not in position
 // 11 [10] A  ControlVoltage AND RwSensFault AND (RwStopEnable OR StartMotor_Cmd) -> (S)  DT35 fault

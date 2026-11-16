@@ -1,0 +1,1 @@
+RwKUse	REAL	0.0		FALSE	FALSE	Thickness K used by the stop calculations: learned RwMat_K, else estimate from PaperGSM

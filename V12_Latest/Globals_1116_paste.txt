@@ -1,0 +1,1 @@
+StallFault	BOOL	False		False	False	Publish Only	Web stalled while the motor is commanded (alarm 8 + stop), reset by ALARM RESET when stopped

@@ -8,6 +8,21 @@
     Rung 0 = part 1 runs first, then this rung, every scan.)
    ========================================================================== *)
 
+(* ---- 5d. V12_1116: thickness used by the stop calculations ------------- *)
+(* Learned K (RwMat_K) when there is one, else an ESTIMATE from the paper  *)
+(* weight (density ~800 kg/m3: 100 gsm -> 0.125 mm). Before: K = 0 -> the  *)
+(* rewinder MAX / target stops only came when the diameter was REACHED,    *)
+(* after a long crawl at final speed (1300 -> 1315 mm = ~240 m).           *)
+(* The learning (part 1) still uses and writes RwMat_K only.               *)
+
+IF RwMat_K > 0.0 THEN
+    RwKUse := RwMat_K;
+ELSIF (PaperGSM > 0.0) AND (MmPerPulse > 0.0) THEN
+    RwKUse := 2.0 * (PaperGSM / 800.0) * MmPerPulse / 3.14159;
+ELSE
+    RwKUse := 0.0;
+END_IF;
+
 (* ---- 6. Lengths in pulses: stop, slow-down, remaining ------------------ *)
 (* Stop length uses the ACTUAL speed (precision)                           *)
 
@@ -153,9 +168,9 @@ END_IF;
 
 IF RwDiam >= RwTargetDiam THEN
     RwRemain_Pls := 0.0;
-ELSIF RwMat_K > 0.0 THEN
+ELSIF RwKUse > 0.0 THEN
     RwRemain_Pls := (RwTargetDiam * RwTargetDiam - RwDiam * RwDiam)
-                    / (2.0 * RwMat_K);
+                    / (2.0 * RwKUse);
 ELSE
     RwRemain_Pls := 1.0E9;                          (* K not learned: plain target *)
 END_IF;
@@ -167,15 +182,15 @@ RwSlowLen_m := RwSlowLen_Pls * MmPerPulse / 1000.0;
 (* ---- 6b. Live operator displays ---------------------------------------- *)
 (* Rewinder: diameter where slow-down / stop command will happen           *)
 
-IF RwMat_K > 0.0 THEN
-    SqrtArg := RwTargetDiam * RwTargetDiam - 2.0 * RwMat_K * RwSlowLen_Pls;
+IF RwKUse > 0.0 THEN
+    SqrtArg := RwTargetDiam * RwTargetDiam - 2.0 * RwKUse * RwSlowLen_Pls;
 
     IF SqrtArg > 0.0 THEN
         RwSlow_at_D_Val := SQRT(SqrtArg);
     ELSE
         RwSlow_at_D_Val := 0.0;
     END_IF;
-    SqrtArg := RwTargetDiam * RwTargetDiam - 2.0 * RwMat_K * StopLen_Pls;
+    SqrtArg := RwTargetDiam * RwTargetDiam - 2.0 * RwKUse * StopLen_Pls;
 
     IF SqrtArg > 0.0 THEN
         RwStop_at_D_Val := SQRT(SqrtArg);
@@ -228,9 +243,9 @@ END_IF;
 (* the lower speed does not move it back and speed up again. Released by   *)
 (* a new roll (diameter 30 mm above the frozen point).                     *)
 
-IF UwSlow_at_D_Req AND (RwMat_K > 0.0) AND (UwStopDiam_Limit > 0.0)
+IF UwSlow_at_D_Req AND (RwKUse > 0.0) AND (UwStopDiam_Limit > 0.0)
    AND (UwSlowLen_Pls > 0.0) THEN
-    SqrtArg := UwStopDiam_Limit * UwStopDiam_Limit + 2.0 * RwMat_K * UwSlowLen_Pls;
+    SqrtArg := UwStopDiam_Limit * UwStopDiam_Limit + 2.0 * RwKUse * UwSlowLen_Pls;
     UwSlowDiamCalc := SQRT(SqrtArg);               (* same pattern as 6b *)
 ELSE
     UwSlowDiamCalc := UwSlow_at_D_Val;
@@ -278,7 +293,7 @@ IF RwStopEnable THEN
     (* v6t: thickness not learned (RwMat_K = 0): slow down at a fixed      *)
     (* distance before the target instead of stopping from full speed.    *)
 
-    IF RwUseSlow AND (RwMat_K <= 0.0) AND (RwSlowFallbackMm > 0.0)
+    IF RwUseSlow AND (RwKUse <= 0.0) AND (RwSlowFallbackMm > 0.0)
        AND NOT RwSensFault
        AND (RwDiam >= RwTargetDiam - RwSlowFallbackMm) THEN
         RwSlow_at_D_Req := TRUE;
@@ -359,8 +374,8 @@ UwStopLenShow := I_AutoStop_OS AND (UwStopEnable OR (AutoEnRefused AND (AutoEnWh
 UwSlowDiamShow := NOT UwStopLenShow AND Measure_ON AND NOT UwSlowDiamLatch;
 UwStopDiamShow := NOT UwStopLenShow AND Measure_ON AND UwSlowDiamLatch;
 
-IF (RwMat_K > 0.0) AND (StopLen_Pls > 0.0) THEN
-    SqrtArg := UwStopDiam_Limit * UwStopDiam_Limit + 2.0 * RwMat_K * StopLen_Pls;
+IF (RwKUse > 0.0) AND (StopLen_Pls > 0.0) THEN
+    SqrtArg := UwStopDiam_Limit * UwStopDiam_Limit + 2.0 * RwKUse * StopLen_Pls;
     UwStop_at_D_Val := SQRT(SqrtArg);
 ELSE
     UwStop_at_D_Val := UwStopDiam_Limit;
@@ -472,17 +487,17 @@ END_IF;
 
 IF RwDiam >= RwMaxDiam THEN
     RwRemainMax_Pls := 0.0;
-ELSIF RwMat_K > 0.0 THEN
+ELSIF RwKUse > 0.0 THEN
     RwRemainMax_Pls := (RwMaxDiam * RwMaxDiam - RwDiam * RwDiam)
-                       / (2.0 * RwMat_K);
+                       / (2.0 * RwKUse);
 ELSE
     RwRemainMax_Pls := 1.0E9;                       (* K not learned: plain limit *)
 END_IF;
 
 (* Display: diameter where the max-protection slow-down will start         *)
 
-IF RwMat_K > 0.0 THEN
-    SqrtArg := RwMaxDiam * RwMaxDiam - 2.0 * RwMat_K * RwSlowLen_Pls;
+IF RwKUse > 0.0 THEN
+    SqrtArg := RwMaxDiam * RwMaxDiam - 2.0 * RwKUse * RwSlowLen_Pls;
 
     IF SqrtArg > 0.0 THEN
         RwMaxSlowAtDiam := SQRT(SqrtArg);
@@ -512,7 +527,7 @@ IF NOT RwSensFault THEN
         RwMaxSlow := TRUE;                          (* warning slow-down + horn *)
     END_IF;
 
-    IF (RwMat_K <= 0.0) AND (RwMaxSlowFallback > 0.0)
+    IF (RwKUse <= 0.0) AND (RwMaxSlowFallback > 0.0)
        AND (RwDiam >= RwMaxSlowFallback) THEN
         RwMaxSlow := TRUE;                          (* fallback while K not learned *)
     END_IF;

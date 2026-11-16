@@ -76,7 +76,9 @@ END_IF;
 //   (AutoSlowCmd OR (Measure_ON AND SlowByDiam)) AND StartMotor_Cmd     -> ( SlowDown )
 
 // Rung 4  "Checking the stop point"
-//   (I_WebBreak_Monitor AND I_WebBreak_PH AND NOT I_Jog_PB AND StartMotor_Cmd) OR EndStopNow -> ( Stop )
+//   (I_WebBreak_Monitor AND I_WebBreak_PH AND NOT I_Jog_PB AND StartMotor_Cmd) OR EndStopNow
+//   OR StallFault                                                           -> ( Stop )
+//   V12_1116: StallFault contact added as a 3rd parallel branch (web stalled -> immediate stop)
 
 // Rung 5  "Check the maximum and minimum values" (ST)
 

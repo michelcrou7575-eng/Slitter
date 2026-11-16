@@ -55,3 +55,22 @@ Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.
   Trace 11/16: pot noise +/-0.4 % made `InvRef` flicker and reset `FFSteadyTicks` 94 times in 110 s, so the `RwRatioD` adaptation stalled (web speed -2 % on a big roll).
 - Manual mode: `Speed_Display` / `LowSpd_Display` (rung 7) and the drive reference `InvRef` (rung 19) from the filtered pots `Pot1Hold` / `Pot2Hold`.
 - Internals: `Internals_1116_Motor_Manager_paste.txt`.
+
+**AutoStop_Control rung 1** (`7b_AutoStop_Control_part2_rung1.st`, new section 5d)
+- `RwKUse` = learned `RwMat_K`, else an estimate from `PaperGSM` (density ~800 kg/m3: 100 gsm -> 0.125 mm).
+  Used instead of `RwMat_K` in the stop / slow-down calculations (sections 6, 6b, 6c, 7, 8, 11).
+  Before: thickness 0 -> rewinder MAX stop only at 1315 mm after ~240 m crawling at final speed.
+  The learning, NEW GSM reset, thickness display and GSM OK still use `RwMat_K`.
+- Internals: `Internals_1116_AutoStop_paste.txt` (`RwKUse`).
+
+**Alarms** (`5_Alarms.st`, rung 1 ST + rung 9 ladder)
+- `T_Stall` 3 s / `StallFault` (latched): web stalled (< 1 m/min) while the motor is commanded (`InvRef` > 40),
+  not during `TensWait`, JOG or manual mode. Reset by ALARM RESET when stopped.
+  11/16: unwinder empty at 121 mm with the stop limit at 110 -> motor pulled at 103 % torque for minutes.
+- Rung 9: `StallFault` contact in parallel with `T_EncoderStill.Q` before `Alarm_Array[8]`.
+- HMI alarm 8 text: "ENCODER STOPPED / WEB STALLED" / "ENCODEUR ARRÊTÉ / BANDE BLOQUÉE".
+- Internals: `Internals_1116_Alarms_paste.txt` (`T_Stall`); global: `Globals_1116_paste.txt` (`StallFault`).
+
+**Motor_Manager rung 4** (stop point): third parallel branch `StallFault` -> `Stop`.
+
+**Settings 11/16:** `UwCoreDiameter` = 121 mm (real core), `UwStopDiam_Limit` = 135 mm (was 110 = below the empty core).
