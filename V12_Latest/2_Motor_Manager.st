@@ -230,6 +230,26 @@ ELSE
     Pot2_Mem := INT#0;
 END_IF;
 
+// V12_1116: final speed never 0 while running (min FinalSpdMin_mpm), never above the work speed
+
+IF FinalSpdMin_mpm < REAL#2.0 THEN
+    FinalSpdMin_mpm := REAL#2.0;
+ELSIF FinalSpdMin_mpm > REAL#50.0 THEN
+    FinalSpdMin_mpm := REAL#50.0;
+END_IF;
+
+FinalMinCnt := FinalSpdMin_mpm * Input_Ratio;                 // counts
+
+IF FinalMinCnt > UINT_TO_REAL(Pot1_Mem) THEN
+    FinalMinCnt := UINT_TO_REAL(Pot1_Mem);                    // never above the work speed set point
+END_IF;
+
+IF UINT_TO_REAL(Pot2_Mem) < FinalMinCnt THEN
+    Pot2_Mem := REAL_TO_INT(FinalMinCnt);                     // raise to the minimum
+ELSIF Pot2_Mem > Pot1_Mem THEN
+    Pot2_Mem := Pot1_Mem;                                     // final speed <= work speed
+END_IF;
+
 // Rung 7  "Updating the set speed" (ST)
 
 IF ManMode = FALSE THEN

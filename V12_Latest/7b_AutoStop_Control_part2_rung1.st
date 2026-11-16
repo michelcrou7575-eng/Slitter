@@ -536,6 +536,14 @@ ELSIF (AI_Diam_Rewinder < RwRawMin) AND (RwLastValidDiam > RwMaxDiam - 100.0) TH
 END_IF;
 
 (* Max diameter protection added OUTSIDE the 12SA5 master (section 9)      *)
+(* V12_1116: max diameter = protection: no crawl at final speed. As soon as  *)
+(* the slow-down point is reached, stop on the end-of-roll ramp             *)
+(* (FinalStopDecel, soft stop). AutoStopWhy = 4, alarm 11 as before.        *)
+
+IF RwMaxSlow THEN
+    RwMaxStop := TRUE;
+END_IF;
+
 AutoSlowCmd := AutoSlowCmd OR RwMaxSlow;
 AutoStopCmd := AutoStopCmd OR RwMaxStop;
 

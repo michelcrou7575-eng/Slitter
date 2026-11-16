@@ -73,9 +73,34 @@ Thickness_Fault := ControlVoltage AND StartMotor_Cmd
 // did not see it at final speed (InvRef ~76). Not during the tension wait or JOG.
 // Latched: cleared by ALARM RESET once stopped. Motor_Manager rung 4: StallFault -> Stop.
 
+// V12_1116: NEAR stall -> StallRelief (Tension_Manager eases the brake: -StallReliefPct %,
+// minimum after 1.5 s). Web < 30 % of the speed asked by the ramp (RampRef, not VelSet:
+// an acceleration from standstill is not a stall) for 0.5 s. Ends when the web is back
+// above 80 % for 2 s. StallFault (below) stops only if the web stays stalled 5 s.
+
+IF FFActive AND (WebRatio > 0.0) AND (Output_Ratio > 0.0) THEN
+    VelCmd := RampRef / (WebRatio * Output_Ratio);              // web speed asked by the ramp (m/min)
+ELSE
+    VelCmd := REAL#0.0;
+END_IF;
+
+T_StallPre(In := StartMotor_Cmd AND NOT TensWait AND NOT JogRun AND NOT ManMode
+                 AND (VelCmd > REAL#3.0) AND (Velocity_M_min < VelCmd * REAL#0.3),
+           PT := T#500ms);
+
+IF T_StallPre.Q THEN
+    StallRelief := TRUE;
+END_IF;
+
+T_StallOK(In := StallRelief AND (Velocity_M_min >= VelCmd * REAL#0.8), PT := T#2s);
+
+IF T_StallOK.Q OR NOT StartMotor_Cmd THEN
+    StallRelief := FALSE;                                        // web moving again for 2 s
+END_IF;
+
 T_Stall(In := ControlVoltage AND StartMotor_Cmd AND NOT ManMode AND NOT TensWait
               AND NOT JogRun AND (InvRef > INT#40) AND (Velocity_M_min < REAL#1.0),
-        PT := T#3s);
+        PT := T#5s);                                             // 5 s: the relief acts first
 
 IF T_Stall.Q THEN
     StallFault := TRUE;

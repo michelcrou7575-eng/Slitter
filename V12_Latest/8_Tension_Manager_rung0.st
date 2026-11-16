@@ -77,6 +77,12 @@ IF TensMax_kg < TensMin_kg + REAL#5.0 THEN
     TensMax_kg := TensMin_kg + REAL#5.0;
 END_IF;
 
+IF StallReliefPct < REAL#10.0 THEN
+    StallReliefPct := REAL#10.0;
+ELSIF StallReliefPct > REAL#80.0 THEN
+    StallReliefPct := REAL#80.0;
+END_IF;
+
 IF TensSPMin_kg < TensMin_kg THEN
     TensSPMin_kg := TensMin_kg;
 ELSIF TensSPMin_kg > TensMax_kg - REAL#5.0 THEN
@@ -187,6 +193,22 @@ IF TensAuto THEN
     TensSPLow := TensSPMin_kg;
 ELSE
     TensSPLow := TensMin_kg;
+END_IF;
+
+// V12_1116: NEAR stall (StallRelief, Alarms rung 1) -> ease the brake so the motor
+// can pull through: -StallReliefPct % at once, the minimum after 1.5 s, fast rate.
+
+T_Relief2(In := StallRelief, PT := T#1500ms);
+
+IF StallRelief THEN
+
+    IF T_Relief2.Q THEN
+        TensTarget := TensSPLow;                                         // step 2: minimum
+    ELSE
+        TensTarget := TensTarget * (REAL#1.0 - StallReliefPct / REAL#100.0); // step 1
+    END_IF;
+
+    TensDecelActive := TRUE;                                             // fast rate
 END_IF;
 
 IF TensTarget < TensSPLow THEN

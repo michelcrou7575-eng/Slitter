@@ -1,0 +1,3 @@
+FinalSpdMin_mpm	REAL	10.0		True	False	Publish Only	Minimum final speed while running (m/min), 2..50, never above the work speed
+StallRelief	BOOL	False		False	False	Publish Only	Near stall: T-one eased automatically (HMI lamp)
+StallReliefPct	REAL	30.0		True	False	Publish Only	Near stall: T-one set point reduction step 1 (
