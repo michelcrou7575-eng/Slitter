@@ -3,3 +3,5 @@ VelCmd	REAL	0.0		FALSE	FALSE	Alarms: web speed asked by the ramp (m/min)
 T_StallPre	TON			FALSE	FALSE	Alarms: near stall 0.5 s
 T_StallOK	TON			FALSE	FALSE	Alarms: web moving again 2 s
 T_Relief2	TON			FALSE	FALSE	Tension_Manager: near stall step 2 after 1.5 s
+WorkCnt	REAL	0.0		FALSE	FALSE	Motor_Manager: actual work speed in pot counts (rewinder AUTO limit included)
+FinalCapCnt	REAL	0.0		FALSE	FALSE	Motor_Manager: highest final speed in pot counts (FinalMaxPct of WorkCnt)

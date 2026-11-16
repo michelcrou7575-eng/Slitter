@@ -76,9 +76,9 @@ Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.
 **Settings 11/16:** see correction below (`UwCoreDiameter` stays 100 mm).
 
 **Near stall / final speed / MAX stop (V12_1116, 2nd part)**
-- Motor_Manager rung 6: final speed min `FinalSpdMin_mpm` (10 m/min, 2..50), capped by the work speed; final speed never above the work speed. Internal `FinalMinCnt`.
+- Motor_Manager rung 6: final speed always BELOW the work speed: max `FinalMaxPct` % (80 %, 20..95) of the actual work speed (rewinder AUTO limit included), even with the pot at max; min `FinalSpdMin_mpm` (10 m/min, 2..50), the cap wins. Internals `WorkCnt`, `FinalCapCnt`, `FinalMinCnt`.
 - Alarms rung 1: near stall (web < 30 % of the ramp speed `VelCmd` for 0.5 s) -> `StallRelief`; ends after 2 s above 80 %. `T_Stall` (StallFault stop) 3 -> 5 s. Internals `VelCmd`, `T_StallPre`, `T_StallOK`.
 - Tension_Manager (before the final clamp): `StallRelief` -> T-one set point -`StallReliefPct` % (30 %, 10..80), the minimum after 1.5 s (`T_Relief2`), fast rate.
 - AutoStop section 11: `RwMaxSlow` -> `RwMaxStop`: the MAX protection stops on the end-of-roll ramp, no crawl at final speed. HMI field 1300 = "REWINDER MAX STOP DIAMETER (fallback)".
-- Globals: `Globals_1116b_paste.txt` (`FinalSpdMin_mpm`, `StallRelief`, `StallReliefPct`). Internals: `Internals_1116b_paste.txt`.
+- Globals: `Globals_1116b_paste.txt` (`FinalSpdMin_mpm`, `FinalMaxPct`, `StallRelief`, `StallReliefPct`). Internals: `Internals_1116b_paste.txt`.
 - Correction: `UwCoreDiameter` stays 100 mm (121 mm was the sonar reading at the stall, not the core). `UwStopDiam_Limit`: to decide (paper left on the core or sonar offset).

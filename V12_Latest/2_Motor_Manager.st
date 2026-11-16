@@ -230,7 +230,14 @@ ELSE
     Pot2_Mem := INT#0;
 END_IF;
 
-// V12_1116: final speed never 0 while running (min FinalSpdMin_mpm), never above the work speed
+// V12_1116: final speed always BELOW the work speed: max FinalMaxPct % of it (pot at max too),
+// min FinalSpdMin_mpm (never 0), both based on the ACTUAL work speed (rewinder AUTO limit included)
+
+IF FinalMaxPct < REAL#20.0 THEN
+    FinalMaxPct := REAL#20.0;
+ELSIF FinalMaxPct > REAL#95.0 THEN
+    FinalMaxPct := REAL#95.0;
+END_IF;
 
 IF FinalSpdMin_mpm < REAL#2.0 THEN
     FinalSpdMin_mpm := REAL#2.0;
@@ -238,16 +245,23 @@ ELSIF FinalSpdMin_mpm > REAL#50.0 THEN
     FinalSpdMin_mpm := REAL#50.0;
 END_IF;
 
-FinalMinCnt := FinalSpdMin_mpm * Input_Ratio;                 // counts
+WorkCnt := UINT_TO_REAL(Pot1_Mem);                            // work speed (counts)
 
-IF FinalMinCnt > UINT_TO_REAL(Pot1_Mem) THEN
-    FinalMinCnt := UINT_TO_REAL(Pot1_Mem);                    // never above the work speed set point
+IF RwAutoLimAct AND (WorkCnt > RwAutoMaxSpdAct * Input_Ratio) THEN
+    WorkCnt := RwAutoMaxSpdAct * Input_Ratio;                 // rewinder AUTO speed limit
 END_IF;
 
-IF UINT_TO_REAL(Pot2_Mem) < FinalMinCnt THEN
-    Pot2_Mem := REAL_TO_INT(FinalMinCnt);                     // raise to the minimum
-ELSIF Pot2_Mem > Pot1_Mem THEN
-    Pot2_Mem := Pot1_Mem;                                     // final speed <= work speed
+FinalCapCnt := WorkCnt * FinalMaxPct / REAL#100.0;            // highest final speed
+FinalMinCnt := FinalSpdMin_mpm * Input_Ratio;                 // lowest final speed
+
+IF FinalMinCnt > FinalCapCnt THEN
+    FinalMinCnt := FinalCapCnt;                               // the cap wins
+END_IF;
+
+IF UINT_TO_REAL(Pot2_Mem) > FinalCapCnt THEN
+    Pot2_Mem := REAL_TO_INT(FinalCapCnt);
+ELSIF UINT_TO_REAL(Pot2_Mem) < FinalMinCnt THEN
+    Pot2_Mem := REAL_TO_INT(FinalMinCnt);
 END_IF;
 
 // Rung 7  "Updating the set speed" (ST)
