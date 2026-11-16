@@ -200,14 +200,30 @@ SpdMax_Pending := (WorkSpd_Max <> WorkSpd_Max_Set)
                OR (RwAutoLimAct AND (RwAutoMaxSpdAct <> RwAutoMaxSpd));
 // v6i: pots scaled to their own full scale (m/min)
 
-IF Pot1_Work_Velocity > INT#5 THEN
-    Pot1_Mem := REAL_TO_INT(INT_TO_REAL(Pot1_Work_Velocity) * WorkSpd_Max / VelMax);
+// V12_1116: pot filter (~80 ms at 4 ms) + 3-count hysteresis: steady speed reference
+// (trace 11/16: pot noise +/-0.4 % reset FFSteadyTicks 94 times in 110 s -> RwRatioD
+//  adaptation blocked, web speed 2 % low on a big roll)
+
+Pot1F := Pot1F + REAL#0.05 * (INT_TO_REAL(Pot1_Work_Velocity) - Pot1F);
+
+IF ABS(Pot1F - Pot1Hold) >= REAL#3.0 THEN
+    Pot1Hold := Pot1F;
+END_IF;
+
+Pot2F := Pot2F + REAL#0.05 * (INT_TO_REAL(Pot2_Slow_Velocity) - Pot2F);
+
+IF ABS(Pot2F - Pot2Hold) >= REAL#3.0 THEN
+    Pot2Hold := Pot2F;
+END_IF;
+
+IF Pot1Hold > REAL#5.0 THEN
+    Pot1_Mem := REAL_TO_INT(Pot1Hold * WorkSpd_Max / VelMax);
 ELSE
     Pot1_Mem := INT#0;
 END_IF;
 
-IF Pot2_Slow_Velocity > INT#5 THEN
-    Pot2_Mem := REAL_TO_INT(INT_TO_REAL(Pot2_Slow_Velocity) * FinalSpd_Max / VelMax);
+IF Pot2Hold > REAL#5.0 THEN
+    Pot2_Mem := REAL_TO_INT(Pot2Hold * FinalSpd_Max / VelMax);
 ELSE
     Pot2_Mem := INT#0;
 END_IF;
@@ -223,8 +239,8 @@ IF ManMode = FALSE THEN
         Speed_Display := RwAutoMaxSpdAct;
     END_IF;
 ELSE
-    Speed_Display := Pot1_Work_Velocity / (Analog_Res / UINT#40); // v6i: raw pot, %
-    LowSpd_Display := Pot2_Slow_Velocity / (Analog_Res / UINT#40);
+    Speed_Display  := Pot1Hold / UINT_TO_REAL(Analog_Res / UINT#40); // V12_1116: filtered pot, %
+    LowSpd_Display := Pot2Hold / UINT_TO_REAL(Analog_Res / UINT#40);
 END_IF;
 
 // Rung 8  "Updating potentiometer value"   NOT ManMode AND NOT JogRun -> ST:

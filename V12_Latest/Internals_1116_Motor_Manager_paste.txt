@@ -1,0 +1,4 @@
+Pot1F	REAL	0.0		FALSE	FALSE	Work speed pot, filtered (counts)
+Pot1Hold	REAL	0.0		FALSE	FALSE	Work speed pot, filtered + 3-count hysteresis (counts)
+Pot2F	REAL	0.0		FALSE	FALSE	Final speed pot, filtered (counts)
+Pot2Hold	REAL	0.0		FALSE	FALSE	Final speed pot, filtered + 3-count hysteresis (counts)
