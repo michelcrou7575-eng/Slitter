@@ -53,5 +53,5 @@ Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.
 **Motor_Manager** (`2_Motor_Manager.st`, before `Pot1_Mem` / `Pot2_Mem`)
 - Speed pots filtered (`Pot1F`/`Pot2F`, factor 0.05 per 4 ms scan = ~80 ms) with a 3-count hysteresis (`Pot1Hold`/`Pot2Hold`).
   Trace 11/16: pot noise +/-0.4 % made `InvRef` flicker and reset `FFSteadyTicks` 94 times in 110 s, so the `RwRatioD` adaptation stalled (web speed -2 % on a big roll).
-- Manual mode: `Speed_Display` / `LowSpd_Display` from the filtered pots (the drive still gets the raw pot in ManMode, line `InvRef := Pot1_Work_Velocity`).
+- Manual mode: `Speed_Display` / `LowSpd_Display` (rung 7) and the drive reference `InvRef` (rung 19) from the filtered pots `Pot1Hold` / `Pot2Hold`.
 - Internals: `Internals_1116_Motor_Manager_paste.txt`.

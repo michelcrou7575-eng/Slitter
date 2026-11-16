@@ -622,9 +622,9 @@ InvRef := REAL_TO_INT((Vel_Max_mms - Vfd_SP_Modif ) / Output_Ratio);
 IF SoftStop THEN
     InvRef := INT#0;                          // v6m: drive ramps down on its own
 ELSIF SlowDown = FALSE THEN
-    InvRef := Pot1_Work_Velocity;
+    InvRef := REAL_TO_INT(Pot1Hold);          // V12_1116: filtered pot (same counts, steady)
 ELSE
-    InvRef := Pot2_Slow_Velocity;
+    InvRef := REAL_TO_INT(Pot2Hold);
 END_IF;
 
 // Rung 20 "Slow speed (ManMode)"   ManMode AND JogRun -> ST:
