@@ -76,7 +76,8 @@ Done in 1114: `PulseRate` mapped, `CntAutoReset` internal Retain False.
 **Settings 11/16:** see correction below (`UwCoreDiameter` stays 100 mm).
 
 **Near stall / final speed / MAX stop (V12_1116, 2nd part)**
-- Motor_Manager rung 6: final speed always BELOW the work speed: max `FinalMaxPct` % (80 %, 20..95) of the actual work speed (rewinder AUTO limit included), even with the pot at max; min `FinalSpdMin_mpm` (10 m/min, 2..50), the cap wins. Internals `WorkCnt`, `FinalCapCnt`, `FinalMinCnt`.
+- Motor_Manager rung 6: final speed from the actual work speed W (all adjustable): W <= `FinalSameBelow` (40) -> final = W; 40..`FinalMinAt` (60) min rises 0 -> `FinalMinFull` (20), max = W; max capped at `FinalMaxCap` (80); min never below `FinalSpdMin_mpm` (10) above 40. Replaces `FinalMaxPct` (global can be deleted). Internals `WorkCnt`, `WorkMpm`, `FinMin`, `FinMax` (`FinalCapCnt`, `FinalMinCnt` no longer used).
+- Alarms rung 1: `StallRelief` only if `AntiStallEnable` (HMI switch) AND an auto stop in progress (`SlowDown OR FinalStopRamp`) AND `RwDiam >= AntiStallDiam` (900 mm). `StallFault` stays always active.
 - Alarms rung 1: near stall (web < 30 % of the ramp speed `VelCmd` for 0.5 s) -> `StallRelief`; ends after 2 s above 80 %. `T_Stall` (StallFault stop) 3 -> 5 s. Internals `VelCmd`, `T_StallPre`, `T_StallOK`.
 - Tension_Manager (before the final clamp): `StallRelief` -> T-one set point -`StallReliefPct` % (30 %, 10..80), the minimum after 1.5 s (`T_Relief2`), fast rate.
 - AutoStop section 11: `RwMaxSlow` -> `RwMaxStop`: the MAX protection stops on the end-of-roll ramp, no crawl at final speed. HMI field 1300 = "REWINDER MAX STOP DIAMETER (fallback)".

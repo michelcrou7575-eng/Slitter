@@ -88,7 +88,15 @@ T_StallPre(In := StartMotor_Cmd AND NOT TensWait AND NOT JogRun AND NOT ManMode
                  AND (VelCmd > REAL#3.0) AND (Velocity_M_min < VelCmd * REAL#0.3),
            PT := T#500ms);
 
-IF T_StallPre.Q THEN
+// V12_1116: relief only in the risky case: anti-stall switch ON (HMI), an auto stop in
+// progress (slow-down or end-of-roll ramp) and a big rewind roll. StallFault stays always active.
+
+IF AntiStallDiam < REAL#200.0 THEN
+    AntiStallDiam := REAL#200.0;
+END_IF;
+
+IF T_StallPre.Q AND AntiStallEnable AND (SlowDown OR FinalStopRamp)
+   AND (RwDiam >= AntiStallDiam) THEN
     StallRelief := TRUE;
 END_IF;
 
