@@ -1,9 +1,6 @@
-FinalSpdMin_mpm	REAL	10.0		True	False	Publish Only	Minimum final speed while running (m/min), 2..50, never above the work speed
+FinalSpdMin_mpm	REAL	30.0		True	False	Publish Only	Min final speed (m/min), 2..100, never above the work speed
 StallRelief	BOOL	False		False	False	Publish Only	Near stall: T-one eased automatically (HMI lamp)
 StallReliefPct	REAL	30.0		True	False	Publish Only	Near stall: T-one set point reduction step 1 (%), 10..80
-FinalSameBelow	REAL	40.0		True	False	Publish Only	Final speed = work speed when the work speed is at or below this (m/min)
-FinalMinAt	REAL	60.0		True	False	Publish Only	Work speed (m/min) where the min final speed reaches FinalMinFull
-FinalMinFull	REAL	20.0		True	False	Publish Only	Min final speed (m/min) from FinalMinAt up
-FinalMaxCap	REAL	80.0		True	False	Publish Only	Max final speed (m/min): follows the work speed up to this value
+FinalMaxCap	REAL	80.0		True	False	Publish Only	Max final speed (m/min), never above the work speed
 AntiStallEnable	BOOL	True		True	False	Publish Only	HMI switch: near-stall brake relief allowed (auto stop + big roll)
 AntiStallDiam	REAL	900.0		True	False	Publish Only	Near-stall brake relief only above this rewinder diameter (mm)
